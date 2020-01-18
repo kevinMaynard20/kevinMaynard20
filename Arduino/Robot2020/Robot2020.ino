@@ -13,5 +13,5 @@ void setup() {
 
 void loop() {
   PixyCam::refresh();
-  I2C::setWriteData(PixyCam::getTargetInView(), PixyCam::getXValue(), PixyCam::getWidth());
+  I2C::setWriteData(PixyCam::getTargetInView(), PixyCam::getXValue(), PixyCam::getDistance());
 }

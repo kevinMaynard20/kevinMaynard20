@@ -22,7 +22,7 @@ static void I2C::requestEvent() {
   Wire.write(writeData, sizeof(writeData) / sizeof(byte));
 }
 
-static void I2C::setWriteData(bool targetInView, int xValue, int width) {
+static void I2C::setWriteData(bool targetInView, int xValue, int distance) {
   writeData[0] = targetInView ? 1 : 0;
 
   if (xValue <= 127) {
@@ -40,18 +40,18 @@ static void I2C::setWriteData(bool targetInView, int xValue, int width) {
     }
   }
 
-  if (width <= 127) {
-    writeData[4] = width;
+  if (distance <= 127) {
+    writeData[4] = distance;
     writeData[5] = 0;
     writeData[6] = 0;
   } else {
     writeData[4] = 127;
-    if (width <= 255) {
-      writeData[5] = width - 127;
+    if (distance <= 255) {
+      writeData[5] = distance - 127;
       writeData[6] = 0;
     } else {
       writeData[5] = 127;
-      writeData[6] = width - 254;
+      writeData[6] = distance - 254;
     }
   }
 }

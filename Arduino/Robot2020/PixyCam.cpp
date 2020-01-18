@@ -5,7 +5,7 @@ static PIDLoop PixyCam::pan = PIDLoop(400, 0, 400, true);
 static PIDLoop PixyCam::tilt = PIDLoop(500, 0, 500, true);
 static bool PixyCam::targetInView;
 static int PixyCam::xValue;
-static int PixyCam::width;
+static int PixyCam::distance;
 
 static void PixyCam::initialize() {
   pixy.init();
@@ -22,17 +22,11 @@ static void PixyCam::refresh() {
       targetInView = true;
     // update values
     xValue = pixy.ccc.blocks[0].m_x;
-    width = pixy.ccc.blocks[0].m_width;
-    // update servo PID loops
-    //    pan.update(pixy.frameWidth / 2 - pixy.ccc.blocks[0].m_x);
-    //    tilt.update(pixy.ccc.blocks[0].m_y - pixy.frameWidth / 2);
-    // update servos
-    //    pixy.setServos(pan.m_command, tilt.m_command);
-  } else if (targetInView) {
+    int width = pixy.ccc.blocks[0].m_width;
+    byte angle = (double)width / (double)pixy.frameWidth * 60.0 / 2.0;
+    distance = 3.5 * sin((90 - angle) / 2) * (1.0 / sin(angle));
+  } else if (targetInView)
     targetInView = false;
-    reset();
-    xValue = 157;
-  }
 }
 
 static void PixyCam::reset() {
@@ -50,6 +44,6 @@ static int PixyCam::getXValue() {
   return xValue;
 }
 
-static int PixyCam::getWidth() {
-  return width;
+static int PixyCam::getDistance() {
+  return distance;
 }
