@@ -17,6 +17,8 @@ class I2C {
     static byte readData[1];
     // data to send to RoboRio
     static byte writeData[7];
+
+    static void splitValue(int value, byte startIndex, byte endIndex);
 };
 
 #endif

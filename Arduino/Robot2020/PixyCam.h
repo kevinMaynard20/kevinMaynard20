@@ -11,7 +11,7 @@ class PixyCam {
     static void refresh();
     static bool getTargetInView();
     static int getXValue();
-    static int getWidth();
+    static int getDistance();
     
   private:
     // Pixy2 object
@@ -23,8 +23,8 @@ class PixyCam {
     static bool targetInView;
     // x-value of center of largest block
     static int xValue;
-    // width of largest block
-    static int width;
+    // distance to power cell
+    static int distance;
     
     static void reset();
 };
