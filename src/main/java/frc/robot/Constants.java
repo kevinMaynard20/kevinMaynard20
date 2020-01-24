@@ -36,4 +36,28 @@ public final class Constants {
             public static final int kLeft = 270;
         }
     }
+
+    public static final class DriveConstants {
+        // TODO: add motor ports once drivetrain is built
+    }
+
+    public static final class ArduinoConstants {
+		public static final int kAddress = 0x1;
+
+		public static final double kAngleP = 0.002;
+		public static final double kAngleI = 0.0;
+		public static final double kAngleD = 0.0002;
+		public static final int kAngleSetpoint = 157;
+		public static final int kAngleTolerance = 10;
+
+		public static final double kDistanceP = 0.01;
+		public static final double kDistanceI = 0.0;
+		public static final double kDistanceD = 0.0013;
+		public static final int kDistanceSetpoint = 20;
+		public static final int kDistanceTolerance = 2;
+
+		public static final int kReadTargetInView = 0;
+		public static final int[] kReadXValue = {1, 2, 3};
+		public static final int[] kReadDistance = {4, 5, 6};
+	}
 }

@@ -22,6 +22,10 @@ static void I2C::requestEvent() {
   Wire.write(writeData, sizeof(writeData) / sizeof(byte));
 }
 
+static void I2C::getPattern() {
+  return readData[0];
+}
+
 static void I2C::setWriteData(bool targetInView, int xValue, int distance) {
   writeData[0] = targetInView ? 1 : 0;
   splitValue(xValue, 1, 3);
