@@ -9,8 +9,8 @@ class I2C {
     static void initialize(byte address);
     static void receiveEvent();
     static void requestEvent();
+    static byte getPattern();
     static void setWriteData(bool targetInView, int xValue, int width);
-    // TODO: add methods for getting and setting data
     
   private:
     // data received from RoboRio
