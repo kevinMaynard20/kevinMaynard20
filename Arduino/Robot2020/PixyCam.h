@@ -24,7 +24,7 @@ class PixyCam {
     // x-value of center of largest block
     static int xValue;
     // distance to power cell
-    static int distance;
+    static byte distance;
     
     static void reset();
 };

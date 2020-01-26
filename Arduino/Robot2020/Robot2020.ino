@@ -2,6 +2,7 @@
 // Arduino code for Team 20's 2020 FIRST Robotics Competition Robot
 
 #include "I2C.h"
+#include "LEDStrip.h"
 #include "PixyCam.h"
 
 void setup() {
