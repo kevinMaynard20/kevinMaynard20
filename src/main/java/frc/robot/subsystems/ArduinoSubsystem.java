@@ -33,11 +33,6 @@ public class ArduinoSubsystem extends SubsystemBase {
 		m_distancePid.setTolerance(ArduinoConstants.kDistanceTolerance);
 	}
 
-	@Override
-	public void periodic() {
-		System.out.println("m_xValue = " + m_xValue + "\tm_width = " + m_distance);
-	}
-
 	/**
 	 * @return Speed to turn to face target.
 	 */
