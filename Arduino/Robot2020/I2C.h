@@ -10,7 +10,7 @@ class I2C {
     static void receiveEvent();
     static void requestEvent();
     static byte getPattern();
-    static void setWriteData(bool targetInView, int xValue, byte distance);
+    static void setWriteData(bool targetInView, short xValue, byte distance);
     
   private:
     // data received from RoboRio
@@ -18,7 +18,7 @@ class I2C {
     // data to send to RoboRio
     static byte writeData[5];
 
-    static void splitValue(int value, byte startIndex, byte endIndex);
+    static void splitValue(short value, byte startIndex, byte endIndex);
 };
 
 #endif

@@ -4,7 +4,7 @@ static Pixy2 PixyCam::pixy;
 static PIDLoop PixyCam::pan = PIDLoop(400, 0, 400, true);
 static PIDLoop PixyCam::tilt = PIDLoop(500, 0, 500, true);
 static bool PixyCam::targetInView;
-static int PixyCam::xValue;
+static short PixyCam::xValue;
 static byte PixyCam::distance;
 
 static void PixyCam::initialize() {
@@ -22,11 +22,10 @@ static void PixyCam::refresh() {
       targetInView = true;
     // update values
     xValue = pixy.ccc.blocks[0].m_x;
-    int width = pixy.ccc.blocks[0].m_width;
-//    double angle = (double)width / (double)pixy.frameWidth * 60.0;
-//    distance = 3.5 * sin(radians(90 - angle / 2.0)) * (1.0 / sin(radians(angle / 2.0)));
+    short width = pixy.ccc.blocks[0].m_width;
     double angle = (double)width / (double)pixy.frameWidth * (PI / 3.0);
-    distance = 3.5 * sin(90 - angle / 2.0) * (1.0 / sin(angle / 2.0));
+    // distance = 3.5 * sin(90 - angle / 2.0) * (1.0 / sin(angle / 2.0));
+    distance = 3.5 / tan(angle);
   } else if (targetInView)
     targetInView = false;
 }
@@ -42,10 +41,10 @@ static bool PixyCam::getTargetInView() {
   return targetInView;
 }
 
-static int PixyCam::getXValue() {
+static short PixyCam::getXValue() {
   return xValue;
 }
 
-static int PixyCam::getDistance() {
+static short PixyCam::getDistance() {
   return distance;
 }

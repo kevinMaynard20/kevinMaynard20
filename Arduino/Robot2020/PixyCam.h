@@ -10,8 +10,8 @@ class PixyCam {
     static void initialize();
     static void refresh();
     static bool getTargetInView();
-    static int getXValue();
-    static int getDistance();
+    static short getXValue();
+    static short getDistance();
     
   private:
     // Pixy2 object
@@ -22,7 +22,7 @@ class PixyCam {
     // booleans for checking if blocks are detected
     static bool targetInView;
     // x-value of center of largest block
-    static int xValue;
+    static short xValue;
     // distance to power cell
     static byte distance;
     

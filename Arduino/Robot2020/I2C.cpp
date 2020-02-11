@@ -26,13 +26,13 @@ static byte I2C::getPattern() {
   return readData[0];
 }
 
-static void I2C::setWriteData(bool targetInView, int xValue, byte distance) {
+static void I2C::setWriteData(bool targetInView, short xValue, byte distance) {
   writeData[0] = targetInView ? 1 : 0;
   splitValue(xValue, 1, 3);
   writeData[4] = distance;
 }
 
-static void I2C::splitValue(int value, byte startIndex, byte endIndex) {
+static void I2C::splitValue(short value, byte startIndex, byte endIndex) {
   for (byte i = startIndex; i <= endIndex; i++) {
     if (value <= 127) {
       writeData[i] = value;
