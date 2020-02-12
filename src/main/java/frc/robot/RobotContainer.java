@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.commands.ArcadeDriveCommand;
 import frc.robot.commands.CarouselCommand;
-import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FeederCommand;
 import frc.robot.commands.TargetCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
@@ -29,7 +29,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		configureButtonBindings();
 
-		m_driveSubsystem.setDefaultCommand(new DriveCommand(m_driveSubsystem,
+		m_driveSubsystem.setDefaultCommand(new ArcadeDriveCommand(m_driveSubsystem,
 				() -> -m_driverController.getRawAxis(ControllerConstants.Axis.kLeftY),
 				() -> (m_driverController.getRawAxis(ControllerConstants.Axis.kLeftTrigger) + 1) / 2,
 				() -> (m_driverController.getRawAxis(ControllerConstants.Axis.kRightTrigger) + 1) / 2));
