@@ -9,7 +9,7 @@ static void LEDStrip::initialize(byte pin, byte numLEDs, byte brightness) {
   strip.show();
 }
 
-static void refresh(byte pattern) {
+static void LEDStrip::refresh(byte pattern) {
   // selects pattern to display
   switch (pattern) {
     // TODO: add a case for each pattern
