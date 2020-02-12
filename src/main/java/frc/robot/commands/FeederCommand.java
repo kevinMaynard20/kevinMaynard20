@@ -32,11 +32,11 @@ public class FeederCommand extends CommandBase {
 
 	@Override
 	public void execute() {
-		if (!started && (m_carouselPosition.get() % CarouselConstants.kRatio < 0.1)
-				|| (m_carouselPosition.get() % CarouselConstants.kRatio > 0.9))
-			started = true;
 		if (started)
 			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
+		else if (m_carouselPosition.get() % CarouselConstants.kRatio < 2.5
+				|| m_carouselPosition.get() % CarouselConstants.kRatio > 93.75) // TODO make a constant for this
+			started = true;
 	}
 
 	@Override

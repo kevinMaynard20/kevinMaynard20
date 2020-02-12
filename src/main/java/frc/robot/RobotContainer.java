@@ -40,19 +40,19 @@ public class RobotContainer {
 				.whenHeld(new TargetCommand(m_driveSubsystem, m_arduinoSubsystem));
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kCircle)
-				.whenHeld(new CarouselCommand(m_carouselSubsystem));
+				.toggleWhenPressed(new CarouselCommand(m_carouselSubsystem));
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kX)
-				.whenHeld(new FeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition()));
+				.toggleWhenPressed(new FeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition()));
 
 		new POVButton(m_driverController, ControllerConstants.DPad.kDown)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(1000), m_flywheelSubsystem);
-		new POVButton(m_driverController, ControllerConstants.DPad.kLeft)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(1500), m_flywheelSubsystem);
-		new POVButton(m_driverController, ControllerConstants.DPad.kUp)
+		new POVButton(m_driverController, ControllerConstants.DPad.kLeft)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(2000), m_flywheelSubsystem);
-		new POVButton(m_driverController, ControllerConstants.DPad.kRight)
+		new POVButton(m_driverController, ControllerConstants.DPad.kUp)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(2500), m_flywheelSubsystem);
+		new POVButton(m_driverController, ControllerConstants.DPad.kRight)
+				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(3000), m_flywheelSubsystem);
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kLeftBumper)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(0));
