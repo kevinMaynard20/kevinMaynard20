@@ -48,4 +48,20 @@ public class CarouselSubsystem extends SubsystemBase {
 		else
 			m_pidController.setReference(velocity, ControlType.kVelocity);
 	}
+
+	/**
+	 * @return Position of encoder (rotations).
+	 */
+	public double getPosition() {
+		return m_encoder.getPosition();
+	}
+
+	/**
+	 * Set the value of the current encoder position.
+	 * 
+	 * @param position Value in rotations.
+	 */
+	public void setPosition(double position) {
+		m_encoder.setPosition(position);
+	}
 }

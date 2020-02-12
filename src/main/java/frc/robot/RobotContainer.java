@@ -43,7 +43,7 @@ public class RobotContainer {
 				.whenHeld(new CarouselCommand(m_carouselSubsystem));
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kX)
-				.whenHeld(new FeederCommand(m_feederSubsystem));
+				.whenHeld(new FeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition()));
 
 		new POVButton(m_driverController, ControllerConstants.DPad.kDown)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(1000), m_flywheelSubsystem);
@@ -59,5 +59,8 @@ public class RobotContainer {
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kSquare)
 				.whenPressed(() -> CommandScheduler.getInstance().cancelAll());
+
+		new JoystickButton(m_driverController, ControllerConstants.Button.kOptions)
+				.whenPressed(() -> m_carouselSubsystem.setPosition(0));
 	}
 }
