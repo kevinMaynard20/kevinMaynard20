@@ -80,6 +80,7 @@ public final class Constants {
 	public static final class FeederConstants {
 		public static final int kMotorPort = 7;
 		public static final double kSpeed = 1.0;
+		public static final double kStartPositionTolerance = 2.5;
 	}
 
 	public static final class FlywheelConstants {

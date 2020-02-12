@@ -34,8 +34,9 @@ public class FeederCommand extends CommandBase {
 	public void execute() {
 		if (started)
 			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
-		else if (m_carouselPosition.get() % CarouselConstants.kRatio < 2.5
-				|| m_carouselPosition.get() % CarouselConstants.kRatio > 93.75) // TODO make a constant for this
+		else if (m_carouselPosition.get() % CarouselConstants.kRatio < FeederConstants.kStartPositionTolerance
+				|| m_carouselPosition.get() % CarouselConstants.kRatio > CarouselConstants.kRatio
+						- FeederConstants.kStartPositionTolerance)
 			started = true;
 	}
 
