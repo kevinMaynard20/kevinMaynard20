@@ -25,7 +25,7 @@ static void PixyCam::refresh() {
     short width = pixy.ccc.blocks[0].m_width;
     double angle = (double)width / (double)pixy.frameWidth * (PI / 3.0);
     // distance = 3.5 * sin(90 - angle / 2.0) * (1.0 / sin(angle / 2.0));
-    distance = 3.5 / tan(angle);
+    distance = 3.5 / tan(angle / 2);
   } else if (targetInView)
     targetInView = false;
 }
