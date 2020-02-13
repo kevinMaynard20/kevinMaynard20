@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 
 public class FlywheelSubsystem extends SubsystemBase {
-    private final CANSparkMax m_neoFlywheel;
-    private final CANPIDController m_neoController;
-    private final CANEncoder m_neoEncoder;
+
+    private final CANSparkMax m_neoFlywheel = new CANSparkMax(FlywheelConstants.kFlywheelPort, MotorType.kBrushless);
+    private final CANPIDController m_neoController = m_neoFlywheel.getPIDController();
+    private final CANEncoder m_neoEncoder = m_neoFlywheel.getEncoder();
     private double m_setPoint;
 
     /**
@@ -21,17 +22,14 @@ public class FlywheelSubsystem extends SubsystemBase {
      */
     public FlywheelSubsystem() {
         // Initialize Motors
-        m_neoFlywheel = new CANSparkMax(FlywheelConstants.kFlywheelPort, MotorType.kBrushless);
-        m_neoFlywheel.restoreFactoryDefaults();
         m_neoFlywheel.restoreFactoryDefaults();
         m_neoFlywheel.setInverted(true);
         m_neoFlywheel.setIdleMode(IdleMode.kBrake);
         m_neoFlywheel.enableVoltageCompensation(12);
-        m_neoFlywheel.setSmartCurrentLimit(60);
+        m_neoFlywheel.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
+        m_neoFlywheel.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
+                FlywheelConstants.kPeakCurrentDurationMillis);
         m_neoFlywheel.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        m_neoController = m_neoFlywheel.getPIDController();
-        m_neoEncoder = m_neoFlywheel.getEncoder();
-
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
         m_neoController.setD(FlywheelConstants.kD);

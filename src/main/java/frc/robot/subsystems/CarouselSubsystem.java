@@ -5,11 +5,11 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CarouselConstants;
 
 public class CarouselSubsystem extends SubsystemBase {
+
 	private final CANSparkMax m_motor = new CANSparkMax(CarouselConstants.kMotorPort, MotorType.kBrushless);
 	private final CANEncoder m_encoder = m_motor.getEncoder();
 	private final CANPIDController m_pidController = m_motor.getPIDController();
@@ -19,7 +19,7 @@ public class CarouselSubsystem extends SubsystemBase {
 	 */
 	public CarouselSubsystem() {
 		m_motor.restoreFactoryDefaults();
-		m_motor.setSmartCurrentLimit(20);
+		m_motor.setSmartCurrentLimit(CarouselConstants.kSmartCurrentLimit);
 
 		m_pidController.setP(CarouselConstants.kP);
 		m_pidController.setI(CarouselConstants.kI);

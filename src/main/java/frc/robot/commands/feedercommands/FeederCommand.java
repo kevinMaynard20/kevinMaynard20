@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.feedercommands;
 
 import java.util.function.Supplier;
 
@@ -8,10 +8,9 @@ import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.FeederSubsystem;
 
 public class FeederCommand extends CommandBase {
-	FeederSubsystem m_feederSubsystem;
-	Supplier<Double> m_carouselPosition;
-
-	boolean started;
+	private final FeederSubsystem m_feederSubsystem;
+	private final Supplier<Double> m_carouselPosition;
+	private boolean started;
 
 	/**
 	 * Initializes a new instance of the {@link FeederCommand} class.
@@ -21,16 +20,13 @@ public class FeederCommand extends CommandBase {
 	public FeederCommand(FeederSubsystem feederSubsystem, Supplier<Double> carouselPosition) {
 		m_feederSubsystem = feederSubsystem;
 		m_carouselPosition = carouselPosition;
-
 		addRequirements(m_feederSubsystem);
 	}
 
-	@Override
 	public void initialize() {
 		started = false;
 	}
 
-	@Override
 	public void execute() {
 		if (!started && (m_carouselPosition.get() % CarouselConstants.kRatio < 0.1)
 				|| (m_carouselPosition.get() % CarouselConstants.kRatio > 0.9))
@@ -39,7 +35,6 @@ public class FeederCommand extends CommandBase {
 			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
 	}
 
-	@Override
 	public void end(boolean interrupted) {
 		m_feederSubsystem.setSpeed(0.0);
 		started = false;
