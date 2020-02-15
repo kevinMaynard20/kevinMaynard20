@@ -7,6 +7,8 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 
@@ -40,6 +42,12 @@ public class FlywheelSubsystem extends SubsystemBase {
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("flywheel rpm", getVelocity());
+        SmartDashboard.putNumber("flywheel rpm graph", getVelocity());
+    }
+
     /**
      * Sets target speed for flywheel.
      * 
@@ -50,7 +58,7 @@ public class FlywheelSubsystem extends SubsystemBase {
         if (setPoint == 0) {
             m_neoFlywheel.stopMotor();
         } else {
-            m_neoController.setReference(setPoint, ControlType.kVelocity);
+            m_neoController.setReference(setPoint / FlywheelConstants.kRatio, ControlType.kVelocity);
         }
     }
 

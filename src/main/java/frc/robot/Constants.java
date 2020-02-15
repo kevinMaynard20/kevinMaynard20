@@ -80,6 +80,7 @@ public final class Constants {
 	public static final class FeederConstants {
 		public static final int kMotorPort = 7;
 		public static final double kSpeed = 1.0;
+		public static final double kStartPositionTolerance = 2.5;
 	}
 
 	public static final class FlywheelConstants {
@@ -91,6 +92,7 @@ public final class Constants {
 		public static final double kFF = 0.000_19;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kMaxRPM = 4000;
+		public static final double kMaxRPM = 9600;
+		public static final double kRatio = 2.4;
 	}
 }
