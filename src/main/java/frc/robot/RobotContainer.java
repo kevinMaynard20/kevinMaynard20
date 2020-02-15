@@ -46,13 +46,13 @@ public class RobotContainer {
 				.toggleWhenPressed(new FeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition()));
 
 		new POVButton(m_driverController, ControllerConstants.DPad.kDown)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(1500), m_flywheelSubsystem);
+				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(5000), m_flywheelSubsystem);
 		new POVButton(m_driverController, ControllerConstants.DPad.kLeft)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(2000), m_flywheelSubsystem);
+				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(6000), m_flywheelSubsystem);
 		new POVButton(m_driverController, ControllerConstants.DPad.kUp)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(2500), m_flywheelSubsystem);
+				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(7000), m_flywheelSubsystem);
 		new POVButton(m_driverController, ControllerConstants.DPad.kRight)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(3000), m_flywheelSubsystem);
+				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(8000), m_flywheelSubsystem);
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kLeftBumper)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(0));

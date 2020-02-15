@@ -92,6 +92,7 @@ public final class Constants {
 		public static final double kFF = 0.000_19;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kMaxRPM = 4000;
+		public static final double kMaxRPM = 9600;
+		public static final double kRatio = 2.4;
 	}
 }
