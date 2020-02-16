@@ -1,109 +1,116 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
-	private final TalonSRX m_masterLeft = new TalonSRX(DriveConstants.kMasterLeft);
-	private final TalonSRX m_followerLeft1 = new TalonSRX(DriveConstants.kFollowerLeft1);
-	private final TalonSRX m_followerLeft2 = new TalonSRX(DriveConstants.kFollowerLeft2);
-	private final TalonSRX m_masterRight = new TalonSRX(DriveConstants.kMasterRight);
-	private final TalonSRX m_followerRight1 = new TalonSRX(DriveConstants.kFollowerRight1);
-	private final TalonSRX m_followerRight2 = new TalonSRX(DriveConstants.kFollowerRight2);
 
-	/**
-	 * Initializes a new instance of the {@link DriveSubsystem} class.
-	 */
-	public DriveSubsystem() {
-		m_masterLeft.setInverted(false);
-		m_masterLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
-		m_masterLeft.configClosedloopRamp(0.1, 1000);
-		m_masterLeft.configOpenloopRamp(0.1, 1000);
-		m_masterLeft.enableVoltageCompensation(true);
-		m_masterLeft.setSensorPhase(true);
-		m_masterLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 1000);
-		m_masterLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 1000);
-		m_masterLeft.configNominalOutputForward(0, 1000);
-		m_masterLeft.configNominalOutputReverse(0, 1000);
-		m_masterLeft.configPeakOutputForward(1, 1000);
-		m_masterLeft.configPeakOutputReverse(-1, 1000);
-		m_masterLeft.selectProfileSlot(0, 0);
-		m_masterLeft.config_kF(0, 0.08189, 1000);
-		m_masterLeft.config_kP(0, 0.5, 1000);
-		m_masterLeft.config_kI(0, 0.004, 1000);
-		m_masterLeft.config_kD(0, 1.5, 1000);
-		m_masterLeft.config_IntegralZone(0, 100, 1000);
-		m_masterLeft.configMotionCruiseVelocity(9370, 1000);
-		m_masterLeft.configMotionAcceleration(9370, 1000);
-		m_masterLeft.setSelectedSensorPosition(0, 0, 1000);
+    private final WPI_TalonSRX m_masterLeft = new WPI_TalonSRX(DriveConstants.kMasterLeftPort);
+    private final WPI_TalonSRX m_followerLeftOne = new WPI_TalonSRX(DriveConstants.kFollowerLeftOnePort);
+    private final WPI_TalonSRX m_followerLeftTwo = new WPI_TalonSRX(DriveConstants.kFollowerLeftTwoPort);
+    private final WPI_TalonSRX m_masterRight = new WPI_TalonSRX(DriveConstants.kMasterRightPort);
+    private final WPI_TalonSRX m_followerRightOne = new WPI_TalonSRX(DriveConstants.kFollowerRightOnePort);
+    private final WPI_TalonSRX m_followerRightTwo = new WPI_TalonSRX(DriveConstants.kFollowerRightTwoPort);
+    private final AHRS m_gyro = new AHRS(DriveConstants.kGyroPort);
+    private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
+            Rotation2d.fromDegrees(getHeading()));
 
-		m_followerLeft1.follow(m_masterLeft);
-		m_followerLeft1.setInverted(true);
+    public DriveSubsystem() {
+        m_masterLeft.setInverted(DriveConstants.kMasterLeftInvert);
+        m_followerLeftOne.setInverted(DriveConstants.kFollowerLeftOneInvert);
+        m_followerLeftOne.follow(m_masterLeft);
+        m_followerLeftTwo.setInverted(DriveConstants.kFollowerLeftTwoInvert);
+        m_followerLeftTwo.follow(m_masterLeft);
 
-		m_followerLeft2.follow(m_masterLeft);
-		m_followerLeft2.setInverted(true);
+        m_masterRight.setInverted(DriveConstants.kMasterRightInvert);
+        m_followerRightOne.setInverted(DriveConstants.kFollowerRightOneInvert);
+        m_followerRightOne.follow(m_masterRight);
+        m_followerRightTwo.setInverted(DriveConstants.kFollowerRightTwoInvert);
+        m_followerRightTwo.follow(m_masterRight);
 
-		m_masterRight.setInverted(true);
-		m_masterRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
-		m_masterRight.configClosedloopRamp(0.1, 1000);
-		m_masterRight.configOpenloopRamp(0.1, 1000);
-		m_masterRight.enableVoltageCompensation(true);
-		m_masterRight.setSensorPhase(false);
-		m_masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 1000);
-		m_masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 1000);
-		m_masterRight.configNominalOutputForward(0, 1000);
-		m_masterRight.configNominalOutputReverse(0, 1000);
-		m_masterRight.configPeakOutputForward(1, 1000);
-		m_masterRight.configPeakOutputReverse(-1, 1000);
-		m_masterRight.selectProfileSlot(0, 0);
-		m_masterRight.config_kF(0, 0.08189, 1000);
-		m_masterRight.config_kP(0, 0.5, 1000);
-		m_masterRight.config_kI(0, 0.004, 1000);
-		m_masterRight.config_kD(0, 1.5, 1000);
-		m_masterRight.config_IntegralZone(0, 100, 1000);
-		m_masterRight.configMotionCruiseVelocity(9370, 1000);
-		m_masterRight.configMotionAcceleration(9370, 1000);
-		m_masterRight.setSelectedSensorPosition(0, 0, 1000);
+        resetEncoders();
+        zeroHeading();
+    }
 
-		m_followerRight1.follow(m_masterRight);
-		m_followerLeft1.setInverted(true);
+    public void periodic() {
+        m_odometry.update(Rotation2d.fromDegrees(getHeading()), getLeftEncoderPosition(), getRightEncoderPosition());
+    }
 
-		m_followerRight2.follow(m_masterRight);
-		m_followerRight2.setInverted(true);
-	}
+    public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
+    }
 
-	/**
-	 * Sets speed of left wheels.
-	 * 
-	 * @param speed Percent output of the left wheels.
-	 */
-	public void setLeftSpeed(double speed) {
-		m_masterLeft.set(ControlMode.PercentOutput, -speed);
-	}
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(getLeftEncoderVelocity(), getRightEncoderVelocity());
+    }
 
-	/**
-	 * Sets speed of right wheels.
-	 * 
-	 * @param speed Percent output of the right wheels.
-	 */
-	public void setRightSpeed(double speed) {
-		m_masterRight.set(ControlMode.PercentOutput, speed);
-	}
+    public void resetOdometry(Pose2d pose) {
+        resetEncoders();
+        m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+    }
 
-	/**
-	 * Uses arcade drive setup to move the robot.
-	 * 
-	 * @param speed Forwards/backwards motion.
-	 * @param left  Turn left.
-	 * @param right Turn right.
-	 */
-	public void arcadeDrive(double speed, double left, double right) {
-		setLeftSpeed(speed - left + right);
-		setRightSpeed(speed - right + left);
-	}
+    public void arcadeDrive(double straight, double left, double right) {
+        tankDrive(straight - left + right, straight + left - right);
+    }
+
+    public void tankDrive(double leftSpeed, double rightSpeed) {
+        m_masterLeft.set(leftSpeed);
+        m_masterRight.set(rightSpeed);
+        m_masterLeft.feed();
+        m_masterRight.feed();
+    }
+
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        m_masterLeft.setVoltage(leftVolts);
+        m_masterRight.setVoltage(rightVolts);
+        m_masterLeft.feed();
+        m_masterRight.feed();
+    }
+
+    public void resetEncoders() {
+        m_masterLeft.setSelectedSensorPosition(0);
+        m_masterRight.setSelectedSensorPosition(0);
+    }
+
+    public double getLeftEncoderPosition() {
+        return m_masterLeft.getSelectedSensorPosition() * Math.PI * DriveConstants.kWheelDiameterMeters
+                / DriveConstants.kEncoderEdgesPerRotation;
+    }
+
+    public double getRightEncoderPosition() {
+        return -m_masterRight.getSelectedSensorPosition() * Math.PI * DriveConstants.kWheelDiameterMeters
+                / DriveConstants.kEncoderEdgesPerRotation;
+    }
+
+    public double getAverageEncoderDistance() {
+        return (getLeftEncoderPosition() + getRightEncoderPosition()) / 2.0;
+    }
+
+    public double getLeftEncoderVelocity() {
+        return m_masterLeft.getSelectedSensorVelocity() * 10 * Math.PI * DriveConstants.kWheelDiameterMeters
+                / DriveConstants.kEncoderEdgesPerRotation;
+    }
+
+    public double getRightEncoderVelocity() {
+        return -m_masterRight.getSelectedSensorVelocity() * 10 * Math.PI * DriveConstants.kWheelDiameterMeters
+                / DriveConstants.kEncoderEdgesPerRotation;
+    }
+
+    public void zeroHeading() {
+        m_gyro.reset();
+    }
+
+    public double getHeading() {
+        return m_gyro.getYaw() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    }
+
+    public double getTurnRate() {
+        return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    }
 }

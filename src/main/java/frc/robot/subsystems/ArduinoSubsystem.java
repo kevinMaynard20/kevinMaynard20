@@ -7,14 +7,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArduinoConstants;
 
 public class ArduinoSubsystem extends SubsystemBase {
+
 	// PIDs
-	private PIDController m_anglePid = new PIDController(ArduinoConstants.kAngleP, ArduinoConstants.kAngleI, ArduinoConstants.kAngleD);
-	private PIDController m_distancePid = new PIDController(ArduinoConstants.kDistanceP, ArduinoConstants.kDistanceI, ArduinoConstants.kDistanceD);
+	private final PIDController m_anglePid = new PIDController(ArduinoConstants.kAngleP, ArduinoConstants.kAngleI,
+			ArduinoConstants.kAngleD);
+	private final PIDController m_distancePid = new PIDController(ArduinoConstants.kDistanceP,
+			ArduinoConstants.kDistanceI, ArduinoConstants.kDistanceD);
 	// I2C communication
-	private I2C m_wire = new I2C(Port.kOnboard, ArduinoConstants.kAddress);
+	private final I2C m_wire = new I2C(Port.kOnboard, ArduinoConstants.kAddress);
 	// data written to Arduino
 	private byte[] m_writeData = new byte[1];
-	// data wread from Arduino
+	// data read from Arduino
 	private byte[] m_readData = new byte[7];
 	private boolean m_targetInView;
 	private int m_xValue;
@@ -76,7 +79,7 @@ public class ArduinoSubsystem extends SubsystemBase {
 		for (int i : ArduinoConstants.kReadXValue)
 			m_xValue += m_readData[i];
 		m_distance = 0;
-			for (int i : ArduinoConstants.kReadDistance)
+		for (int i : ArduinoConstants.kReadDistance)
 			m_distance += m_readData[i];
 		// m_xValue = m_readData[1] + m_readData[2] + m_readData[3];
 		// m_distance = m_readData[4] + m_readData[5] + m_readData[6];
