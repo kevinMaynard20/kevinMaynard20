@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import frc.robot.ShuffleboardLogging;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeederConstants;
 
-public class FeederSubsystem extends SubsystemBase {
+public class FeederSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
 	private final TalonSRX m_motor = new TalonSRX(FeederConstants.kMotorPort);
 
@@ -22,5 +24,9 @@ public class FeederSubsystem extends SubsystemBase {
 	 */
 	public void setSpeed(double speed) {
 		m_motor.set(ControlMode.PercentOutput, speed);
+	}
+
+	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
+		shuffleboardTab.add("Output Percentage", m_motor.getMotorOutputPercent());
 	}
 }

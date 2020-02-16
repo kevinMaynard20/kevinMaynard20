@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.ShuffleboardLogging;
 
-public class LimelightSubsystem extends SubsystemBase {
+public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
     private final NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");;
     private boolean isTargetVisible;
@@ -44,5 +46,9 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public void turnOffLight() {
         m_limelightTable.getEntry("ledmode").setNumber(0);
+    }
+
+    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
+
     }
 }
