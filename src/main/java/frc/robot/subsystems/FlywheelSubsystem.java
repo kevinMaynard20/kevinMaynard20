@@ -7,12 +7,13 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.ShuffleboardLogging;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 
-public class FlywheelSubsystem extends SubsystemBase {
+public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
     private final CANSparkMax m_neoFlywheel = new CANSparkMax(FlywheelConstants.kFlywheelPort, MotorType.kBrushless);
     private final CANPIDController m_neoController = m_neoFlywheel.getPIDController();
@@ -38,12 +39,6 @@ public class FlywheelSubsystem extends SubsystemBase {
         m_neoController.setIZone(FlywheelConstants.kIz);
         m_neoController.setFF(FlywheelConstants.kFF);
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
-    }
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("flywheel rpm", getVelocity());
-        SmartDashboard.putNumber("flywheel rpm graph", getVelocity());
     }
 
     /**
@@ -72,5 +67,14 @@ public class FlywheelSubsystem extends SubsystemBase {
      */
     public double getVelocity() {
         return m_neoEncoder.getVelocity();
+    }
+
+    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
+        shuffleboardTab.add("Setpoint", getSetpoint()).withSize(1, 1).withPosition(1, 1)
+                .withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.add("Velocity", m_neoEncoder.getVelocity()).withSize(2, 2).withPosition(1, 2)
+                .withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.add("Current", m_neoEncoder.getVelocity()).withSize(2, 2).withPosition(1, 4)
+                .withWidget(BuiltInWidgets.kGraph);
     }
 }
