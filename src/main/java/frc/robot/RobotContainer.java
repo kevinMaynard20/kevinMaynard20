@@ -1,8 +1,13 @@
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -27,6 +32,9 @@ public class RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final FeederSubsystem m_feederSubsystem = new FeederSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
+	private final HoodSubsystem m_hoodSubsystem = new HoodSubsystem();
+	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+	private final LimelightSubsystem m_limelightSubsystem = new LimelightSubsystem();
 	// controllers
 	private final Joystick m_driverController = new Joystick(ControllerConstants.kDriverControllerPort);
 	private final Joystick m_operatorController = new Joystick(ControllerConstants.kOperatorControllerPort);
@@ -34,7 +42,7 @@ public class RobotContainer {
 	private final SendableChooser<RamseteCommand> m_autoChooser = new SendableChooser<>();
 	// shuffleboard logging parallel arrays
 	private final ShuffleboardLogging[] m_subsystems = { m_arduinoSubsystem, m_carouselSubsystem, m_driveSubsystem,
-			m_feederSubsystem, m_flywheelSubsystem };
+			m_feederSubsystem, m_flywheelSubsystem, m_hoodSubsystem, m_intakeSubsystem, m_limelightSubsystem };
 	private final SimpleWidget[] m_viewToggleWidgets = new SimpleWidget[6];
 
 	public RobotContainer() {
@@ -61,15 +69,15 @@ public class RobotContainer {
 				.toggleWhenPressed(new FeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition()));
 
 		new POVButton(m_driverController, ControllerConstants.DPad.kDown)
-				.whenPressed(new ShootCommand(m_flywheelSubsystem, 4000));
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, m_hoodSubsystem, 4000));
 		new POVButton(m_driverController, ControllerConstants.DPad.kLeft)
-				.whenPressed(new ShootCommand(m_flywheelSubsystem, 6000));
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, m_hoodSubsystem, 6000));
 		new POVButton(m_driverController, ControllerConstants.DPad.kUp)
-				.whenPressed(new ShootCommand(m_flywheelSubsystem, 7000));
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, m_hoodSubsystem, 7000));
 		new POVButton(m_driverController, ControllerConstants.DPad.kRight)
-				.whenPressed(new ShootCommand(m_flywheelSubsystem, 8000));
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, m_hoodSubsystem, 8000));
 		new JoystickButton(m_driverController, ControllerConstants.Button.kLeftBumper)
-				.whenPressed(new ShootCommand(m_flywheelSubsystem, 0));
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, m_hoodSubsystem, 0));
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kSquare)
 				.whenPressed(() -> CommandScheduler.getInstance().cancelAll());
@@ -104,8 +112,14 @@ public class RobotContainer {
 	}
 
 	public void generateTrajectoryCommands() {
-		// Add commands to the smart dashboard here
-
+		String trajectoryJSON = "paths/Path1.wpilib.json";
+		try {
+			Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+			Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+			m_autoChooser.addOption("Trajectory", new TrajectoryFollow(m_driveSubsystem, trajectory));
+		} catch (IOException ex) {
+			Shuffleboard.getTab("Errors").add("Trajectory Error", ex.getStackTrace());
+		}
 		SmartDashboard.putData(m_autoChooser);
 	}
 }

@@ -4,6 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.ShuffleboardLogging;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -23,6 +24,7 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	public CarouselSubsystem() {
 		m_motor.restoreFactoryDefaults();
 		m_motor.setSmartCurrentLimit(CarouselConstants.kSmartCurrentLimit);
+		m_motor.setIdleMode(IdleMode.kBrake);
 
 		m_pidController.setP(CarouselConstants.kP);
 		m_pidController.setI(CarouselConstants.kI);

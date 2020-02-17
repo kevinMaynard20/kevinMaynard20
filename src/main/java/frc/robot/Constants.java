@@ -129,10 +129,10 @@ public final class Constants {
 
 	public static final class FlywheelConstants {
 		public static final int kMasterPort = 22;
-		//TODO fix port
+		// TODO fix port
 		public static final int kFollowerPort = -1;
 		public static final boolean kMasterInvert = true;
-		//TODO test before running together
+		// TODO test before running together
 		public static final boolean kFollowerInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final int kPeakCurrentDurationMillis = 100;
@@ -148,6 +148,31 @@ public final class Constants {
 		public static final double kRatio = 2.4;
 	}
 
+	public static final class HoodConstants {
+		public static final int kMotorPort = 0;
+		public static final int kSlotID = 0;
+		public static final double kMaxAcel = 0;
+		public static final double kMaxVelocity = 0;
+		public static final double kAllowedError = 0;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kPeakCurrentLimit = 65;
+		public static final double kP = 0;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final double kMaxRPM = 0;
+	}
+
+	public static final class IntakeConstants {
+		public static final int kMotorPort = 0;
+	}
+
 	public static final class LimelightConstants {// TODO - Update PID and camera values
 		public static final double kDisP = .016;
 		public static final double kDisI = 0;
@@ -160,20 +185,5 @@ public final class Constants {
 		public static final double kCameraHeight = 27.6;
 		public static final double kCameraAngle = 18.43;
 		public static final double kTargetHeight = 89.75;
-	}
-
-	public static final class HoodConstants {
-		public static final double kMaxAcel = 0;
-		public static final double kMaxVelocity = 0;
-		public static final double kAllowedError = 0;
-		public static final int KSlotID = 0;
-		public static final double kMinVelocity = 0;
-		public static final double kPIDP = 0;
-		public static final double kPIDI = 0;
-		public static final double kPIDIZone = 0;
-		public static final double kPIDD = 0;
-		public static final int kCurrentLimit = 0;
-		public static final double kFreedom = 1;
-		public static final int kMotorPort = 0;
 	}
 }

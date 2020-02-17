@@ -6,11 +6,11 @@ import frc.robot.ShuffleboardLogging;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FeederConstants;
+import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
-	private final TalonSRX m_motor = new TalonSRX(FeederConstants.kMotorPort);
+	private final TalonSRX m_motor = new TalonSRX(IntakeConstants.kMotorPort);
 
 	/**
 	 * Initializes a new instance of the {@link FeederSubsystem} class.
