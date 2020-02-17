@@ -69,11 +69,11 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	}
 
 	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Angular Velocity", getVelocity()).withSize(3, 1).withPosition(1, 1)
+		shuffleboardTab.add("Velocity", getVelocity()).withSize(2, 2).withPosition(1, 1)
 				.withWidget(BuiltInWidgets.kGraph);
-		shuffleboardTab.add("Current", m_motor.getOutputCurrent()).withSize(3, 1).withPosition(1, 3)
+		shuffleboardTab.add("Current", m_motor.getOutputCurrent()).withSize(2, 2).withPosition(1, 3)
 				.withWidget(BuiltInWidgets.kGraph);
-		shuffleboardTab.add("PID", m_pidController).withSize(1, 2).withPosition(4, 1)
+		shuffleboardTab.add("PID", m_pidController).withSize(1, 2).withPosition(3, 1)
 				.withWidget(BuiltInWidgets.kPIDController);
 	}
 }

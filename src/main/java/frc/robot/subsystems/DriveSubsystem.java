@@ -121,7 +121,13 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
         shuffleboardTab
                 .add("Location", "X: " + getPose().getTranslation().getX() + " Y: " + getPose().getTranslation().getY())
                 .withSize(1, 1).withPosition(1, 1).withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Rotation", "X: " + getPose().getRotation().getDegrees()).withSize(1, 1).withPosition(1, 1)
+        shuffleboardTab.add("Turn Rate", getTurnRate()).withSize(1, 1).withPosition(3, 1)
                 .withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.add("Rotation", getPose().getRotation().getDegrees()).withSize(1, 1).withPosition(2, 1)
+                .withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.add("Left Velocity", getLeftEncoderVelocity()).withSize(2, 2).withPosition(1, 2)
+                .withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.add("Right Velocity", getRightEncoderVelocity()).withSize(2, 2).withPosition(1, 4)
+                .withWidget(BuiltInWidgets.kGraph);
     }
 }

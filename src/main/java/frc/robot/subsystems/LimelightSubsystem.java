@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
@@ -49,6 +50,11 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
     }
 
     public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-
+        shuffleboardTab.add("X Angle", getXAngle()).withSize(1, 1).withPosition(1, 1)
+                .withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.add("Distance", getDistance()).withSize(1, 1).withPosition(2, 1)
+                .withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.add("Target Visible", isTargetVisible()).withSize(1, 1).withPosition(2, 1)
+                .withWidget(BuiltInWidgets.kBooleanBox);
     }
 }
