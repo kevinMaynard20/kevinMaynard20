@@ -128,7 +128,12 @@ public final class Constants {
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kFlywheelPort = 22;
+		public static final int kMasterPort = 22;
+		//TODO fix port
+		public static final int kFollowerPort = -1;
+		public static final boolean kMasterInvert = true;
+		//TODO test before running together
+		public static final boolean kFollowerInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kPeakCurrentLimit = 65;

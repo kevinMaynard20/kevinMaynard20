@@ -1,22 +1,15 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import edu.wpi.first.wpilibj.trajectory.*;
-import edu.wpi.first.wpilibj.geometry.*;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import frc.robot.Constants.*;
@@ -24,6 +17,7 @@ import frc.robot.Constants.ControllerConstants.*;
 import frc.robot.commands.carouselcommands.*;
 import frc.robot.commands.drivecommands.*;
 import frc.robot.commands.feedercommands.*;
+import frc.robot.commands.shootcommands.ShootCommand;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -67,22 +61,18 @@ public class RobotContainer {
 				.toggleWhenPressed(new FeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition()));
 
 		new POVButton(m_driverController, ControllerConstants.DPad.kDown)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(5000), m_flywheelSubsystem);
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, 4000));
 		new POVButton(m_driverController, ControllerConstants.DPad.kLeft)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(6000), m_flywheelSubsystem);
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, 6000));
 		new POVButton(m_driverController, ControllerConstants.DPad.kUp)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(7000), m_flywheelSubsystem);
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, 7000));
 		new POVButton(m_driverController, ControllerConstants.DPad.kRight)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(8000), m_flywheelSubsystem);
-
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, 8000));
 		new JoystickButton(m_driverController, ControllerConstants.Button.kLeftBumper)
-				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(0));
+				.whenPressed(new ShootCommand(m_flywheelSubsystem, 0));
 
 		new JoystickButton(m_driverController, ControllerConstants.Button.kSquare)
 				.whenPressed(() -> CommandScheduler.getInstance().cancelAll());
-
-		new JoystickButton(m_driverController, ControllerConstants.Button.kOptions)
-				.whenPressed(() -> m_carouselSubsystem.setPosition(0));
 	}
 
 	private void configureShuffleboard() {
@@ -114,27 +104,8 @@ public class RobotContainer {
 	}
 
 	public void generateTrajectoryCommands() {
-		ArrayList<String> trajectoryCommandNames = new ArrayList<>();
-		ArrayList<Trajectory> trajectories = new ArrayList<>();
+		// Add commands to the smart dashboard here
 
-		trajectoryCommandNames.add("Straight Line");
-		trajectories.add(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-				List.of(new Translation2d(1, 0), new Translation2d(2, 0)), new Pose2d(3, 0, new Rotation2d(0)),
-				DriveConstants.kTrajectoryConfig));
-
-		trajectoryCommandNames.add("Zig Zag");
-		trajectories.add(TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-				List.of(new Translation2d(1, -.2), new Translation2d(2, .2), new Translation2d(3, -.2),
-						new Translation2d(4, .2)),
-				new Pose2d(5, 0, new Rotation2d(0)), DriveConstants.kTrajectoryConfig));
-
-		for (int i = 0; i < trajectories.size(); i++) {
-			m_autoChooser.addOption(trajectoryCommandNames.get(i),
-					new RamseteCommand(trajectories.get(i), m_driveSubsystem::getPose, new RamseteController(),
-							DriveConstants.kFeedForward, DriveConstants.kDriveKinematics,
-							m_driveSubsystem::getWheelSpeeds, new PIDController(DriveConstants.kPDriveVel, 0, 0),
-							new PIDController(DriveConstants.kPDriveVel, 0, 0), m_driveSubsystem::tankDriveVolts,
-							m_driveSubsystem));
-		}
+		SmartDashboard.putData(m_autoChooser);
 	}
 }

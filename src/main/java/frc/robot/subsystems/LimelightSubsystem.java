@@ -49,12 +49,18 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
         m_limelightTable.getEntry("ledmode").setNumber(0);
     }
 
+    public boolean isLightOn() {
+        return m_limelightTable.getEntry("ledmode").getDouble(0) == 1;
+    }
+
     public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
         shuffleboardTab.add("X Angle", getXAngle()).withSize(1, 1).withPosition(1, 1)
                 .withWidget(BuiltInWidgets.kTextView);
         shuffleboardTab.add("Distance", getDistance()).withSize(1, 1).withPosition(2, 1)
                 .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Target Visible", isTargetVisible()).withSize(1, 1).withPosition(2, 1)
+        shuffleboardTab.add("Target Visible", isTargetVisible()).withSize(1, 1).withPosition(1, 2)
+                .withWidget(BuiltInWidgets.kBooleanBox);
+        shuffleboardTab.add("Light On", isLightOn()).withSize(1, 1).withPosition(2, 2)
                 .withWidget(BuiltInWidgets.kBooleanBox);
     }
 }

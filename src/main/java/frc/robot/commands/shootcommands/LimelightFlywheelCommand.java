@@ -1,4 +1,4 @@
-package frc.robot.commands.flywheelcommands;
+package frc.robot.commands.shootcommands;
 
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
