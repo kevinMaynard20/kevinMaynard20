@@ -30,23 +30,18 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
     public FlywheelSubsystem() {
         // Initialize Motors
         m_neoFlywheelMaster.restoreFactoryDefaults();
-        m_neoFlywheelMaster.setInverted(FlywheelConstants.kMasterInvert);
-        m_neoFlywheelMaster.setIdleMode(IdleMode.kCoast);
+        m_neoFlywheelMaster.setIdleMode(IdleMode.kBrake);
         m_neoFlywheelMaster.enableVoltageCompensation(12);
         m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
         m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
                 FlywheelConstants.kPeakCurrentDurationMillis);
-        m_neoFlywheelMaster.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
         m_neoFlywheelFollower.restoreFactoryDefaults();
-        m_neoFlywheelFollower.setInverted(FlywheelConstants.kMasterInvert);
-        m_neoFlywheelFollower.setIdleMode(IdleMode.kCoast);
+        m_neoFlywheelFollower.setIdleMode(IdleMode.kBrake);
         m_neoFlywheelFollower.enableVoltageCompensation(12);
         m_neoFlywheelFollower.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
         m_neoFlywheelFollower.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
                 FlywheelConstants.kPeakCurrentDurationMillis);
-        m_neoFlywheelFollower.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        m_neoFlywheelFollower.follow(m_neoFlywheelMaster);
 
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
@@ -54,6 +49,11 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         m_neoController.setIZone(FlywheelConstants.kIz);
         m_neoController.setFF(FlywheelConstants.kFF);
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
+    }
+
+    @Override
+    public void periodic() {
+        m_neoFlywheelFollower.set(-m_neoFlywheelMaster.getAppliedOutput());
     }
 
     /**
