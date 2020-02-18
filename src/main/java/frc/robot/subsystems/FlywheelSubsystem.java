@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.ShuffleboardLogging;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 
@@ -49,10 +50,11 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
     }
 
-    // @Override
-    // public void periodic() {
-    //     m_neoFlywheelFollower.set(-m_neoFlywheelMaster.getAppliedOutput());
-    // }
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("flywheel velocity", m_neoEncoderMaster.getVelocity() * FlywheelConstants.kRatio);
+        SmartDashboard.putNumber("flywheel current", m_neoFlywheelMaster.getOutputCurrent());
+    }
 
     /**
      * Sets target speed for flywheel.
