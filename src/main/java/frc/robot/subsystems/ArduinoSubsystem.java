@@ -3,18 +3,24 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardLogging;
 import frc.robot.Constants.ArduinoConstants;
 
-public class ArduinoSubsystem extends SubsystemBase {
+public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLogging {
+
 	// PIDs
-	private PIDController m_anglePid = new PIDController(ArduinoConstants.kAngleP, ArduinoConstants.kAngleI, ArduinoConstants.kAngleD);
-	private PIDController m_distancePid = new PIDController(ArduinoConstants.kDistanceP, ArduinoConstants.kDistanceI, ArduinoConstants.kDistanceD);
+	private final PIDController m_anglePid = new PIDController(ArduinoConstants.kAngleP, ArduinoConstants.kAngleI,
+			ArduinoConstants.kAngleD);
+	private final PIDController m_distancePid = new PIDController(ArduinoConstants.kDistanceP,
+			ArduinoConstants.kDistanceI, ArduinoConstants.kDistanceD);
 	// I2C communication
-	private I2C m_wire = new I2C(Port.kOnboard, ArduinoConstants.kAddress);
+	private final I2C m_wire = new I2C(Port.kOnboard, ArduinoConstants.kAddress);
 	// data written to Arduino
 	private byte[] m_writeData = new byte[1];
-	// data wread from Arduino
+	// data read from Arduino
 	private byte[] m_readData = new byte[7];
 	private boolean m_targetInView;
 	private int m_xValue;
@@ -76,7 +82,7 @@ public class ArduinoSubsystem extends SubsystemBase {
 		for (int i : ArduinoConstants.kReadXValue)
 			m_xValue += m_readData[i];
 		m_distance = 0;
-			for (int i : ArduinoConstants.kReadDistance)
+		for (int i : ArduinoConstants.kReadDistance)
 			m_distance += m_readData[i];
 		// m_xValue = m_readData[1] + m_readData[2] + m_readData[3];
 		// m_distance = m_readData[4] + m_readData[5] + m_readData[6];
@@ -109,5 +115,23 @@ public class ArduinoSubsystem extends SubsystemBase {
 	 */
 	public int getDistance() {
 		return m_distance;
+	}
+
+	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
+		shuffleboardTab.add("Angle PID", m_anglePid).withSize(1, 2).withPosition(1, 1)
+				.withWidget(BuiltInWidgets.kPIDController);
+		shuffleboardTab.add("Distance PID", m_distancePid).withSize(1, 2).withPosition(2, 1)
+				.withWidget(BuiltInWidgets.kPIDController);
+		shuffleboardTab.add("Target in view", m_targetInView).withSize(1, 1).withPosition(3, 1)
+				.withWidget(BuiltInWidgets.kBooleanBox);
+		shuffleboardTab.add("At Setpoint", atSetpoint()).withSize(1, 1).withPosition(3, 2)
+				.withWidget(BuiltInWidgets.kBooleanBox);
+		shuffleboardTab.add("X Value", m_xValue).withSize(1, 1).withPosition(4, 1).withWidget(BuiltInWidgets.kTextView);
+		shuffleboardTab.add("Distance", m_distance).withSize(1, 1).withPosition(4, 2)
+				.withWidget(BuiltInWidgets.kTextView);
+		shuffleboardTab.add("Turn Speed", m_turnSpeed).withSize(1, 1).withPosition(5, 1)
+				.withWidget(BuiltInWidgets.kTextView);
+		shuffleboardTab.add("Drive Speed", m_driveSpeed).withSize(1, 1).withPosition(5, 2)
+				.withWidget(BuiltInWidgets.kTextView);
 	}
 }

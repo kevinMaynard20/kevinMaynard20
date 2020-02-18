@@ -1,10 +1,11 @@
-package frc.robot.commands;
+package frc.robot.commands.carouselcommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.subsystems.CarouselSubsystem;
 
 public class CarouselCommand extends CommandBase {
+
 	private final CarouselSubsystem m_carouselSubsystem;
 
 	/**
@@ -14,16 +15,13 @@ public class CarouselCommand extends CommandBase {
 	 */
 	public CarouselCommand(CarouselSubsystem carouselSubsystem) {
 		m_carouselSubsystem = carouselSubsystem;
-
 		addRequirements(m_carouselSubsystem);
 	}
 
-	@Override
 	public void initialize() {
 		m_carouselSubsystem.setVelocity(CarouselConstants.kVelocity * CarouselConstants.kRatio);
 	}
 
-	@Override
 	public void end(boolean interrupted) {
 		m_carouselSubsystem.setVelocity(0.0);
 	}
