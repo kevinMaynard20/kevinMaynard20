@@ -130,18 +130,18 @@ public final class Constants {
 	public static final class FlywheelConstants {
 		public static final int kMasterPort = 22;
 		// TODO fix port
-		public static final int kFollowerPort = -1;
+		public static final int kFollowerPort = 6;
 		public static final boolean kMasterInvert = true;
 		// TODO test before running together
 		public static final boolean kFollowerInvert = false;
-		public static final int kSmartCurrentLimit = 60;
+		public static final int kSmartCurrentLimit = 50;
 		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kPeakCurrentLimit = 65;
-		public static final double kP = 0.000_525;
+		public static final double kP = 0.000_375;
 		public static final double kI = 0;
-		public static final double kD = 0;
-		public static final double kIz = 0;
-		public static final double kFF = 0.000_19;
+		public static final double kD = 0.000_03;
+		public static final double kIz = 0.0;
+		public static final double kFF = 0.000_26;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
 		public static final double kMaxRPM = 9600;
@@ -149,7 +149,7 @@ public final class Constants {
 	}
 
 	public static final class HoodConstants {
-		public static final int kMotorPort = 0;
+		public static final int kMotorPort = 5;
 		public static final int kSlotID = 0;
 		public static final double kMaxAcel = 0;
 		public static final double kMaxVelocity = 0;
