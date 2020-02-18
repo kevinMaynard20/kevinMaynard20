@@ -35,13 +35,11 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
         m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
                 FlywheelConstants.kPeakCurrentDurationMillis);
+        m_neoFlywheelMaster.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
 
         m_neoFlywheelFollower.restoreFactoryDefaults();
         m_neoFlywheelFollower.setIdleMode(IdleMode.kBrake);
-        m_neoFlywheelFollower.enableVoltageCompensation(12);
-        m_neoFlywheelFollower.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-        m_neoFlywheelFollower.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
-                FlywheelConstants.kPeakCurrentDurationMillis);
+        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, true);
 
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
@@ -51,10 +49,10 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
     }
 
-    @Override
-    public void periodic() {
-        m_neoFlywheelFollower.set(-m_neoFlywheelMaster.getAppliedOutput());
-    }
+    // @Override
+    // public void periodic() {
+    //     m_neoFlywheelFollower.set(-m_neoFlywheelMaster.getAppliedOutput());
+    // }
 
     /**
      * Sets target speed for flywheel.
