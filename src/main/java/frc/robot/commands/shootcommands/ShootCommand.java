@@ -19,7 +19,7 @@ public class ShootCommand extends CommandBase {
 
     public void initialize() {
         m_flywheelSubsystem.setSetpoint(m_flywheelSetpoint);
-        m_hoodSubsystem.setPosition(calculateHoodSetpoint());
+        m_hoodSubsystem.setSetPoint(calculateHoodSetpoint());
     }
 
     public double calculateHoodSetpoint() {

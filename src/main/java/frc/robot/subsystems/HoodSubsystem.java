@@ -1,14 +1,17 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANDigitalInput;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
 import com.revrobotics.CANPIDController.AccelStrategy;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.ShuffleboardLogging;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 
@@ -17,7 +20,8 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     private final CANSparkMax m_motor = new CANSparkMax(HoodConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_PIDController = m_motor.getPIDController();
-    private double targetPosition = 0;
+    private final CANDigitalInput m_limitSwitch = m_motor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyOpen);
+    private double m_targetPosition = 0;
 
     /**
      * Initializes a new instance of the {@link HoodSubsystem} class.
@@ -43,8 +47,13 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
         resetEncoder();
     }
 
-    public void setPosition(double position) {
-        this.targetPosition = position;
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("hood angle", m_encoder.getPosition() * ((HoodConstants.kMaxAngle - HoodConstants.kMinAngle) / (HoodConstants.kMaxEncoderValue - HoodConstants.kMinEncoderValue)) - HoodConstants.kMinAngle);
+    }
+
+    public void setSetPoint(double position) {
+        m_targetPosition = position;
         m_PIDController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
     }
 
@@ -57,7 +66,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     }
 
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - targetPosition) <= HoodConstants.kAllowedError);
+        return (Math.abs(getPosition() - m_targetPosition) <= HoodConstants.kAllowedError);
     }
 
     public void resetEncoder() {
@@ -65,8 +74,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     }
 
     public double getAngle() {
-        // TODO - calculate angle from encoder
-        return 0;
+        return getPosition() * ((HoodConstants.kMaxAngle - HoodConstants.kMinAngle) / (HoodConstants.kMaxEncoderValue - HoodConstants.kMinEncoderValue)) + HoodConstants.kMinAngle;
     }
 
     public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
@@ -76,4 +84,8 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
                 .withWidget(BuiltInWidgets.kBooleanBox);
         shuffleboardTab.add("Angle", getAngle()).withSize(1, 1).withPosition(3, 2).withWidget(BuiltInWidgets.kTextView);
     }
+
+	public void setPercentOutput(Double speed) {
+        m_motor.set(speed);
+	}
 }

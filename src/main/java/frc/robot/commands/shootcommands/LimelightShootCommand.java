@@ -23,7 +23,7 @@ public class LimelightShootCommand extends CommandBase {
     public void initialize() {
         m_flywheelSetpoint = calculateFlywheelSetpoint();
         m_flywheelSubsystem.setSetpoint(m_flywheelSetpoint);
-        m_hoodSubsystem.setPosition(calculateHoodSetpoint());
+        m_hoodSubsystem.setSetPoint(calculateHoodSetpoint());
     }
 
     public double calculateFlywheelSetpoint() {
