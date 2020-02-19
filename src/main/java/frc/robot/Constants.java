@@ -40,6 +40,11 @@ public final class Constants {
 		public static final int kSmartCurrentLimit = 20;
 	}
 
+	public static final class ClimberConstants {
+		public static final int kMotorPort = 6;
+		public static final double kTopSetpoint = -1;
+	}
+
 	public static final class ControllerConstants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
@@ -149,8 +154,6 @@ public final class Constants {
 		public static final double kAllowedError = 0.2;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
-		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kPeakCurrentLimit = 65;
 		public static final double kP = 0.000_1;
 		public static final double kI = 0.0;
 		public static final double kD = 0.0;
@@ -159,7 +162,6 @@ public final class Constants {
 		public static final double kMinVelocity = 0;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kMaxRPM = 0;
 		public static final double kMinEncoderValue = 0.0;
 		public static final double kMaxEncoderValue = 42.0;
 		public static final double kMinAngle = 24.36;
@@ -168,7 +170,22 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kMotorPort = 0;
+		public static final int kArmPort = 0;
 		public static final double kIntakeSpeed = 1.0;
+		public static final int kSlotID = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values
@@ -183,5 +200,18 @@ public final class Constants {
 		public static final double kCameraHeight = 27.6;
 		public static final double kCameraAngle = 18.43;
 		public static final double kTargetHeight = 89.75;
+	}
+
+	public enum FieldLocation {
+		WALL(-1, -1, -1, -1), INITLINE(-1, -1, -1, -1), CLOSETRENCH(-1, -1, -1, -1), FARTRENCH(-1, -1, -1, -1);
+
+		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
+
+		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double distanceGoal, double turnGoal) {
+			this.flywheelSetpoint = flywheelSetpoint;
+			this.hoodSetpoint = hoodSetpoint;
+			this.distanceGoal = distanceGoal;
+			this.turnGoal = turnGoal;
+		}
 	}
 }
