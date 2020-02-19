@@ -6,19 +6,25 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.HoodSubsystem;
 
 public class HoodPositionCommand extends CommandBase {
-    HoodSubsystem m_hoodSubsystem;
 
-    Supplier<Long> m_speed;
+    private final HoodSubsystem m_hoodSubsystem;
+    private final Supplier<Double> m_speed;
 
-    public HoodPositionCommand(HoodSubsystem hoodSubsystem, Supplier<Long> speed) {
+    /**
+     * Drive the hood using setpoints
+     * 
+     * @param hoodSubsystem The hood subsystem to be used
+     * @param speed         The desired encoder position
+     */
+    public HoodPositionCommand(HoodSubsystem hoodSubsystem, Supplier<Double> speed) {
         m_hoodSubsystem = hoodSubsystem;
-
         m_speed = speed;
-
         addRequirements(m_hoodSubsystem);
     }
 
-    @Override
+    /**
+     * Update the setpoint
+     */
     public void execute() {
         m_hoodSubsystem.setSetPoint(m_speed.get());
     }

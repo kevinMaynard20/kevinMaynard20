@@ -17,6 +17,9 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
     public LimelightSubsystem() {
     }
 
+    /**
+     * Update local data from the limelight network table
+     */
     public void periodic() {
         isTargetVisible = m_limelightTable.getEntry("tv").getDouble(0) == 1;
         xAngle = m_limelightTable.getEntry("tx").getDouble(0);
@@ -25,42 +28,63 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
                 / (Math.tan(Math.toRadians(LimelightConstants.kCameraAngle + getYAngle())));
     }
 
+    /**
+     * @return Whether the limelight can see the target
+     */
     public boolean isTargetVisible() {
         return isTargetVisible;
     }
 
+    /**
+     * @return The x angle of the target center to the limelight crosshair
+     */
     public double getXAngle() {
         return xAngle;
     }
 
+    /**
+     * @return The y angle of the target center to the limelight crosshair
+     */
     public double getYAngle() {
         return yAngle;
     }
 
+    /**
+     * @return The estimated ground distance from the limelight to the target
+     */
     public double getDistance() {
         return distance;
     }
 
+    /**
+     * Turn on the LIME light
+     */
     public void turnOnLight() {
         m_limelightTable.getEntry("ledmode").setNumber(1);
     }
 
+    /**
+     * Turn off the LIME light
+     */
     public void turnOffLight() {
         m_limelightTable.getEntry("ledmode").setNumber(0);
     }
 
+    /**
+     * @return Whether the LIME light is on
+     */
     public boolean isLightOn() {
         return m_limelightTable.getEntry("ledmode").getDouble(0) == 1;
     }
 
     public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab.add("X Angle", getXAngle()).withSize(1, 1).withPosition(1, 1)
+        shuffleboardTab.add("X Angle", getXAngle()).withSize(1, 1).withPosition(0, 0)
                 .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Distance", getDistance()).withSize(1, 1).withPosition(2, 1)
+        shuffleboardTab.add("Distance", getDistance()).withSize(1, 1).withPosition(1, 0)
                 .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Target Visible", isTargetVisible()).withSize(1, 1).withPosition(1, 2)
+        shuffleboardTab.add("Target Visible", isTargetVisible()).withSize(1, 1).withPosition(0, 1)
                 .withWidget(BuiltInWidgets.kBooleanBox);
-        shuffleboardTab.add("Light On", isLightOn()).withSize(1, 1).withPosition(2, 2)
+        shuffleboardTab.add("Light On", isLightOn()).withSize(1, 1).withPosition(1, 1)
                 .withWidget(BuiltInWidgets.kBooleanBox);
     }
 }

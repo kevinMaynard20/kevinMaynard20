@@ -1,9 +1,10 @@
 package frc.robot.commands.drivecommands;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import java.util.function.Supplier;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ArcadeDriveCommand extends CommandBase {
 
@@ -13,7 +14,7 @@ public class ArcadeDriveCommand extends CommandBase {
 	/**
 	 * Drive using speed inputs as a percentage output of the motor
 	 * 
-	 * @param DriveSubsystem
+	 * @param driveSubsystem The subsystem to be used
 	 * @param speedStraight  Supplier of straight speed
 	 * @param speedLeft      Supplier of left speed
 	 * @param speedRight     Supplier of right speed
@@ -27,6 +28,9 @@ public class ArcadeDriveCommand extends CommandBase {
 		addRequirements(driveSubsystem);
 	}
 
+	/**
+	 * Update the motor outputs
+	 */
 	public void execute() {
 		double speedStraight = Math.abs(m_speedStraight.get()) > ControllerConstants.kDeadzone ? m_speedStraight.get()
 				: 0;

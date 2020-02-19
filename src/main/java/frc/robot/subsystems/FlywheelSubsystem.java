@@ -3,16 +3,16 @@ package frc.robot.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.ShuffleboardLogging;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
+import frc.robot.ShuffleboardLogging;
 
 public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
@@ -50,12 +50,6 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
     }
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("flywheel velocity", m_neoEncoderMaster.getVelocity() * FlywheelConstants.kRatio);
-        SmartDashboard.putNumber("flywheel current", m_neoFlywheelMaster.getOutputCurrent());
-    }
-
     /**
      * Sets target speed for flywheel.
      * 
@@ -85,13 +79,13 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
     }
 
     public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab.add("Setpoint", getSetpoint()).withSize(1, 1).withPosition(1, 1)
+        shuffleboardTab.add("Setpoint", getSetpoint()).withSize(1, 1).withPosition(0, 0)
                 .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Velocity Master", m_neoEncoderMaster.getVelocity()).withSize(2, 2).withPosition(1, 2)
+        shuffleboardTab.add("Velocity Master", m_neoEncoderMaster.getVelocity()).withSize(2, 2).withPosition(0, 1)
                 .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("Velocity Master", m_neoEncoderFollower.getVelocity()).withSize(2, 2).withPosition(3, 2)
+        shuffleboardTab.add("Velocity Master", m_neoEncoderFollower.getVelocity()).withSize(2, 2).withPosition(2, 1)
                 .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("Current", m_neoEncoderMaster.getVelocity()).withSize(2, 2).withPosition(1, 4)
+        shuffleboardTab.add("Current", m_neoEncoderMaster.getVelocity()).withSize(2, 2).withPosition(0, 3)
                 .withWidget(BuiltInWidgets.kGraph);
     }
 }

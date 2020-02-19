@@ -2,11 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import frc.robot.ShuffleboardLogging;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.ShuffleboardLogging;
 
 public class IntakeSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
@@ -28,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase implements ShuffleboardLoggin
 	}
 
 	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Output Percentage", m_motor.getMotorOutputPercent()).withSize(2, 2).withPosition(1, 1)
+		shuffleboardTab.add("Output Percentage", m_motor.getMotorOutputPercent()).withSize(2, 2).withPosition(0, 0)
 				.withWidget(BuiltInWidgets.kGraph);
 	}
 }

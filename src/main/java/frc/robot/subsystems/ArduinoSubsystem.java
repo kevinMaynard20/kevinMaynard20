@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.ShuffleboardLogging;
 import frc.robot.Constants.ArduinoConstants;
+import frc.robot.ShuffleboardLogging;
 
 public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
@@ -118,20 +118,20 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 	}
 
 	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Angle PID", m_anglePid).withSize(1, 2).withPosition(1, 1)
+		shuffleboardTab.add("Angle PID", m_anglePid).withSize(1, 2).withPosition(0, 0)
 				.withWidget(BuiltInWidgets.kPIDController);
-		shuffleboardTab.add("Distance PID", m_distancePid).withSize(1, 2).withPosition(2, 1)
+		shuffleboardTab.add("Distance PID", m_distancePid).withSize(1, 2).withPosition(1, 0)
 				.withWidget(BuiltInWidgets.kPIDController);
-		shuffleboardTab.add("Target in view", m_targetInView).withSize(1, 1).withPosition(3, 1)
+		shuffleboardTab.add("Target in view", m_targetInView).withSize(1, 1).withPosition(2, 0)
 				.withWidget(BuiltInWidgets.kBooleanBox);
-		shuffleboardTab.add("At Setpoint", atSetpoint()).withSize(1, 1).withPosition(3, 2)
+		shuffleboardTab.add("At Setpoint", atSetpoint()).withSize(1, 1).withPosition(2, 1)
 				.withWidget(BuiltInWidgets.kBooleanBox);
-		shuffleboardTab.add("X Value", m_xValue).withSize(1, 1).withPosition(4, 1).withWidget(BuiltInWidgets.kTextView);
-		shuffleboardTab.add("Distance", m_distance).withSize(1, 1).withPosition(4, 2)
+		shuffleboardTab.add("X Value", m_xValue).withSize(1, 1).withPosition(3, 0).withWidget(BuiltInWidgets.kTextView);
+		shuffleboardTab.add("Distance", m_distance).withSize(1, 1).withPosition(3, 1)
 				.withWidget(BuiltInWidgets.kTextView);
-		shuffleboardTab.add("Turn Speed", m_turnSpeed).withSize(1, 1).withPosition(5, 1)
+		shuffleboardTab.add("Turn Speed", m_turnSpeed).withSize(1, 1).withPosition(4, 0)
 				.withWidget(BuiltInWidgets.kTextView);
-		shuffleboardTab.add("Drive Speed", m_driveSpeed).withSize(1, 1).withPosition(5, 2)
+		shuffleboardTab.add("Drive Speed", m_driveSpeed).withSize(1, 1).withPosition(4, 1)
 				.withWidget(BuiltInWidgets.kTextView);
 	}
 }

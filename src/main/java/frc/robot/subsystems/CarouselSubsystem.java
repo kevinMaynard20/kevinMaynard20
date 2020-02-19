@@ -3,14 +3,15 @@ package frc.robot.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.ShuffleboardLogging;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CarouselConstants;
+import frc.robot.ShuffleboardLogging;
 
 public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
@@ -71,11 +72,11 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	}
 
 	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Velocity", getVelocity()).withSize(2, 2).withPosition(1, 1)
+		shuffleboardTab.add("Velocity", getVelocity()).withSize(2, 2).withPosition(0, 0)
 				.withWidget(BuiltInWidgets.kGraph);
-		shuffleboardTab.add("Current", m_motor.getOutputCurrent()).withSize(2, 2).withPosition(1, 3)
+		shuffleboardTab.add("Current", m_motor.getOutputCurrent()).withSize(2, 2).withPosition(0, 2)
 				.withWidget(BuiltInWidgets.kGraph);
-		shuffleboardTab.add("PID", m_pidController).withSize(1, 2).withPosition(3, 1)
+		shuffleboardTab.add("PID", m_pidController).withSize(1, 2).withPosition(2, 0)
 				.withWidget(BuiltInWidgets.kPIDController);
 	}
 }

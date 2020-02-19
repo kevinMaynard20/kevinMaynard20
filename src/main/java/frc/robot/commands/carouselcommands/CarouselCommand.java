@@ -18,10 +18,16 @@ public class CarouselCommand extends CommandBase {
 		addRequirements(m_carouselSubsystem);
 	}
 
+	/**
+	 * Run the carousel
+	 */
 	public void initialize() {
 		m_carouselSubsystem.setVelocity(CarouselConstants.kVelocity * CarouselConstants.kRatio);
 	}
 
+	/**
+	 * Stop the carousel at the end of the command
+	 */
 	public void end(boolean interrupted) {
 		m_carouselSubsystem.setVelocity(0.0);
 	}

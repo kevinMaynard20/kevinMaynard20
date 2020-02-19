@@ -1,15 +1,16 @@
 package frc.robot.commands.drivecommands;
 
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
 import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.LimelightConstants;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 
 public class LimelightCompleteCommand extends CommandBase {
 
@@ -23,6 +24,14 @@ public class LimelightCompleteCommand extends CommandBase {
             LimelightConstants.kDisI, LimelightConstants.kDisD, new Constraints(DriveConstants.kMaxSpeedMetersPerSecond,
                     DriveConstants.kMaxAccelerationMetersPerSecondSquared));;
 
+    /**
+     * Use the limelight to both reach a desired distance and angle to the powerport
+     * 
+     * @param limelightSubsystem  The limelight subsystem to gather data from
+     * @param drivetrainSubsystem The drivetrain subsystem to be used
+     * @param turnGoal            Supplier of the angle setpoint towards the target
+     * @param distanceGoal        Supplier of the distance towards the target
+     */
     public LimelightCompleteCommand(LimelightSubsystem limelightSubsystem, DriveSubsystem drivetrainSubsystem,
             Supplier<Double> turnGoal, Supplier<Double> distanceGoal) {
         m_limelightSubsystem = limelightSubsystem;
@@ -32,6 +41,9 @@ public class LimelightCompleteCommand extends CommandBase {
         addRequirements(drivetrainSubsystem);
     }
 
+    /**
+     * Set the tolerance and goal of each PID
+     */
     public void initialize() {
         m_turnController.setTolerance(LimelightConstants.kTurnTolerance);
         m_turnController.setGoal(m_turnGoal.get());
@@ -40,6 +52,9 @@ public class LimelightCompleteCommand extends CommandBase {
         m_distanceController.setGoal(m_distanceGoal.get());
     }
 
+    /**
+     * Update the motor outputs
+     */
     public void execute() {
         double robotTurnSpeed = m_turnController.calculate(m_limelightSubsystem.getXAngle());
         double robotTranslationSpeed = m_distanceController.calculate(m_limelightSubsystem.getDistance());
@@ -50,10 +65,16 @@ public class LimelightCompleteCommand extends CommandBase {
         m_drivetrainSubsystem.tankDriveVolts(leftVoltage, rightVoltage);
     }
 
+    /**
+     * Stop the drivetrain at the end of the command
+     */
     public void end(boolean interrputed) {
         m_drivetrainSubsystem.tankDriveVolts(0, 0);
     }
 
+    /**
+     * End the command when both PIDs are at their setpoints
+     */
     public boolean isFinished() {
         return m_turnController.atSetpoint() && m_distanceController.atSetpoint();
     }

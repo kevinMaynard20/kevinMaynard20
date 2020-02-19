@@ -77,21 +77,16 @@ public final class Constants {
 		}
 	}
 
-	public static final class DriveConstants { // TODO: this is currently for the 2017 robot, update ports and
-												// characterization data
+	public static final class DriveConstants {
 		public static final int kMasterLeftPort = 10;
-		public static final InvertType kMasterLeftInvert = InvertType.InvertMotorOutput;
-		public static final int kFollowerLeftOnePort = 9;
-		public static final InvertType kFollowerLeftOneInvert = InvertType.OpposeMaster;
-		public static final int kFollowerLeftTwoPort = 8;
-		public static final InvertType kFollowerLeftTwoInvert = InvertType.OpposeMaster;
+		public static final InvertType kMasterLeftInvert = InvertType.None;
+		public static final int kFollowerLeftPort = 9;
+		public static final InvertType kFollowerLeftInvert = InvertType.None;
 
 		public static final int kMasterRightPort = 4;
-		public static final InvertType kMasterRightInvert = InvertType.InvertMotorOutput;
-		public static final int kFollowerRightOnePort = 3;
-		public static final InvertType kFollowerRightOneInvert = InvertType.OpposeMaster;
-		public static final int kFollowerRightTwoPort = 2;
-		public static final InvertType kFollowerRightTwoInvert = InvertType.FollowMaster;
+		public static final InvertType kMasterRightInvert = InvertType.None;
+		public static final int kFollowerRightPort = 3;
+		public static final InvertType kFollowerRightInvert = InvertType.None;
 
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
 		public static final boolean kGyroReversed = true;
@@ -129,10 +124,8 @@ public final class Constants {
 
 	public static final class FlywheelConstants {
 		public static final int kMasterPort = 22;
-		// TODO fix port
 		public static final int kFollowerPort = 6;
 		public static final boolean kMasterInvert = true;
-		// TODO test before running together
 		public static final boolean kFollowerInvert = false;
 		public static final int kSmartCurrentLimit = 50;
 		public static final int kPeakCurrentDurationMillis = 100;
@@ -175,6 +168,7 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kMotorPort = 0;
+		public static final double kIntakeSpeed = 1.0;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values

@@ -11,7 +11,16 @@ public class TrajectoryFollow extends RamseteCommand {
 
     private final DriveSubsystem m_driveSubsystem;
 
+    /**
+     * Follow a trajectory, either created through Pathweaver or manually
+     * 
+     * @param driveSubsystem The subsystem to be used
+     * @param trajectory     The trajectory that the ramsete controller seeks to
+     *                       follow
+     */
     public TrajectoryFollow(DriveSubsystem driveSubsystem, Trajectory trajectory) {
+        // This class serves to abstract away creating the RamseteCommand by just taking
+        // in a trajectory and handing the rest
         super(trajectory, driveSubsystem::getPose, new RamseteController(), DriveConstants.kFeedForward,
                 DriveConstants.kDriveKinematics, driveSubsystem::getWheelSpeeds,
                 new PIDController(DriveConstants.kPDriveVel, 0, 0), new PIDController(DriveConstants.kPDriveVel, 0, 0),
@@ -19,6 +28,9 @@ public class TrajectoryFollow extends RamseteCommand {
         m_driveSubsystem = driveSubsystem;
     }
 
+    /**
+     * Stop the drivetrain at the end of the command
+     */
     public void end(boolean interrupted) {
         m_driveSubsystem.tankDriveVolts(0, 0);
     }

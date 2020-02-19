@@ -17,10 +17,10 @@ public class VelocityDriveCommand extends CommandBase {
     /**
      * Drive using speed inputs as a velocity percentage out of a maximum velocity
      * 
-     * @param DriveSubsystem
-     * @param speedStraight  Joystick input for the straight speed
-     * @param speedLeft      Joystick input for left speed
-     * @param speedRight     Joystick input for the right speed
+     * @param driveSubsystem The subsystem to be used
+     * @param speedStraight  Supplier of straight speed
+     * @param speedLeft      Supplier of left speed
+     * @param speedRight     Supplier of right speed
      */
     public VelocityDriveCommand(DriveSubsystem driveSubsystem, Supplier<Double> speedStraight,
             Supplier<Double> speedLeft, Supplier<Double> speedRight) {
@@ -31,6 +31,9 @@ public class VelocityDriveCommand extends CommandBase {
         addRequirements(driveSubsystem);
     }
 
+    /**
+     * Update the motor outputs
+     */
     public void execute() {
         double speedStraight = Math.abs(m_speedStraight.get()) > ControllerConstants.kDeadzone ? m_speedStraight.get()
                 : 0;

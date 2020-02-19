@@ -20,13 +20,16 @@ public class FeederCommand extends CommandBase {
 	public FeederCommand(FeederSubsystem feederSubsystem, Supplier<Double> carouselPosition) {
 		m_feederSubsystem = feederSubsystem;
 		m_carouselPosition = carouselPosition;
-		addRequirements(m_feederSubsystem);
+		addRequirements(feederSubsystem);
 	}
 
 	public void initialize() {
 		started = false;
 	}
 
+	/**
+	 * Run feeder motor at correct carousel position
+	 */
 	public void execute() {
 		if (started)
 			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
@@ -36,6 +39,9 @@ public class FeederCommand extends CommandBase {
 			started = true;
 	}
 
+	/**
+	 * Stop the feeder at the end of the command
+	 */
 	public void end(boolean interrupted) {
 		m_feederSubsystem.setSpeed(0.0);
 		started = false;
