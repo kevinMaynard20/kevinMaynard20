@@ -11,7 +11,7 @@ public class DriveScissorsCommand extends CommandBase {
     private final Supplier<Double> m_speed;
 
     /**
-     * Lower the climber back to the robot
+     * Drive the climber manually with percent output
      * 
      * @param climberSubsystem The climber subsystem to be used
      */

@@ -30,9 +30,9 @@ public class DriveHoodCommand extends CommandBase {
     }
 
     /**
-     * Zero the hood encoder when the command ends
+     * Set the setposition to the current position when the command ends
      */
     public void end(boolean interrupted) {
-        m_hoodSubsystem.resetEncoder();
+        m_hoodSubsystem.setSetpoint(m_hoodSubsystem.getPosition());
     }
 }

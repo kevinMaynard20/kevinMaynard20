@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -13,6 +15,7 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
     private final NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");;
     private boolean isTargetVisible;
     private double xAngle, yAngle, distance;
+    private ArrayList<Double> averageDistance = new ArrayList<>();
 
     public LimelightSubsystem() {
     }
@@ -24,8 +27,16 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
         isTargetVisible = m_limelightTable.getEntry("tv").getDouble(0) == 1;
         xAngle = m_limelightTable.getEntry("tx").getDouble(0);
         yAngle = m_limelightTable.getEntry("ty").getDouble(0);
-        distance = (LimelightConstants.kTargetHeight - LimelightConstants.kCameraHeight)
-                / (Math.tan(Math.toRadians(LimelightConstants.kCameraAngle + getYAngle())));
+        distance = isTargetVisible
+                ? (LimelightConstants.kTargetHeight - LimelightConstants.kCameraHeight)
+                        / (Math.tan(Math.toRadians(LimelightConstants.kCameraAngle + getYAngle())))
+                : 0;
+        if (distance != 0) {
+            averageDistance.add(distance);
+            if (averageDistance.size() > 10) {
+                averageDistance.remove(0);
+            }
+        }
     }
 
     /**
@@ -54,6 +65,20 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
      */
     public double getDistance() {
         return distance;
+    }
+
+    /**
+     * @return The averaged ground distance from the limelight to the target over
+     *         the past .2 seconds (account for loss in camera view while
+     *         movingfast)
+     */
+    public double getAverageDistance() {
+        double sum = 0;
+        double size = averageDistance.size();
+        for (int i = 0; i < averageDistance.size(); i++) {
+            sum += averageDistance.get(i);
+        }
+        return size > 0 ? sum / size : 0;
     }
 
     /**

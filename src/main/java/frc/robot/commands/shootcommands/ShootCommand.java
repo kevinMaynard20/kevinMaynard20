@@ -1,5 +1,7 @@
 package frc.robot.commands.shootcommands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FieldLocation;
 import frc.robot.subsystems.FlywheelSubsystem;
@@ -27,11 +29,12 @@ public class ShootCommand extends CommandBase {
         addRequirements(flywheelSubsystem, hoodSubsystem);
     }
 
-    public ShootCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem, FieldLocation fieldLocation) {
+    public ShootCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem,
+            Supplier<FieldLocation> fieldLocation) {
         m_flywheelSubsystem = flywheelSubsystem;
         m_hoodSubsystem = hoodSubsystem;
-        m_flywheelSetpoint = fieldLocation.flywheelSetpoint;
-        m_hoodSetpoint = fieldLocation.hoodSetpoint;
+        m_flywheelSetpoint = fieldLocation.get().flywheelSetpoint;
+        m_hoodSetpoint = fieldLocation.get().hoodSetpoint;
     }
 
     /**

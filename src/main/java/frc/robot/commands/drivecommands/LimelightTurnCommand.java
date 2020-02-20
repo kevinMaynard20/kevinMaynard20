@@ -1,7 +1,5 @@
 package frc.robot.commands.drivecommands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
@@ -16,7 +14,7 @@ public class LimelightTurnCommand extends CommandBase {
 
     private final LimelightSubsystem m_limelightSubsystem;
     private final DriveSubsystem m_driveSubsystem;
-    private final Supplier<Double> m_turnGoal;
+    private final double m_turnGoal;
     private final ProfiledPIDController m_turnController = new ProfiledPIDController(LimelightConstants.kTurnP,
             LimelightConstants.kTurnI, LimelightConstants.kTurnD, new Constraints(
                     DriveConstants.kMaxRotSpeedMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
@@ -28,8 +26,7 @@ public class LimelightTurnCommand extends CommandBase {
      * @param driveSubsystem     The drivetrain subsystem to be used
      * @param turnGoal           Supplier of the angle setpoint towards the target
      */
-    public LimelightTurnCommand(LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem,
-            Supplier<Double> turnGoal) {
+    public LimelightTurnCommand(LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem, double turnGoal) {
         m_limelightSubsystem = limelightSubsystem;
         m_driveSubsystem = driveSubsystem;
         m_turnGoal = turnGoal;
@@ -41,7 +38,7 @@ public class LimelightTurnCommand extends CommandBase {
      */
     public void initialize() {
         m_turnController.setTolerance(LimelightConstants.kTurnTolerance);
-        m_turnController.setGoal(m_turnGoal.get());
+        m_turnController.setGoal(m_turnGoal);
     }
 
     /**
