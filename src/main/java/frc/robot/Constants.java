@@ -29,15 +29,40 @@ public final class Constants {
 		public static final int[] kReadDistance = { 4, 5, 6 };
 	}
 
+	public static final class ArmConstants {
+		public static final int kMotorPort = 0;
+		public static final int kSlotID = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final double kArmOutPosition = -1;
+	}
+
 	public static final class CarouselConstants {
 		public static final int kMotorPort = 6;
 		public static final double kVelocity = 10;
+		public static final double kIntakeVelocity = 15;
 		public static final double kRatio = 96.25;
 		public static final double kP = 0.000_005;
 		public static final double kI = 0.000_000_5;
 		public static final double kD = 0.000_5;
 		public static final double kFF = 0.0;
 		public static final int kSmartCurrentLimit = 20;
+	}
+
+	public static final class ClimberConstants {
+		public static final int kMotorPort = 6;
+		public static final double kTopSetpoint = -1;
 	}
 
 	public static final class ControllerConstants {
@@ -130,6 +155,7 @@ public final class Constants {
 		public static final int kSmartCurrentLimit = 50;
 		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kPeakCurrentLimit = 65;
+		public static final double kAllowedErrorPercent = 2;
 		public static final double kP = 0.000_375;
 		public static final double kI = 0;
 		public static final double kD = 0.000_03;
@@ -149,8 +175,6 @@ public final class Constants {
 		public static final double kAllowedError = 0.2;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
-		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kPeakCurrentLimit = 65;
 		public static final double kP = 0.000_1;
 		public static final double kI = 0.0;
 		public static final double kD = 0.0;
@@ -159,7 +183,6 @@ public final class Constants {
 		public static final double kMinVelocity = 0;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kMaxRPM = 0;
 		public static final double kMinEncoderValue = 0.0;
 		public static final double kMaxEncoderValue = 42.0;
 		public static final double kMinAngle = 24.36;
@@ -183,5 +206,29 @@ public final class Constants {
 		public static final double kCameraHeight = 27.6;
 		public static final double kCameraAngle = 18.43;
 		public static final double kTargetHeight = 89.75;
+	}
+
+	public enum FieldLocation {
+		WALL(-1, -1, -1, -1), INITLINE(-1, -1, -1, -1), CLOSETRENCH(-1, -1, -1, -1), FARTRENCH(-1, -1, -1, -1);
+
+		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
+
+		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double distanceGoal, double turnGoal) {
+			this.flywheelSetpoint = flywheelSetpoint;
+			this.hoodSetpoint = hoodSetpoint;
+			this.distanceGoal = distanceGoal;
+			this.turnGoal = turnGoal;
+		}
+
+		public static final FieldLocation fromDistance(double distance) {
+			FieldLocation closestDistance = WALL;
+			for (FieldLocation fieldLocation : FieldLocation.values()) {
+				if (Math.abs(distance - fieldLocation.distanceGoal) < Math
+						.abs(distance - closestDistance.distanceGoal)) {
+					closestDistance = fieldLocation;
+				}
+			}
+			return closestDistance;
+		}
 	}
 }

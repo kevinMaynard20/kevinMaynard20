@@ -14,13 +14,13 @@ public class IntakeSubsystem extends SubsystemBase implements ShuffleboardLoggin
 	private final TalonSRX m_motor = new TalonSRX(IntakeConstants.kMotorPort);
 
 	/**
-	 * Initializes a new instance of the {@link FeederSubsystem} class.
+	 * Initializes a new instance of the {@link IntakeSubsystem} class.
 	 */
 	public IntakeSubsystem() {
 	}
 
 	/**
-	 * Sets new speed for the feeder wheel to spin at.
+	 * Sets new speed for the intake wheel to spin at.
 	 * 
 	 * @param speed Percent output.
 	 */
@@ -29,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase implements ShuffleboardLoggin
 	}
 
 	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Output Percentage", m_motor.getMotorOutputPercent()).withSize(2, 2).withPosition(0, 0)
-				.withWidget(BuiltInWidgets.kGraph);
+		shuffleboardTab.add("Intake Output Percentage", m_motor.getMotorOutputPercent()).withSize(2, 2)
+				.withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
 	}
 }

@@ -78,6 +78,16 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         return m_neoEncoderMaster.getVelocity();
     }
 
+    /**
+     * @return Whether the flywheel is at its setpoint ABOVE 0
+     */
+    public boolean atSetpoint() {
+        return getSetpoint() > 0
+                ? (Math.abs(getVelocity() - getSetpoint()) / getSetpoint())
+                        * 100 < FlywheelConstants.kAllowedErrorPercent
+                : false;
+    }
+
     public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
         shuffleboardTab.add("Setpoint", getSetpoint()).withSize(1, 1).withPosition(0, 0)
                 .withWidget(BuiltInWidgets.kTextView);

@@ -47,7 +47,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     /**
      * @param position Setpoint (motor rotations)
      */
-    public void setSetPoint(double position) {
+    public void setSetpoint(double position) {
         m_targetPosition = position;
         m_PIDController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
     }
