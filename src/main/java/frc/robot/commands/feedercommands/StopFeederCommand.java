@@ -4,10 +4,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.FeederSubsystem;
 
 public class StopFeederCommand extends CommandBase {
+    
     private final FeederSubsystem m_feederSubsystem;
 
     /**
-     * Initializes a new instance of the {@link StopFeederCommand} class.
+     * Stop the feeder
      * 
      * @param feederSubsystem {@link FeederSubsystem} to be used.
      */

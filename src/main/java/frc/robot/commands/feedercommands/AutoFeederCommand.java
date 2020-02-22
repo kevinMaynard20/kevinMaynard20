@@ -8,13 +8,15 @@ import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.FeederSubsystem;
 
 public class AutoFeederCommand extends CommandBase {
+
 	private final FeederSubsystem m_feederSubsystem;
 	private final Supplier<Double> m_carouselPosition;
 	private final Supplier<Boolean> m_flywheelReady;
-	private boolean started;
+	private boolean m_started;
 
 	/**
-	 * Initializes a new instance of the {@link AutoFeederCommand} class.
+	 * Begin the feeder when the carousel is at the feeder opening and the flywheel
+	 * is at speed
 	 * 
 	 * @param feederSubsystem  {@link FeederSubsystem} to be used.
 	 * @param carouselPosition The current position of the carousel
@@ -29,19 +31,19 @@ public class AutoFeederCommand extends CommandBase {
 	}
 
 	public void initialize() {
-		started = false;
+		m_started = false;
 	}
 
 	/**
 	 * Run feeder motor at correct carousel position
 	 */
 	public void execute() {
-		if (started && m_flywheelReady.get())
+		if (m_started && m_flywheelReady.get())
 			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
 		else if (m_carouselPosition.get() % CarouselConstants.kRatio < FeederConstants.kStartPositionTolerance
 				|| m_carouselPosition.get() % CarouselConstants.kRatio > CarouselConstants.kRatio
 						- FeederConstants.kStartPositionTolerance)
-			started = true;
+			m_started = true;
 	}
 
 	/**
@@ -49,6 +51,6 @@ public class AutoFeederCommand extends CommandBase {
 	 */
 	public void end(boolean interrupted) {
 		m_feederSubsystem.setSpeed(0.0);
-		started = false;
+		m_started = false;
 	}
 }

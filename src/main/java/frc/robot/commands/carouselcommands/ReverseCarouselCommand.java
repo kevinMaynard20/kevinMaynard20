@@ -9,13 +9,13 @@ public class ReverseCarouselCommand extends CommandBase {
 	private final CarouselSubsystem m_carouselSubsystem;
 
 	/**
-	 * Initializes a new instance of the {@link ReverseCarouselCommand} class.
+	 * Run the carousel faster in reverse
 	 * 
 	 * @param carouselSubsystem {@link CarouselSubsystem} to be used.
 	 */
 	public ReverseCarouselCommand(CarouselSubsystem carouselSubsystem) {
 		m_carouselSubsystem = carouselSubsystem;
-		addRequirements(m_carouselSubsystem);
+		addRequirements(carouselSubsystem);
 	}
 
 	/**

@@ -7,7 +7,7 @@ import frc.robot.Constants.FieldLocation;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 
-public class ShootCommand extends CommandBase {
+public class ShootSetupCommand extends CommandBase {
 
     private final FlywheelSubsystem m_flywheelSubsystem;
     private final HoodSubsystem m_hoodSubsystem;
@@ -20,7 +20,7 @@ public class ShootCommand extends CommandBase {
      * @param flywheelSetpoint  The flywheel setpoint
      * @param hoodSetpoint      The hood setpoint
      */
-    public ShootCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem, double flywheelSetpoint,
+    public ShootSetupCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem, double flywheelSetpoint,
             double hoodSetpoint) {
         m_flywheelSubsystem = flywheelSubsystem;
         m_hoodSubsystem = hoodSubsystem;
@@ -29,7 +29,7 @@ public class ShootCommand extends CommandBase {
         addRequirements(flywheelSubsystem, hoodSubsystem);
     }
 
-    public ShootCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem,
+    public ShootSetupCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem,
             Supplier<FieldLocation> fieldLocation) {
         m_flywheelSubsystem = flywheelSubsystem;
         m_hoodSubsystem = hoodSubsystem;

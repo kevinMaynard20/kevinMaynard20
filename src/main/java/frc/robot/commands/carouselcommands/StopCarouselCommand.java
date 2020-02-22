@@ -8,13 +8,13 @@ public class StopCarouselCommand extends CommandBase {
     private final CarouselSubsystem m_carouselSubsystem;
 
     /**
-     * Initializes a new instance of the {@link StopCarouselCommand} class.
+     * Stop the carousel
      * 
      * @param carouselSubsystem {@link CarouselSubsystem} to be used.
      */
     public StopCarouselCommand(CarouselSubsystem carouselSubsystem) {
         m_carouselSubsystem = carouselSubsystem;
-        addRequirements(m_carouselSubsystem);
+        addRequirements(carouselSubsystem);
     }
 
     /**

@@ -5,10 +5,11 @@ import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.FeederSubsystem;
 
 public class FeederCommand extends CommandBase {
+	
 	private final FeederSubsystem m_feederSubsystem;
 
 	/**
-	 * Initializes a new instance of the {@link FeederCommand} class.
+	 * Begin the feeder immedietly
 	 * 
 	 * @param feederSubsystem {@link FeederSubsystem} to be used.
 	 */

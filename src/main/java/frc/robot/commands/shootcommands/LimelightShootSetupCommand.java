@@ -5,7 +5,7 @@ import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 
-public class LimelightShootCommand extends CommandBase {
+public class LimelightShootSetupCommand extends CommandBase {
 
     private final FlywheelSubsystem m_flywheelSubsystem;
     private final HoodSubsystem m_hoodSubsystem;
@@ -18,7 +18,7 @@ public class LimelightShootCommand extends CommandBase {
      * @param hoodSubsystem      The hood subsystem to be used
      * @param limelightSubsystem The limelight subsystem to be used
      */
-    public LimelightShootCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem,
+    public LimelightShootSetupCommand(FlywheelSubsystem flywheelSubsystem, HoodSubsystem hoodSubsystem,
             LimelightSubsystem limelightSubsystem) {
         m_flywheelSubsystem = flywheelSubsystem;
         m_hoodSubsystem = hoodSubsystem;

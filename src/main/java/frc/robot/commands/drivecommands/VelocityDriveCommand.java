@@ -37,8 +37,9 @@ public class VelocityDriveCommand extends CommandBase {
     public void execute() {
         double speedStraight = Math.abs(m_speedStraight.get()) > ControllerConstants.kDeadzone ? m_speedStraight.get()
                 : 0;
-        double speedLeft = Math.abs(m_speedLeft.get()) > ControllerConstants.kDeadzone ? m_speedLeft.get() : 0;
-        double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kDeadzone ? m_speedRight.get() : 0;
+        double speedLeft = Math.abs(m_speedLeft.get()) > ControllerConstants.kTriggerDeadzone ? m_speedLeft.get() : 0;
+        double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone ? m_speedRight.get()
+                : 0;
 
         // Calculate robot velocity before calculating Drive wheel speeds
         DifferentialDriveWheelSpeeds wheelSpeeds = DriveConstants.kDriveKinematics

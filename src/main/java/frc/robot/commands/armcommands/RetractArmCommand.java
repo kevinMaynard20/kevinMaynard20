@@ -1,6 +1,7 @@
 package frc.robot.commands.armcommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class RetractArmCommand extends CommandBase {
@@ -21,6 +22,6 @@ public class RetractArmCommand extends CommandBase {
      * Update arm setpoint
      */
     public void initialize() {
-        m_armSubsystem.setSetpoint(0);
+        m_armSubsystem.setSetpoint(ArmConstants.kInPosition);
     }
 }

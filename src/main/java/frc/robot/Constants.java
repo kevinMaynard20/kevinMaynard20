@@ -31,10 +31,6 @@ public final class Constants {
 
 	public static final class ArmConstants {
 		public static final int kMotorPort = 0;
-		public static final int kSlotID = 0;
-		public static final double kMaxAcel = 20_000;
-		public static final double kMaxVelocity = 10_000;
-		public static final double kAllowedError = 0.2;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -42,22 +38,31 @@ public final class Constants {
 		public static final double kD = 0.0;
 		public static final double kIz = 0;
 		public static final double kFF = 0;
-		public static final double kMinVelocity = 0;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kArmOutPosition = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
+		public static final double kOutPosition = -1;
+		public static final double kInPosition = -1;
 	}
 
 	public static final class CarouselConstants {
 		public static final int kMotorPort = 6;
-		public static final double kVelocity = 10;
-		public static final double kIntakeVelocity = 15;
-		public static final double kRatio = 96.25;
-		public static final double kP = 0.000_005;
-		public static final double kI = 0.000_000_5;
-		public static final double kD = 0.000_5;
-		public static final double kFF = 0.0;
+		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 20;
+		public static final double kP = 0.000_005;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0;
+		public static final double kFF = 0.0001;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final double kVelocity = 20;
+		public static final double kIntakeVelocity = 30;
+		public static final double kRatio = 300;
 	}
 
 	public static final class ClimberConstants {
@@ -69,6 +74,7 @@ public final class Constants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
 		public static final double kDeadzone = 0.1;
+		public static final double kTriggerDeadzone = .05;
 
 		public static final class Axis {
 			public static final int kLeftX = 0;
@@ -143,6 +149,7 @@ public final class Constants {
 
 	public static final class FeederConstants {
 		public static final int kMotorPort = 7;
+		public static final boolean kInvert = false;
 		public static final double kSpeed = 1.0;
 		public static final double kStartPositionTolerance = 2.5;
 	}
@@ -150,12 +157,11 @@ public final class Constants {
 	public static final class FlywheelConstants {
 		public static final int kMasterPort = 22;
 		public static final int kFollowerPort = 6;
-		public static final boolean kMasterInvert = true;
-		public static final boolean kFollowerInvert = false;
+		public static final boolean kMasterInvert = false;
+		public static final boolean kFollowerOpposeMaster = true;
 		public static final int kSmartCurrentLimit = 50;
-		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kPeakCurrentLimit = 65;
-		public static final double kAllowedErrorPercent = 2;
+		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kP = 0.000_375;
 		public static final double kI = 0;
 		public static final double kD = 0.000_03;
@@ -165,14 +171,11 @@ public final class Constants {
 		public static final double kMinOutput = -1;
 		public static final double kMaxRPM = 9600;
 		public static final double kRatio = 2.4;
+		public static final double kAllowedErrorPercent = 2;
 	}
 
 	public static final class HoodConstants {
 		public static final int kMotorPort = 5;
-		public static final int kSlotID = 0;
-		public static final double kMaxAcel = 20_000;
-		public static final double kMaxVelocity = 10_000;
-		public static final double kAllowedError = 0.2;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -180,9 +183,13 @@ public final class Constants {
 		public static final double kD = 0.0;
 		public static final double kIz = 0;
 		public static final double kFF = 0;
-		public static final double kMinVelocity = 0;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
 		public static final double kMinEncoderValue = 0.0;
 		public static final double kMaxEncoderValue = 42.0;
 		public static final double kMinAngle = 24.36;
@@ -191,7 +198,7 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kMotorPort = 0;
-		public static final double kIntakeSpeed = 1.0;
+		public static final double kSpeed = 1.0;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values

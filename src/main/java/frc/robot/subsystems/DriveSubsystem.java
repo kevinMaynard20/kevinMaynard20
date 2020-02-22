@@ -7,13 +7,10 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.ShuffleboardLogging;
 
-public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class DriveSubsystem extends SubsystemBase {
 
     private final WPI_TalonSRX m_masterLeft = new WPI_TalonSRX(DriveConstants.kMasterLeftPort);
     private final WPI_TalonSRX m_followerLeft = new WPI_TalonSRX(DriveConstants.kFollowerLeftPort);
@@ -165,19 +162,5 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      */
     public double getTurnRate() {
         return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-    }
-
-    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab
-                .add("Location", "X: " + getPose().getTranslation().getX() + " Y: " + getPose().getTranslation().getY())
-                .withSize(1, 1).withPosition(1, 1).withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Turn Rate", getTurnRate()).withSize(1, 1).withPosition(3, 1)
-                .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Rotation", getPose().getRotation().getDegrees()).withSize(1, 1).withPosition(2, 1)
-                .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Left Velocity", getLeftEncoderVelocity()).withSize(2, 2).withPosition(1, 2)
-                .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("Right Velocity", getRightEncoderVelocity()).withSize(2, 2).withPosition(1, 4)
-                .withWidget(BuiltInWidgets.kGraph);
     }
 }

@@ -3,6 +3,7 @@ package frc.robot.commands.shootcommands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.HoodSubsystem;
 
 public class DriveHoodCommand extends CommandBase {
@@ -26,7 +27,7 @@ public class DriveHoodCommand extends CommandBase {
      * Update the motor output
      */
     public void execute() {
-        m_hoodSubsystem.setPercentOutput(m_speed.get());
+        m_hoodSubsystem.setPercentOutput(Math.abs(m_speed.get()) > ControllerConstants.kDeadzone ? m_speed.get() : 0);
     }
 
     /**

@@ -4,18 +4,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.subsystems.CarouselSubsystem;
 
-public class CarouselCommand extends CommandBase {
+public class RunCarouselCommand extends CommandBase {
 
 	private final CarouselSubsystem m_carouselSubsystem;
 
 	/**
-	 * Initializes a new instance of the {@link CarouselCommand} class.
+	 * Run the carousel at normal speed
 	 * 
 	 * @param carouselSubsystem {@link CarouselSubsystem} to be used.
 	 */
-	public CarouselCommand(CarouselSubsystem carouselSubsystem) {
+	public RunCarouselCommand(CarouselSubsystem carouselSubsystem) {
 		m_carouselSubsystem = carouselSubsystem;
-		addRequirements(m_carouselSubsystem);
+		addRequirements(carouselSubsystem);
 	}
 
 	/**

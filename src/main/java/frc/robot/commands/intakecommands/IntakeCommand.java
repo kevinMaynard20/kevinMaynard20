@@ -9,7 +9,7 @@ public class IntakeCommand extends CommandBase {
     private final IntakeSubsystem m_intakeSubsystem;
 
     /**
-     * Initializes a new instance of the {@link IntakeCommand} class.
+     * Run the intake motor forwards
      * 
      * @param intakeSubsystem {@link IntakeSubsystem} to be used.
      */
@@ -22,6 +22,13 @@ public class IntakeCommand extends CommandBase {
      * Run the motor forwards
      */
     public void initialize() {
-        m_intakeSubsystem.setSpeed(IntakeConstants.kIntakeSpeed);
+        m_intakeSubsystem.setSpeed(IntakeConstants.kSpeed);
+    }
+
+    /**
+     * Stop the intake at the end of the command
+     */
+    public void end(boolean interrupted) {
+        m_intakeSubsystem.setSpeed(0);
     }
 }

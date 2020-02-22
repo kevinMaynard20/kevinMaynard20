@@ -7,17 +7,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
-import frc.robot.ShuffleboardLogging;
 
-public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class HoodSubsystem extends SubsystemBase {
 
     private final CANSparkMax m_motor = new CANSparkMax(HoodConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
-    private final CANPIDController m_PIDController = m_motor.getPIDController();
+    private final CANPIDController m_pidController = m_motor.getPIDController();
     private double m_targetPosition = 0;
 
     /**
@@ -27,21 +24,21 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(HoodConstants.kInvert);
         m_motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        m_motor.enableVoltageCompensation(12);
         m_motor.setSmartCurrentLimit(HoodConstants.kSmartCurrentLimit);
-        m_PIDController.setOutputRange(-1.0, 1.0);
-        m_PIDController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, HoodConstants.kSlotID);
-        m_PIDController.setSmartMotionMaxAccel(HoodConstants.kMaxAcel, HoodConstants.kSlotID);
-        m_PIDController.setSmartMotionMaxVelocity(HoodConstants.kMaxVelocity, HoodConstants.kSlotID);
-        m_PIDController.setSmartMotionAllowedClosedLoopError(HoodConstants.kAllowedError, HoodConstants.kSlotID);
-        m_PIDController.setSmartMotionMinOutputVelocity(HoodConstants.kMinVelocity, HoodConstants.kSlotID);
-        m_PIDController.setReference(0, ControlType.kSmartMotion, 0, 0);
-        m_PIDController.setP(HoodConstants.kP);
-        m_PIDController.setI(HoodConstants.kI);
-        m_PIDController.setIZone(HoodConstants.kIz);
-        m_PIDController.setD(HoodConstants.kD);
-        m_PIDController.setFF(HoodConstants.kFF);
 
-        resetEncoder();
+        m_pidController.setP(HoodConstants.kP);
+        m_pidController.setI(HoodConstants.kI);
+        m_pidController.setIZone(HoodConstants.kIz);
+        m_pidController.setD(HoodConstants.kD);
+        m_pidController.setFF(HoodConstants.kFF);
+        m_pidController.setOutputRange(HoodConstants.kMinOutput, HoodConstants.kMaxOutput);
+
+        m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, HoodConstants.kSlotID);
+        m_pidController.setSmartMotionMaxAccel(HoodConstants.kMaxAcel, HoodConstants.kSlotID);
+        m_pidController.setSmartMotionMaxVelocity(HoodConstants.kMaxVelocity, HoodConstants.kSlotID);
+        m_pidController.setSmartMotionAllowedClosedLoopError(HoodConstants.kAllowedError, HoodConstants.kSlotID);
+        m_pidController.setSmartMotionMinOutputVelocity(HoodConstants.kMinVelocity, HoodConstants.kSlotID);
     }
 
     /**
@@ -49,7 +46,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
      */
     public void setSetpoint(double position) {
         m_targetPosition = position;
-        m_PIDController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
+        m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
     }
 
     /**
@@ -93,13 +90,5 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
      */
     public void setPercentOutput(Double speed) {
         m_motor.set(speed);
-    }
-
-    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab.add("Position", getPosition()).withSize(2, 2).withPosition(0, 0)
-                .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("At setpoint", atSetpoint()).withSize(1, 1).withPosition(2, 0)
-                .withWidget(BuiltInWidgets.kBooleanBox);
-        shuffleboardTab.add("Angle", getAngle()).withSize(1, 1).withPosition(2, 1).withWidget(BuiltInWidgets.kTextView);
     }
 }

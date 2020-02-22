@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.ShuffleboardLogging;
 
-public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class LimelightSubsystem extends SubsystemBase{
 
     private final NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");;
     private boolean isTargetVisible;
@@ -100,16 +97,5 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
      */
     public boolean isLightOn() {
         return m_limelightTable.getEntry("ledmode").getDouble(0) == 1;
-    }
-
-    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab.add("X Angle", getXAngle()).withSize(1, 1).withPosition(0, 0)
-                .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Distance", getDistance()).withSize(1, 1).withPosition(1, 0)
-                .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Target Visible", isTargetVisible()).withSize(1, 1).withPosition(0, 1)
-                .withWidget(BuiltInWidgets.kBooleanBox);
-        shuffleboardTab.add("Light On", isLightOn()).withSize(1, 1).withPosition(1, 1)
-                .withWidget(BuiltInWidgets.kBooleanBox);
     }
 }

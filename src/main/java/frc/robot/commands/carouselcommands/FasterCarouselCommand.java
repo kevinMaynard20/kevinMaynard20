@@ -9,13 +9,13 @@ public class FasterCarouselCommand extends CommandBase {
     private final CarouselSubsystem m_carouselSubsystem;
 
     /**
-     * Initializes a new instance of the {@link FasterCarouselCommand} class.
+     * Run the carousel faster
      * 
      * @param carouselSubsystem {@link CarouselSubsystem} to be used.
      */
     public FasterCarouselCommand(CarouselSubsystem carouselSubsystem) {
         m_carouselSubsystem = carouselSubsystem;
-        addRequirements(m_carouselSubsystem);
+        addRequirements(carouselSubsystem);
     }
 
     /**

@@ -8,13 +8,10 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
-import frc.robot.ShuffleboardLogging;
 
-public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class FlywheelSubsystem extends SubsystemBase {
 
     private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(FlywheelConstants.kMasterPort,
             MotorType.kBrushless);
@@ -22,7 +19,6 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
             MotorType.kBrushless);
     private final CANPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
     private final CANEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
-    private final CANEncoder m_neoEncoderFollower = m_neoFlywheelFollower.getEncoder();
     private double m_setPoint;
 
     /**
@@ -31,6 +27,7 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
     public FlywheelSubsystem() {
         // Initialize Motors
         m_neoFlywheelMaster.restoreFactoryDefaults();
+        m_neoFlywheelMaster.setInverted(FlywheelConstants.kMasterInvert);
         m_neoFlywheelMaster.setIdleMode(IdleMode.kBrake);
         m_neoFlywheelMaster.enableVoltageCompensation(12);
         m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
@@ -40,7 +37,7 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
 
         m_neoFlywheelFollower.restoreFactoryDefaults();
         m_neoFlywheelFollower.setIdleMode(IdleMode.kBrake);
-        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, true);
+        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOpposeMaster);
 
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
@@ -86,16 +83,5 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
                 ? (Math.abs(getVelocity() - getSetpoint()) / getSetpoint())
                         * 100 < FlywheelConstants.kAllowedErrorPercent
                 : false;
-    }
-
-    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab.add("Setpoint", getSetpoint()).withSize(1, 1).withPosition(0, 0)
-                .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Velocity Master", m_neoEncoderMaster.getVelocity()).withSize(2, 2).withPosition(0, 1)
-                .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("Velocity Master", m_neoEncoderFollower.getVelocity()).withSize(2, 2).withPosition(2, 1)
-                .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("Current", m_neoEncoderMaster.getVelocity()).withSize(2, 2).withPosition(0, 3)
-                .withWidget(BuiltInWidgets.kGraph);
     }
 }
