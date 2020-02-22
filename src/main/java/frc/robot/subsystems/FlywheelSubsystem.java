@@ -3,21 +3,22 @@ package frc.robot.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.ShuffleboardLogging;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 
-public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class FlywheelSubsystem extends SubsystemBase {
 
-    private final CANSparkMax m_neoFlywheel = new CANSparkMax(FlywheelConstants.kFlywheelPort, MotorType.kBrushless);
-    private final CANPIDController m_neoController = m_neoFlywheel.getPIDController();
-    private final CANEncoder m_neoEncoder = m_neoFlywheel.getEncoder();
+    private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(FlywheelConstants.kMasterPort,
+            MotorType.kBrushless);
+    private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(FlywheelConstants.kFollowerPort,
+            MotorType.kBrushless);
+    private final CANPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
+    private final CANEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
     private double m_setPoint;
 
     /**
@@ -25,34 +26,25 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
      */
     public FlywheelSubsystem() {
         // Initialize Motors
-        m_neoFlywheel.restoreFactoryDefaults();
-        m_neoFlywheel.setInverted(true);
-        m_neoFlywheel.setIdleMode(IdleMode.kBrake);
-        m_neoFlywheel.enableVoltageCompensation(12);
-        m_neoFlywheel.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-        m_neoFlywheel.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
+        m_neoFlywheelMaster.restoreFactoryDefaults();
+        m_neoFlywheelMaster.setInverted(FlywheelConstants.kMasterInvert);
+        m_neoFlywheelMaster.setIdleMode(IdleMode.kBrake);
+        m_neoFlywheelMaster.enableVoltageCompensation(12);
+        m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
+        m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
                 FlywheelConstants.kPeakCurrentDurationMillis);
-        m_neoFlywheel.enableSoftLimit(SoftLimitDirection.kReverse, true);
+        m_neoFlywheelMaster.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
+
+        m_neoFlywheelFollower.restoreFactoryDefaults();
+        m_neoFlywheelFollower.setIdleMode(IdleMode.kBrake);
+        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOpposeMaster);
+
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
         m_neoController.setD(FlywheelConstants.kD);
         m_neoController.setIZone(FlywheelConstants.kIz);
         m_neoController.setFF(FlywheelConstants.kFF);
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
-    }
-
-    /**
-     * Sets target speed for flywheel.
-     * 
-     * @param setPoint Target velocity (rpm).
-     */
-    public void setSetpoint(double setPoint) {
-        m_setPoint = setPoint;
-        if (setPoint == 0) {
-            m_neoFlywheel.stopMotor();
-        } else {
-            m_neoController.setReference(setPoint / FlywheelConstants.kRatio, ControlType.kVelocity);
-        }
     }
 
     /**
@@ -66,15 +58,30 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
      * @return Measured velocity.
      */
     public double getVelocity() {
-        return m_neoEncoder.getVelocity();
+        return m_neoEncoderMaster.getVelocity();
     }
 
-    public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-        shuffleboardTab.add("Setpoint", getSetpoint()).withSize(1, 1).withPosition(1, 1)
-                .withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.add("Velocity", m_neoEncoder.getVelocity()).withSize(2, 2).withPosition(1, 2)
-                .withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.add("Current", m_neoEncoder.getVelocity()).withSize(2, 2).withPosition(1, 4)
-                .withWidget(BuiltInWidgets.kGraph);
+    /**
+     * Sets target speed for flywheel.
+     * 
+     * @param setPoint Target velocity (rpm).
+     */
+    public void setSetpoint(double setPoint) {
+        m_setPoint = setPoint;
+        if (setPoint == 0) {
+            m_neoFlywheelMaster.stopMotor();
+        } else {
+            m_neoController.setReference(setPoint / FlywheelConstants.kRatio, ControlType.kVelocity);
+        }
+    }
+
+    /**
+     * @return Whether the flywheel is at its setpoint ABOVE 0
+     */
+    public boolean atSetpoint() {
+        return getSetpoint() > 0
+                ? (Math.abs(getVelocity() - getSetpoint()) / getSetpoint())
+                        * 100 < FlywheelConstants.kAllowedErrorPercent
+                : false;
     }
 }

@@ -5,23 +5,23 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FeederConstants;
+import frc.robot.Constants.IntakeConstants;
 
-public class FeederSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
-	private final TalonSRX m_motor = new TalonSRX(FeederConstants.kMotorPort);
+	private final TalonSRX m_motor = new TalonSRX(IntakeConstants.kMotorPort);
 
 	/**
-	 * Initializes a new instance of the {@link FeederSubsystem} class.
+	 * Initializes a new instance of the {@link IntakeSubsystem} class.
 	 */
-	public FeederSubsystem() {
+	public IntakeSubsystem() {
 		m_motor.setNeutralMode(NeutralMode.Coast);
 		m_motor.enableVoltageCompensation(true);
-		m_motor.setInverted(FeederConstants.kInvert);
+		m_motor.setInverted(IntakeConstants.kInvert);
 	}
 
 	/**
-	 * Sets new speed for the feeder wheel to spin at.
+	 * Sets new speed for the intake wheel to spin at.
 	 * 
 	 * @param speed Percent output.
 	 */

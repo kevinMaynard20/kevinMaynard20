@@ -29,21 +29,66 @@ public final class Constants {
 		public static final int[] kReadDistance = { 4, 5, 6 };
 	}
 
+	public static final class ArmConstants {
+		public static final int kMotorPort = 0;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
+		public static final double kOutPosition = -1;
+		public static final double kInPosition = -1;
+	}
+
 	public static final class CarouselConstants {
 		public static final int kMotorPort = 6;
-		public static final double kVelocity = 20.83;
-		public static final double kRatio = 96.25;
-		public static final double kP = 0.000_005;
-		public static final double kI = 0.000_000_5;
-		public static final double kD = 0.000_5;
-		public static final double kFF = 0.0;
+		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 20;
+		public static final double kP = 0.000_005;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0;
+		public static final double kFF = 0.0001;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final double kVelocity = 20;
+		public static final double kIntakeVelocity = 30;
+		public static final double kRatio = 300;
+	}
+
+	public static final class ClimberConstants {
+		public static final int kMotorPort = 6;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
+		public static final double kTopSetpoint = -1;
 	}
 
 	public static final class ControllerConstants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
 		public static final double kDeadzone = 0.1;
+		public static final double kTriggerDeadzone = .05;
 
 		public static final class Axis {
 			public static final int kLeftX = 0;
@@ -77,21 +122,16 @@ public final class Constants {
 		}
 	}
 
-	public static final class DriveConstants { // TODO: this is currently for the 2017 robot, update ports and
-												// characterization data
+	public static final class DriveConstants {
 		public static final int kMasterLeftPort = 10;
-		public static final InvertType kMasterLeftInvert = InvertType.InvertMotorOutput;
-		public static final int kFollowerLeftOnePort = 9;
-		public static final InvertType kFollowerLeftOneInvert = InvertType.OpposeMaster;
-		public static final int kFollowerLeftTwoPort = 8;
-		public static final InvertType kFollowerLeftTwoInvert = InvertType.OpposeMaster;
+		public static final InvertType kMasterLeftInvert = InvertType.None;
+		public static final int kFollowerLeftPort = 9;
+		public static final InvertType kFollowerLeftInvert = InvertType.None;
 
 		public static final int kMasterRightPort = 4;
-		public static final InvertType kMasterRightInvert = InvertType.InvertMotorOutput;
-		public static final int kFollowerRightOnePort = 3;
-		public static final InvertType kFollowerRightOneInvert = InvertType.OpposeMaster;
-		public static final int kFollowerRightTwoPort = 2;
-		public static final InvertType kFollowerRightTwoInvert = InvertType.FollowMaster;
+		public static final InvertType kMasterRightInvert = InvertType.None;
+		public static final int kFollowerRightPort = 3;
+		public static final InvertType kFollowerRightInvert = InvertType.None;
 
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
 		public static final boolean kGyroReversed = true;
@@ -123,27 +163,60 @@ public final class Constants {
 
 	public static final class FeederConstants {
 		public static final int kMotorPort = 7;
+		public static final boolean kInvert = false;
 		public static final double kSpeed = 1.0;
 		public static final double kStartPositionTolerance = 2.5;
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kFlywheelPort = 22;
-		public static final int kSmartCurrentLimit = 60;
-		public static final int kPeakCurrentDurationMillis = 100;
+		public static final int kMasterPort = 22;
+		public static final int kFollowerPort = 6;
+		public static final boolean kMasterInvert = false;
+		public static final boolean kFollowerOpposeMaster = true;
+		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 65;
-		public static final double kP = 0.000_5;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.000_375;
 		public static final double kI = 0;
-		public static final double kD = 0;
-		public static final double kIz = 0;
-		public static final double kFF = 0.000_19;
+		public static final double kD = 0.000_03;
+		public static final double kIz = 0.0;
+		public static final double kFF = 0.000_26;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
 		public static final double kMaxRPM = 9600;
 		public static final double kRatio = 2.4;
+		public static final double kAllowedErrorPercent = 2;
 	}
 
-	public static final class LimelightConstants {//TODO - Update PID and camera values
+	public static final class HoodConstants {
+		public static final int kMotorPort = 5;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
+		public static final double kMinEncoderValue = 0.0;
+		public static final double kMaxEncoderValue = 42.0;
+		public static final double kMinAngle = 24.36;
+		public static final double kMaxAngle = 77.64;
+	}
+
+	public static final class IntakeConstants {
+		public static final int kMotorPort = 0;
+		public static final boolean kInvert = false;
+		public static final double kSpeed = 1.0;
+	}
+
+	public static final class LimelightConstants {// TODO - Update PID and camera values
 		public static final double kDisP = .016;
 		public static final double kDisI = 0;
 		public static final double kDisD = 0;
@@ -155,5 +228,29 @@ public final class Constants {
 		public static final double kCameraHeight = 27.6;
 		public static final double kCameraAngle = 18.43;
 		public static final double kTargetHeight = 89.75;
+	}
+
+	public enum FieldLocation {
+		WALL(-1, -1, -1, -1), INITLINE(-1, -1, -1, -1), CLOSETRENCH(-1, -1, -1, -1), FARTRENCH(-1, -1, -1, -1);
+
+		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
+
+		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double distanceGoal, double turnGoal) {
+			this.flywheelSetpoint = flywheelSetpoint;
+			this.hoodSetpoint = hoodSetpoint;
+			this.distanceGoal = distanceGoal;
+			this.turnGoal = turnGoal;
+		}
+
+		public static final FieldLocation fromDistance(double distance) {
+			FieldLocation closestDistance = WALL;
+			for (FieldLocation fieldLocation : FieldLocation.values()) {
+				if (Math.abs(distance - fieldLocation.distanceGoal) < Math
+						.abs(distance - closestDistance.distanceGoal)) {
+					closestDistance = fieldLocation;
+				}
+			}
+			return closestDistance;
+		}
 	}
 }
