@@ -44,67 +44,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return Pose of the robot
-     */
-    public Pose2d getPose() {
-        return m_odometry.getPoseMeters();
-    }
-
-    /**
-     * @return Wheel speeds of the robot
-     */
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(getLeftEncoderVelocity(), getRightEncoderVelocity());
-    }
-
-    /**
-     * @param pose Pose to set the robot to
-     */
-    public void resetOdometry(Pose2d pose) {
-        resetEncoders();
-        m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
-    }
-
-    /**
-     * @param straight Straight percent output
-     * @param left     Left percent output
-     * @param right    Right percent output
-     */
-    public void arcadeDrive(double straight, double left, double right) {
-        tankDrive(straight - left + right, straight + left - right);
-    }
-
-    /**
-     * @param leftSpeed  Left motors percent output
-     * @param rightSpeed Right motors percent output
-     */
-    public void tankDrive(double leftSpeed, double rightSpeed) {
-        m_masterLeft.set(leftSpeed);
-        m_masterRight.set(rightSpeed);
-        m_masterLeft.feed();
-        m_masterRight.feed();
-    }
-
-    /**
-     * @param leftVolts  Left motors desired voltage
-     * @param rightVolts Right motors desired voltage
-     */
-    public void tankDriveVolts(double leftVolts, double rightVolts) {
-        m_masterLeft.setVoltage(leftVolts);
-        m_masterRight.setVoltage(rightVolts);
-        m_masterLeft.feed();
-        m_masterRight.feed();
-    }
-
-    /**
-     * Sets both encoders to 0
-     */
-    public void resetEncoders() {
-        m_masterLeft.setSelectedSensorPosition(0);
-        m_masterRight.setSelectedSensorPosition(0);
-    }
-
-    /**
      * @return The left encoder position (meters)
      */
     public double getLeftEncoderPosition() {
@@ -144,10 +83,17 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * Reset the heading of the gyro
+     * @return Pose of the robot
      */
-    public void zeroHeading() {
-        m_gyro.reset();
+    public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
+    }
+
+    /**
+     * @return Wheel speeds of the robot
+     */
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(getLeftEncoderVelocity(), getRightEncoderVelocity());
     }
 
     /**
@@ -162,5 +108,59 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public double getTurnRate() {
         return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    }
+
+    /**
+     * Sets both encoders to 0
+     */
+    public void resetEncoders() {
+        m_masterLeft.setSelectedSensorPosition(0);
+        m_masterRight.setSelectedSensorPosition(0);
+    }
+
+    /**
+     * Reset the heading of the gyro
+     */
+    public void zeroHeading() {
+        m_gyro.reset();
+    }
+
+    /**
+     * @param pose Pose to set the robot to
+     */
+    public void resetOdometry(Pose2d pose) {
+        resetEncoders();
+        m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+    }
+
+    /**
+     * @param straight Straight percent output
+     * @param left     Left percent output
+     * @param right    Right percent output
+     */
+    public void arcadeDrive(double straight, double left, double right) {
+        tankDrive(straight - left + right, straight + left - right);
+    }
+
+    /**
+     * @param leftSpeed  Left motors percent output
+     * @param rightSpeed Right motors percent output
+     */
+    public void tankDrive(double leftSpeed, double rightSpeed) {
+        m_masterLeft.set(leftSpeed);
+        m_masterRight.set(rightSpeed);
+        m_masterLeft.feed();
+        m_masterRight.feed();
+    }
+
+    /**
+     * @param leftVolts  Left motors desired voltage
+     * @param rightVolts Right motors desired voltage
+     */
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        m_masterLeft.setVoltage(leftVolts);
+        m_masterRight.setVoltage(rightVolts);
+        m_masterLeft.feed();
+        m_masterRight.feed();
     }
 }

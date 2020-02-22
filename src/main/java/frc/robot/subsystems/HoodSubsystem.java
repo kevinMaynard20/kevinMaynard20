@@ -42,14 +42,6 @@ public class HoodSubsystem extends SubsystemBase {
     }
 
     /**
-     * @param position Setpoint (motor rotations)
-     */
-    public void setSetpoint(double position) {
-        m_targetPosition = position;
-        m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
-    }
-
-    /**
      * @return Current position (motor rotations)
      */
     public double getPosition() {
@@ -64,20 +56,6 @@ public class HoodSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return Whether the hood is at the setpoint
-     */
-    public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= HoodConstants.kAllowedError);
-    }
-
-    /**
-     * Zero the encoder position
-     */
-    public void resetEncoder() {
-        m_encoder.setPosition(0);
-    }
-
-    /**
      * @return The angle of the hood from horizontal
      */
     public double getAngle() {
@@ -86,9 +64,31 @@ public class HoodSubsystem extends SubsystemBase {
     }
 
     /**
+     * @return Whether the hood is at the setpoint
+     */
+    public boolean atSetpoint() {
+        return (Math.abs(getPosition() - m_targetPosition) <= HoodConstants.kAllowedError);
+    }
+
+    /**
      * @param speed Percent output of the hood
      */
     public void setPercentOutput(Double speed) {
         m_motor.set(speed);
+    }
+
+    /**
+     * @param position Setpoint (motor rotations)
+     */
+    public void setSetpoint(double position) {
+        m_targetPosition = position;
+        m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
+    }
+
+    /**
+     * Zero the encoder position
+     */
+    public void resetEncoder() {
+        m_encoder.setPosition(0);
     }
 }

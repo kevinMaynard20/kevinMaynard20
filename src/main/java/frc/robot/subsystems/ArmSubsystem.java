@@ -12,20 +12,20 @@ import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
 
-    private final CANSparkMax m_arm = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
-    private final CANEncoder m_encoder = m_arm.getEncoder();
-    private final CANPIDController m_pidController = m_arm.getPIDController();
+    private final CANSparkMax m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
+    private final CANEncoder m_encoder = m_motor.getEncoder();
+    private final CANPIDController m_pidController = m_motor.getPIDController();
     private double m_targetPosition = 0;
 
     /**
      * Initializes a new instance of the {@link ArmSubsystem} class.
      */
     public ArmSubsystem() {
-        m_arm.restoreFactoryDefaults();
-        m_arm.setInverted(ArmConstants.kInvert);
-        m_arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        m_arm.enableVoltageCompensation(12);
-        m_arm.setSmartCurrentLimit(ArmConstants.kSmartCurrentLimit);
+        m_motor.restoreFactoryDefaults();
+        m_motor.setInverted(ArmConstants.kInvert);
+        m_motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        m_motor.enableVoltageCompensation(12);
+        m_motor.setSmartCurrentLimit(ArmConstants.kSmartCurrentLimit);
 
         m_pidController.setP(ArmConstants.kP);
         m_pidController.setI(ArmConstants.kI);
@@ -39,14 +39,6 @@ public class ArmSubsystem extends SubsystemBase {
         m_pidController.setSmartMotionMaxVelocity(ArmConstants.kMaxVelocity, ArmConstants.kSlotID);
         m_pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.kAllowedError, ArmConstants.kSlotID);
         m_pidController.setSmartMotionMinOutputVelocity(ArmConstants.kMinVelocity, ArmConstants.kSlotID);
-    }
-
-    /**
-     * @param position Setpoint (motor rotations)
-     */
-    public void setSetpoint(double position) {
-        m_targetPosition = position;
-        m_pidController.setReference(position, ControlType.kSmartMotion, ArmConstants.kSlotID);
     }
 
     /**
@@ -68,6 +60,21 @@ public class ArmSubsystem extends SubsystemBase {
      */
     public boolean atSetpoint() {
         return (Math.abs(getPosition() - m_targetPosition) <= ArmConstants.kAllowedError);
+    }
+
+    /**
+     * @param speed Percent output of the arm
+     */
+    public void setPercentOutput(Double speed) {
+        m_motor.set(speed);
+    }
+
+    /**
+     * @param position Setpoint (motor rotations)
+     */
+    public void setPosition(double position) {
+        m_targetPosition = position;
+        m_pidController.setReference(position, ControlType.kSmartMotion, ArmConstants.kSlotID);
     }
 
     /**

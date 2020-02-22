@@ -67,6 +67,20 @@ public final class Constants {
 
 	public static final class ClimberConstants {
 		public static final int kMotorPort = 6;
+		public static final boolean kInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
 		public static final double kTopSetpoint = -1;
 	}
 
@@ -198,6 +212,7 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kMotorPort = 0;
+		public static final boolean kInvert = false;
 		public static final double kSpeed = 1.0;
 	}
 

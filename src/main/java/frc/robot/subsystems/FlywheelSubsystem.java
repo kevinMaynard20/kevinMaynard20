@@ -48,20 +48,6 @@ public class FlywheelSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets target speed for flywheel.
-     * 
-     * @param setPoint Target velocity (rpm).
-     */
-    public void setSetpoint(double setPoint) {
-        m_setPoint = setPoint;
-        if (setPoint == 0) {
-            m_neoFlywheelMaster.stopMotor();
-        } else {
-            m_neoController.setReference(setPoint / FlywheelConstants.kRatio, ControlType.kVelocity);
-        }
-    }
-
-    /**
      * @return Current setpoint.
      */
     public double getSetpoint() {
@@ -73,6 +59,20 @@ public class FlywheelSubsystem extends SubsystemBase {
      */
     public double getVelocity() {
         return m_neoEncoderMaster.getVelocity();
+    }
+
+    /**
+     * Sets target speed for flywheel.
+     * 
+     * @param setPoint Target velocity (rpm).
+     */
+    public void setSetpoint(double setPoint) {
+        m_setPoint = setPoint;
+        if (setPoint == 0) {
+            m_neoFlywheelMaster.stopMotor();
+        } else {
+            m_neoController.setReference(setPoint / FlywheelConstants.kRatio, ControlType.kVelocity);
+        }
     }
 
     /**

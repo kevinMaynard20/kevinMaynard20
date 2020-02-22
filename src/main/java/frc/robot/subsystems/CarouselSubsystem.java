@@ -35,10 +35,26 @@ public class CarouselSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * @return Position of encoder (rotations).
+	 */
+	public double getPosition() {
+		return m_encoder.getPosition();
+	}
+
+	/**
 	 * @return Measured velocity of the motor (rpm).
 	 */
 	public double getVelocity() {
 		return m_encoder.getVelocity();
+	}
+
+	/**
+	 * Set the value of the current encoder position.
+	 * 
+	 * @param position Value in rotations.
+	 */
+	public void setPosition(double position) {
+		m_encoder.setPosition(position);
 	}
 
 	/**
@@ -54,18 +70,9 @@ public class CarouselSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * @return Position of encoder (rotations).
+	 * Zero the encoder position
 	 */
-	public double getPosition() {
-		return m_encoder.getPosition();
-	}
-
-	/**
-	 * Set the value of the current encoder position.
-	 * 
-	 * @param position Value in rotations.
-	 */
-	public void setPosition(double position) {
-		m_encoder.setPosition(position);
+	public void resetEncoder() {
+		m_encoder.setPosition(0);
 	}
 }

@@ -7,7 +7,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 
-public class LimelightSubsystem extends SubsystemBase{
+public class LimelightSubsystem extends SubsystemBase {
 
     private final NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");;
     private boolean isTargetVisible;
@@ -79,6 +79,13 @@ public class LimelightSubsystem extends SubsystemBase{
     }
 
     /**
+     * @return Whether the LIME light is on
+     */
+    public boolean isLightOn() {
+        return m_limelightTable.getEntry("ledmode").getDouble(0) == 1;
+    }
+
+    /**
      * Turn on the LIME light
      */
     public void turnOnLight() {
@@ -90,12 +97,5 @@ public class LimelightSubsystem extends SubsystemBase{
      */
     public void turnOffLight() {
         m_limelightTable.getEntry("ledmode").setNumber(0);
-    }
-
-    /**
-     * @return Whether the LIME light is on
-     */
-    public boolean isLightOn() {
-        return m_limelightTable.getEntry("ledmode").getDouble(0) == 1;
     }
 }

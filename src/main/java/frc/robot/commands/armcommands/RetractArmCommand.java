@@ -22,6 +22,6 @@ public class RetractArmCommand extends CommandBase {
      * Update arm setpoint
      */
     public void initialize() {
-        m_armSubsystem.setSetpoint(ArmConstants.kInPosition);
+        m_armSubsystem.setPosition(ArmConstants.kInPosition);
     }
 }
