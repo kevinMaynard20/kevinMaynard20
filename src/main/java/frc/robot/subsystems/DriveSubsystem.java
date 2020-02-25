@@ -7,10 +7,14 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.ShuffleboardLogging;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
     private final WPI_TalonSRX m_masterLeft = new WPI_TalonSRX(DriveConstants.kMasterLeftPort);
     private final WPI_TalonSRX m_followerLeft = new WPI_TalonSRX(DriveConstants.kFollowerLeftPort);
@@ -162,5 +166,15 @@ public class DriveSubsystem extends SubsystemBase {
         m_masterRight.setVoltage(rightVolts);
         m_masterLeft.feed();
         m_masterRight.feed();
+    }
+
+    public void configureShuffleboard() {
+        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drive");
+        shuffleboardTab.addNumber("Left speed", () -> getWheelSpeeds().leftMetersPerSecond).withSize(4, 2)
+                .withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addNumber("Right speed", () -> getWheelSpeeds().rightMetersPerSecond).withSize(4, 2)
+                .withPosition(4, 0).withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addNumber("Heading", () -> getHeading()).withSize(1, 1).withPosition(0, 2)
+                .withWidget(BuiltInWidgets.kTextView);
     }
 }

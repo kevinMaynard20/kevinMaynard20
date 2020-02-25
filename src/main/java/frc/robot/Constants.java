@@ -230,6 +230,10 @@ public final class Constants {
 		public static final double kTargetHeight = 89.75;
 	}
 
+	public static final class LoggingConstants{
+		public static final boolean[] kSubsystems = {false, false, false, false, false, false, false, false, false, false};
+	}
+
 	public enum FieldLocation {
 		WALL(-1, -1, -1, -1), INITLINE(-1, -1, -1, -1), CLOSETRENCH(-1, -1, -1, -1), FARTRENCH(-1, -1, -1, -1);
 

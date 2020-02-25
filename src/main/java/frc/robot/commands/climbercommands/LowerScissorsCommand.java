@@ -21,6 +21,6 @@ public class LowerScissorsCommand extends CommandBase {
      * Update the climber setpoint
      */
     public void initialize() {
-        m_climberSubsystem.setSetpoint(0);
+        m_climberSubsystem.setPosition(0);
     }
 }

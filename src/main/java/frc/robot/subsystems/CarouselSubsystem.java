@@ -7,10 +7,14 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CarouselConstants;
+import frc.robot.ShuffleboardLogging;
 
-public class CarouselSubsystem extends SubsystemBase {
+public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
 	private final CANSparkMax m_motor = new CANSparkMax(CarouselConstants.kMotorPort, MotorType.kBrushless);
 	private final CANEncoder m_encoder = m_motor.getEncoder();
@@ -74,5 +78,11 @@ public class CarouselSubsystem extends SubsystemBase {
 	 */
 	public void resetEncoder() {
 		m_encoder.setPosition(0);
+	}
+
+	public void configureShuffleboard() {
+		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Carousel");
+		shuffleboardTab.addNumber("Encoder Velocity", () -> getPosition()).withSize(4, 4).withPosition(0, 0)
+				.withWidget(BuiltInWidgets.kGraph);
 	}
 }

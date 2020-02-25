@@ -14,12 +14,14 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Constants.ControllerConstants.DPad;
 import frc.robot.Constants.FieldLocation;
+import frc.robot.Constants.LoggingConstants;
 import frc.robot.commands.armcommands.DriveArmCommand;
 import frc.robot.commands.armcommands.ExtendArmCommand;
 import frc.robot.commands.armcommands.RetractArmCommand;
@@ -66,10 +68,14 @@ public class RobotContainer {
 	private final Joystick m_operatorController = new Joystick(ControllerConstants.kOperatorControllerPort);
 	// auto selector
 	private final SendableChooser<RamseteCommand> m_autoChooser = new SendableChooser<>();
+	private final ShuffleboardLogging[] m_subsystems = { m_arduinoSubsystem, m_armSubsystem, m_carouselSubsystem,
+			m_climberSubsystem, m_driveSubsystem, m_feederSubsystem, m_flywheelSubsystem, m_hoodSubsystem,
+			m_intakeSubsystem, m_limelightSubsystem };
 
 	public RobotContainer() {
-		configureButtonBindings();
-
+		// configureButtonBindings();
+		configureTestingBindings();
+		configureShuffleboard();
 		// Generate all trajectories at startup to prevent loop overrun
 		generateTrajectoryCommands();
 	}
@@ -113,8 +119,8 @@ public class RobotContainer {
 		new JoystickButton(m_operatorController, Button.kLeftBumper).whenPressed(new RetractArmCommand(m_armSubsystem));
 		new JoystickButton(m_operatorController, Button.kRightBumper).whenPressed(new ExtendArmCommand(m_armSubsystem));
 		m_armSubsystem.setDefaultCommand(
-				new DriveArmCommand(m_armSubsystem, () -> m_operatorController.getRawAxis(Axis.kRightTrigger)
-						- m_operatorController.getRawAxis(Axis.kLeftTrigger)));
+				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2
+						- (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2));
 		// Carousel jostle
 		new JoystickButton(m_operatorController, Button.kTriangle)
 				.whenHeld(new ReverseCarouselCommand(m_carouselSubsystem));
@@ -133,7 +139,29 @@ public class RobotContainer {
 		new JoystickButton(m_operatorController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
 		// Zero carousel encoder
 		new JoystickButton(m_operatorController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
+	}
 
+	private void configureTestingBindings() {
+		// Serves to switch between testing and actual controls more quickly than
+		// commenting everything out
+		m_driveSubsystem.setDefaultCommand(
+				new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
+						() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+						() -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
+
+		// Zero hood encoder
+		new JoystickButton(m_driverController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
+		// Zero carousel encoder
+		new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
+
+	}
+
+	public void configureShuffleboard() {
+		for (int i = 0; i < m_subsystems.length; i++) {
+			if (LoggingConstants.kSubsystems[i]) {
+				m_subsystems[i].configureShuffleboard();
+			}
+		}
 	}
 
 	public Command getAutonomousCommand() {

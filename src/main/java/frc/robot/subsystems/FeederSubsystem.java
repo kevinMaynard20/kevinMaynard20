@@ -4,10 +4,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeederConstants;
+import frc.robot.ShuffleboardLogging;
 
-public class FeederSubsystem extends SubsystemBase {
+public class FeederSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
 	private final TalonSRX m_motor = new TalonSRX(FeederConstants.kMotorPort);
 
@@ -28,4 +32,10 @@ public class FeederSubsystem extends SubsystemBase {
 	public void setSpeed(double speed) {
 		m_motor.set(ControlMode.PercentOutput, speed);
 	}
+
+    public void configureShuffleboard() {
+        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Feeder");
+        shuffleboardTab.addNumber("Stator current", () -> m_motor.getStatorCurrent()).withSize(4, 2).withPosition(0, 0)
+                .withWidget(BuiltInWidgets.kGraph);
+    }
 }
