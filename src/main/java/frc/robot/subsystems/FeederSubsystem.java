@@ -1,12 +1,15 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import frc.robot.ShuffleboardLogging;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeederConstants;
+import frc.robot.ShuffleboardLogging;
 
 public class FeederSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
@@ -16,6 +19,9 @@ public class FeederSubsystem extends SubsystemBase implements ShuffleboardLoggin
 	 * Initializes a new instance of the {@link FeederSubsystem} class.
 	 */
 	public FeederSubsystem() {
+		m_motor.setNeutralMode(NeutralMode.Coast);
+		m_motor.enableVoltageCompensation(true);
+		m_motor.setInverted(FeederConstants.kInvert);
 	}
 
 	/**
@@ -27,8 +33,9 @@ public class FeederSubsystem extends SubsystemBase implements ShuffleboardLoggin
 		m_motor.set(ControlMode.PercentOutput, speed);
 	}
 
-	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Output Percentage", m_motor.getMotorOutputPercent()).withSize(2, 2).withPosition(1, 1)
-				.withWidget(BuiltInWidgets.kGraph);
-	}
+    public void configureShuffleboard() {
+        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Feeder");
+        shuffleboardTab.addNumber("Stator current", () -> m_motor.getStatorCurrent()).withSize(4, 2).withPosition(0, 0)
+                .withWidget(BuiltInWidgets.kGraph);
+    }
 }

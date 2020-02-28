@@ -18,7 +18,7 @@ public class PixyTargetCommand extends CommandBase {
     public PixyTargetCommand(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
         m_driveSubsystem = driveSubsystem;
         m_arduinoSubsystem = arduinoSubsystem;
-        addRequirements(m_driveSubsystem, m_arduinoSubsystem);
+        addRequirements(driveSubsystem, arduinoSubsystem);
     }
 
     public void execute() {

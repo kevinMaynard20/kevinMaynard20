@@ -11,42 +11,42 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.ShuffleboardLogging;
 
-public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class ClimberSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
-    private final CANSparkMax m_motor = new CANSparkMax(HoodConstants.kMotorPort, MotorType.kBrushless);
+    private final CANSparkMax m_motor = new CANSparkMax(ClimberConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
     private double m_targetPosition = 0;
 
     /**
-     * Initializes a new instance of the {@link HoodSubsystem} class.
+     * Initializes a new instance of the {@link ClimberSubsystem} class.
      */
-    public HoodSubsystem() {
+    public ClimberSubsystem() {
         m_motor.restoreFactoryDefaults();
-        m_motor.setInverted(HoodConstants.kInvert);
+        m_motor.setInverted(ClimberConstants.kInvert);
         m_motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         m_motor.enableVoltageCompensation(12);
-        m_motor.setSmartCurrentLimit(HoodConstants.kSmartCurrentLimit);
+        m_motor.setSmartCurrentLimit(ClimberConstants.kSmartCurrentLimit);
 
-        m_pidController.setP(HoodConstants.kP);
-        m_pidController.setI(HoodConstants.kI);
-        m_pidController.setIZone(HoodConstants.kIz);
-        m_pidController.setD(HoodConstants.kD);
-        m_pidController.setFF(HoodConstants.kFF);
-        m_pidController.setOutputRange(HoodConstants.kMinOutput, HoodConstants.kMaxOutput);
+        m_pidController.setP(ClimberConstants.kP);
+        m_pidController.setI(ClimberConstants.kI);
+        m_pidController.setIZone(ClimberConstants.kIz);
+        m_pidController.setD(ClimberConstants.kD);
+        m_pidController.setFF(ClimberConstants.kFF);
+        m_pidController.setOutputRange(ClimberConstants.kMinOutput, ClimberConstants.kMaxOutput);
 
-        m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionMaxAccel(HoodConstants.kMaxAcel, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionMaxVelocity(HoodConstants.kMaxVelocity, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionAllowedClosedLoopError(HoodConstants.kAllowedError, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionMinOutputVelocity(HoodConstants.kMinVelocity, HoodConstants.kSlotID);
+        m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, ClimberConstants.kSlotID);
+        m_pidController.setSmartMotionMaxAccel(ClimberConstants.kMaxAcel, ClimberConstants.kSlotID);
+        m_pidController.setSmartMotionMaxVelocity(ClimberConstants.kMaxVelocity, ClimberConstants.kSlotID);
+        m_pidController.setSmartMotionAllowedClosedLoopError(ClimberConstants.kAllowedError, ClimberConstants.kSlotID);
+        m_pidController.setSmartMotionMinOutputVelocity(ClimberConstants.kMinVelocity, ClimberConstants.kSlotID);
     }
 
     /**
-     * @return Current position (motor rotations)
+     * @return Current climber position (motor rotations)
      */
     public double getPosition() {
         return m_encoder.getPosition();
@@ -60,22 +60,14 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     }
 
     /**
-     * @return The angle of the hood from horizontal
-     */
-    public double getAngle() {
-        return getPosition() * ((HoodConstants.kMaxAngle - HoodConstants.kMinAngle)
-                / (HoodConstants.kMaxEncoderValue - HoodConstants.kMinEncoderValue)) + HoodConstants.kMinAngle;
-    }
-
-    /**
-     * @return Whether the hood is at the setpoint
+     * @return Whether the climber is at the setpoint
      */
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= HoodConstants.kAllowedError);
+        return (Math.abs(getPosition() - m_targetPosition) <= ClimberConstants.kAllowedError);
     }
 
     /**
-     * @param speed Percent output of the hood
+     * @param speed Percent output of the arm
      */
     public void setPercentOutput(Double speed) {
         m_motor.set(speed);
@@ -84,9 +76,9 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     /**
      * @param position Setpoint (motor rotations)
      */
-    public void setSetpoint(double position) {
+    public void setPosition(double position) {
         m_targetPosition = position;
-        m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
+        m_pidController.setReference(position, ControlType.kSmartMotion, ClimberConstants.kSlotID);
     }
 
     /**
@@ -97,7 +89,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     }
 
     public void configureShuffleboard() {
-        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Hood");
+        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Climber");
         shuffleboardTab.addNumber("Encoder Position", () -> getPosition()).withSize(4, 2).withPosition(0, 0)
                 .withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity()).withSize(4, 2).withPosition(4, 0)

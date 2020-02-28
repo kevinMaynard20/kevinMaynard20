@@ -11,42 +11,42 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.ShuffleboardLogging;
 
-public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging {
+public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
-    private final CANSparkMax m_motor = new CANSparkMax(HoodConstants.kMotorPort, MotorType.kBrushless);
+    private final CANSparkMax m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
     private double m_targetPosition = 0;
 
     /**
-     * Initializes a new instance of the {@link HoodSubsystem} class.
+     * Initializes a new instance of the {@link ArmSubsystem} class.
      */
-    public HoodSubsystem() {
+    public ArmSubsystem() {
         m_motor.restoreFactoryDefaults();
-        m_motor.setInverted(HoodConstants.kInvert);
+        m_motor.setInverted(ArmConstants.kInvert);
         m_motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         m_motor.enableVoltageCompensation(12);
-        m_motor.setSmartCurrentLimit(HoodConstants.kSmartCurrentLimit);
+        m_motor.setSmartCurrentLimit(ArmConstants.kSmartCurrentLimit);
 
-        m_pidController.setP(HoodConstants.kP);
-        m_pidController.setI(HoodConstants.kI);
-        m_pidController.setIZone(HoodConstants.kIz);
-        m_pidController.setD(HoodConstants.kD);
-        m_pidController.setFF(HoodConstants.kFF);
-        m_pidController.setOutputRange(HoodConstants.kMinOutput, HoodConstants.kMaxOutput);
+        m_pidController.setP(ArmConstants.kP);
+        m_pidController.setI(ArmConstants.kI);
+        m_pidController.setIZone(ArmConstants.kIz);
+        m_pidController.setD(ArmConstants.kD);
+        m_pidController.setFF(ArmConstants.kFF);
+        m_pidController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 
-        m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionMaxAccel(HoodConstants.kMaxAcel, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionMaxVelocity(HoodConstants.kMaxVelocity, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionAllowedClosedLoopError(HoodConstants.kAllowedError, HoodConstants.kSlotID);
-        m_pidController.setSmartMotionMinOutputVelocity(HoodConstants.kMinVelocity, HoodConstants.kSlotID);
+        m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, ArmConstants.kSlotID);
+        m_pidController.setSmartMotionMaxAccel(ArmConstants.kMaxAcel, ArmConstants.kSlotID);
+        m_pidController.setSmartMotionMaxVelocity(ArmConstants.kMaxVelocity, ArmConstants.kSlotID);
+        m_pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.kAllowedError, ArmConstants.kSlotID);
+        m_pidController.setSmartMotionMinOutputVelocity(ArmConstants.kMinVelocity, ArmConstants.kSlotID);
     }
 
     /**
-     * @return Current position (motor rotations)
+     * @return Current arm position (motor rotations)
      */
     public double getPosition() {
         return m_encoder.getPosition();
@@ -60,22 +60,14 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     }
 
     /**
-     * @return The angle of the hood from horizontal
-     */
-    public double getAngle() {
-        return getPosition() * ((HoodConstants.kMaxAngle - HoodConstants.kMinAngle)
-                / (HoodConstants.kMaxEncoderValue - HoodConstants.kMinEncoderValue)) + HoodConstants.kMinAngle;
-    }
-
-    /**
-     * @return Whether the hood is at the setpoint
+     * @return Whether the arm is at the setpoint
      */
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= HoodConstants.kAllowedError);
+        return (Math.abs(getPosition() - m_targetPosition) <= ArmConstants.kAllowedError);
     }
 
     /**
-     * @param speed Percent output of the hood
+     * @param speed Percent output of the arm
      */
     public void setPercentOutput(Double speed) {
         m_motor.set(speed);
@@ -84,9 +76,9 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     /**
      * @param position Setpoint (motor rotations)
      */
-    public void setSetpoint(double position) {
+    public void setPosition(double position) {
         m_targetPosition = position;
-        m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
+        m_pidController.setReference(position, ControlType.kSmartMotion, ArmConstants.kSlotID);
     }
 
     /**
@@ -97,7 +89,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     }
 
     public void configureShuffleboard() {
-        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Hood");
+        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Arm");
         shuffleboardTab.addNumber("Encoder Position", () -> getPosition()).withSize(4, 2).withPosition(0, 0)
                 .withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity()).withSize(4, 2).withPosition(4, 0)

@@ -3,14 +3,16 @@ package frc.robot.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.ShuffleboardLogging;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CarouselConstants;
+import frc.robot.ShuffleboardLogging;
 
 public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
@@ -23,16 +25,24 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	 */
 	public CarouselSubsystem() {
 		m_motor.restoreFactoryDefaults();
-		m_motor.setSmartCurrentLimit(CarouselConstants.kSmartCurrentLimit);
+		m_motor.setInverted(CarouselConstants.kInvert);
 		m_motor.setIdleMode(IdleMode.kBrake);
+		m_motor.enableVoltageCompensation(12);
+		m_motor.setSmartCurrentLimit(CarouselConstants.kSmartCurrentLimit);
 
 		m_pidController.setP(CarouselConstants.kP);
 		m_pidController.setI(CarouselConstants.kI);
+		m_pidController.setIZone(CarouselConstants.kIz);
 		m_pidController.setD(CarouselConstants.kD);
 		m_pidController.setFF(CarouselConstants.kFF);
-		m_pidController.setOutputRange(-1.0, 1.0);
+		m_pidController.setOutputRange(CarouselConstants.kMinOutput, CarouselConstants.kMaxOutput);
+	}
 
-		setVelocity(0.0);
+	/**
+	 * @return Position of encoder (rotations).
+	 */
+	public double getPosition() {
+		return m_encoder.getPosition();
 	}
 
 	/**
@@ -40,6 +50,15 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	 */
 	public double getVelocity() {
 		return m_encoder.getVelocity();
+	}
+
+	/**
+	 * Set the value of the current encoder position.
+	 * 
+	 * @param position Value in rotations.
+	 */
+	public void setPosition(double position) {
+		m_encoder.setPosition(position);
 	}
 
 	/**
@@ -55,27 +74,15 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	}
 
 	/**
-	 * @return Position of encoder (rotations).
+	 * Zero the encoder position
 	 */
-	public double getPosition() {
-		return m_encoder.getPosition();
+	public void resetEncoder() {
+		m_encoder.setPosition(0);
 	}
 
-	/**
-	 * Set the value of the current encoder position.
-	 * 
-	 * @param position Value in rotations.
-	 */
-	public void setPosition(double position) {
-		m_encoder.setPosition(position);
-	}
-
-	public void updateShuffleboard(ShuffleboardTab shuffleboardTab) {
-		shuffleboardTab.add("Velocity", getVelocity()).withSize(2, 2).withPosition(1, 1)
+	public void configureShuffleboard() {
+		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Carousel");
+		shuffleboardTab.addNumber("Encoder Velocity", () -> getPosition()).withSize(4, 4).withPosition(0, 0)
 				.withWidget(BuiltInWidgets.kGraph);
-		shuffleboardTab.add("Current", m_motor.getOutputCurrent()).withSize(2, 2).withPosition(1, 3)
-				.withWidget(BuiltInWidgets.kGraph);
-		shuffleboardTab.add("PID", m_pidController).withSize(1, 2).withPosition(3, 1)
-				.withWidget(BuiltInWidgets.kPIDController);
 	}
 }
