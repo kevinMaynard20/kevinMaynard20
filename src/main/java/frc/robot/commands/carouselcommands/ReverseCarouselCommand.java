@@ -22,7 +22,7 @@ public class ReverseCarouselCommand extends CommandBase {
 	 * Run the carousel backwards
 	 */
 	public void initialize() {
-		m_carouselSubsystem.setVelocity(-CarouselConstants.kIntakeVelocity * CarouselConstants.kRatio);
+		m_carouselSubsystem.setVelocity(-CarouselConstants.kVelocity * CarouselConstants.kRatio);
 	}
 
 	/**

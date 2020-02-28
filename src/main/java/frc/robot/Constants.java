@@ -30,7 +30,7 @@ public final class Constants {
 	}
 
 	public static final class ArmConstants {
-		public static final int kMotorPort = 0;
+		public static final int kMotorPort = 10;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -66,7 +66,7 @@ public final class Constants {
 	}
 
 	public static final class ClimberConstants {
-		public static final int kMotorPort = 6;
+		public static final int kMotorPort = 8; // or 9?
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -170,7 +170,6 @@ public final class Constants {
 
 	public static final class FlywheelConstants {
 		public static final int kMasterPort = 11;
-		// TODO fix port
 		public static final int kFollowerPort = 13;
 		public static final boolean kMasterInvert = true;
 		public static final boolean kFollowerInvert = false;
@@ -214,7 +213,7 @@ public final class Constants {
 	public static final class IntakeConstants {
 		public static final boolean kInvert = false;
 		public static final int kMotorPort = 2;
-		public static final double kPercentOutput = 0.2;
+		public static final double kPercentOutput = 0.4;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values

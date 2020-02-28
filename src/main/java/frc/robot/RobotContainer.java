@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
@@ -35,6 +36,7 @@ import frc.robot.commands.drivecommands.LimelightTurnCommand;
 import frc.robot.commands.drivecommands.PixyTargetCommand;
 import frc.robot.commands.drivecommands.TrajectoryFollow;
 import frc.robot.commands.feedercommands.AutoFeederCommand;
+import frc.robot.commands.feedercommands.FeederCommand;
 import frc.robot.commands.intakecommands.IntakeCommand;
 import frc.robot.commands.intakecommands.OuttakeCommand;
 import frc.robot.commands.shootcommands.HoodPositionCommand;
@@ -75,9 +77,9 @@ public class RobotContainer {
 	public RobotContainer() {
 		// configureButtonBindings();
 		configureTestingBindings();
-		configureShuffleboard();
+		// configureShuffleboard();
 		// Generate all trajectories at startup to prevent loop overrun
-		generateTrajectoryCommands();
+		// generateTrajectoryCommands();
 	}
 
 	private void configureButtonBindings() {
@@ -144,15 +146,23 @@ public class RobotContainer {
 	private void configureTestingBindings() {
 		// Serves to switch between testing and actual controls more quickly than
 		// commenting everything out
-		m_driveSubsystem.setDefaultCommand(
-				new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
-						() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
-						() -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
-		// Zero hood encoder
-		new JoystickButton(m_driverController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
-		// Zero carousel encoder
-		new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
-
+		// m_driveSubsystem.setDefaultCommand(
+		// 		new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
+		// 				() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+		// 				() -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
+		// // Zero hood encoder
+		// new JoystickButton(m_driverController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
+		// // Zero carousel encoder
+		// new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
+		// Intake
+		new JoystickButton(m_driverController, Button.kX).whenHeld(new IntakeCommand(m_intakeSubsystem));
+		// Carousel
+		new JoystickButton(m_driverController, Button.kCircle)
+				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem));
+		// Feeder
+		new JoystickButton(m_driverController, Button.kRightBumper).toggleWhenPressed(new FeederCommand(m_feederSubsystem));
+		// Flywheel
+		new POVButton(m_driverController, DPad.kDown).whenPressed(() -> m_flywheelSubsystem.setSetpoint(1000));
 	}
 
 	public void configureShuffleboard() {
