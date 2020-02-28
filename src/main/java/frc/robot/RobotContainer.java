@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import frc.robot.Constants.*;
 import frc.robot.Constants.ControllerConstants.*;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.carouselcommands.*;
 import frc.robot.commands.drivecommands.*;
 import frc.robot.commands.feedercommands.*;
@@ -29,14 +30,13 @@ import frc.robot.subsystems.*;
 
 public class RobotContainer {
 	// subsystems
-	// private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
-	// private final CarouselSubsystem m_carouselSubsystem = new
-	// CarouselSubsystem();
-	// private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	// private final FeederSubsystem m_feederSubsystem = new FeederSubsystem();
+	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
+	private final CarouselSubsystem m_carouselSubsystem = new CarouselSubsystem();
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	private final FeederSubsystem m_feederSubsystem = new FeederSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 	private final HoodSubsystem m_hoodSubsystem = new HoodSubsystem();
-	// private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 	// private final LimelightSubsystem m_limelightSubsystem = new
 	// LimelightSubsystem();
 	// controllers
@@ -72,12 +72,11 @@ public class RobotContainer {
 		// new JoystickButton(m_driverController, ControllerConstants.Button.kTriangle)
 		// .whenHeld(new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem));
 
-		// new JoystickButton(m_driverController, ControllerConstants.Button.kCircle)
-		// .toggleWhenPressed(new CarouselCommand(m_carouselSubsystem));
+		new JoystickButton(m_driverController, ControllerConstants.Button.kCircle)
+				.toggleWhenPressed(new CarouselCommand(m_carouselSubsystem));
 
-		// new JoystickButton(m_driverController, ControllerConstants.Button.kX)
-		// .toggleWhenPressed(new FeederCommand(m_feederSubsystem, () ->
-		// m_carouselSubsystem.getPosition()));
+		new JoystickButton(m_driverController, ControllerConstants.Button.kX)
+				.whenHeld(new IntakeCommand(m_intakeSubsystem));
 
 		new POVButton(m_driverController, ControllerConstants.DPad.kDown)
 				.whenPressed(() -> m_flywheelSubsystem.setSetpoint(5000));

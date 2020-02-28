@@ -182,6 +182,7 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kMotorPort = 2;
+		public static final double kPercentOutput = 0.2;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values
