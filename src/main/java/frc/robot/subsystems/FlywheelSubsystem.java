@@ -41,7 +41,7 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
 
         m_neoFlywheelFollower.restoreFactoryDefaults();
         m_neoFlywheelFollower.setIdleMode(IdleMode.kBrake);
-        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOpposeMaster);
+        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerInvert);
 
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);

@@ -51,13 +51,7 @@ public final class Constants {
 
 	public static final class CarouselConstants {
 		public static final int kMotorPort = 14;
-    public static final boolean kInvert = false;
-		public static final double kVelocity = 10;
-		public static final double kRatio = 96.25;
-		public static final double kP = 0.000_005;
-		public static final double kI = 0.000_000_5;
-		public static final double kD = 0.000_5;
-		public static final double kFF = 0.0;
+		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 20;
 		public static final double kP = 0.000_005;
 		public static final double kI = 0;
@@ -128,22 +122,15 @@ public final class Constants {
 		}
 	}
 
-	/**
-	 * Official motor ports:
-	 * 3 = left follower (victor)
-	 * 4 = left master (talon)
-	 * 5 = right master (talon)
-	 * 6 = right follower (victor)
-	 */
 	public static final class DriveConstants {
-		public static final int kMasterLeftPort = 10;
+		public static final int kMasterLeftPort = 4;
 		public static final InvertType kMasterLeftInvert = InvertType.None;
-		public static final int kFollowerLeftPort = 9;
+		public static final int kFollowerLeftPort = 3;
 		public static final InvertType kFollowerLeftInvert = InvertType.None;
 
-		public static final int kMasterRightPort = 4;
+		public static final int kMasterRightPort = 5;
 		public static final InvertType kMasterRightInvert = InvertType.None;
-		public static final int kFollowerRightPort = 3;
+		public static final int kFollowerRightPort = 6;
 		public static final InvertType kFollowerRightInvert = InvertType.None;
 
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
@@ -204,10 +191,6 @@ public final class Constants {
 
 	public static final class HoodConstants {
 		public static final int kMotorPort = 12;
-		public static final int kSlotID = 0;
-		public static final double kMaxAcel = 20_000;
-		public static final double kMaxVelocity = 10_000;
-		public static final double kAllowedError = 0.2;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -248,8 +231,9 @@ public final class Constants {
 		public static final double kTargetHeight = 89.75;
 	}
 
-	public static final class LoggingConstants{
-		public static final boolean[] kSubsystems = {false, false, false, false, false, false, false, false, false, false};
+	public static final class LoggingConstants {
+		public static final boolean[] kSubsystems = { false, false, false, false, false, false, false, false, false,
+				false };
 	}
 
 	public enum FieldLocation {

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -17,9 +18,9 @@ import frc.robot.ShuffleboardLogging;
 public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
     private final WPI_TalonSRX m_masterLeft = new WPI_TalonSRX(DriveConstants.kMasterLeftPort);
-    private final WPI_TalonSRX m_followerLeft = new WPI_TalonSRX(DriveConstants.kFollowerLeftPort);
+    private final WPI_VictorSPX m_followerLeft = new WPI_VictorSPX(DriveConstants.kFollowerLeftPort);
     private final WPI_TalonSRX m_masterRight = new WPI_TalonSRX(DriveConstants.kMasterRightPort);
-    private final WPI_TalonSRX m_followerRight = new WPI_TalonSRX(DriveConstants.kFollowerRightPort);
+    private final WPI_VictorSPX m_followerRight = new WPI_VictorSPX(DriveConstants.kFollowerRightPort);
     private final AHRS m_gyro = new AHRS(DriveConstants.kGyroPort);
     private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
             Rotation2d.fromDegrees(getHeading()));

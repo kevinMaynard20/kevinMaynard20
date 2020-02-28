@@ -22,7 +22,7 @@ public class OuttakeCommand extends CommandBase {
      * Run the motor backwards
      */
     public void initialize() {
-        m_intakeSubsystem.setSpeed(-IntakeConstants.kSpeed);
+        m_intakeSubsystem.setSpeed(-IntakeConstants.kPercentOutput);
     }
 
     /**

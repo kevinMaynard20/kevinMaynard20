@@ -22,7 +22,7 @@ public class IntakeCommand extends CommandBase {
      * Run the motor forwards
      */
     public void initialize() {
-        m_intakeSubsystem.setSpeed(IntakeConstants.kSpeed);
+        m_intakeSubsystem.setSpeed(IntakeConstants.kPercentOutput);
     }
 
     /**
