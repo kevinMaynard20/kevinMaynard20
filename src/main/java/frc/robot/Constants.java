@@ -50,8 +50,14 @@ public final class Constants {
 	}
 
 	public static final class CarouselConstants {
-		public static final int kMotorPort = 6;
-		public static final boolean kInvert = false;
+		public static final int kMotorPort = 14;
+    public static final boolean kInvert = false;
+		public static final double kVelocity = 10;
+		public static final double kRatio = 96.25;
+		public static final double kP = 0.000_005;
+		public static final double kI = 0.000_000_5;
+		public static final double kD = 0.000_5;
+		public static final double kFF = 0.0;
 		public static final int kSmartCurrentLimit = 20;
 		public static final double kP = 0.000_005;
 		public static final double kI = 0;
@@ -122,6 +128,13 @@ public final class Constants {
 		}
 	}
 
+	/**
+	 * Official motor ports:
+	 * 3 = left follower (victor)
+	 * 4 = left master (talon)
+	 * 5 = right master (talon)
+	 * 6 = right follower (victor)
+	 */
 	public static final class DriveConstants {
 		public static final int kMasterLeftPort = 10;
 		public static final InvertType kMasterLeftInvert = InvertType.None;
@@ -162,17 +175,18 @@ public final class Constants {
 	}
 
 	public static final class FeederConstants {
-		public static final int kMotorPort = 7;
 		public static final boolean kInvert = false;
+		public static final int kMotorPort = 1;
 		public static final double kSpeed = 1.0;
 		public static final double kStartPositionTolerance = 2.5;
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kMasterPort = 22;
-		public static final int kFollowerPort = 6;
-		public static final boolean kMasterInvert = false;
-		public static final boolean kFollowerOpposeMaster = true;
+		public static final int kMasterPort = 11;
+		// TODO fix port
+		public static final int kFollowerPort = 13;
+		public static final boolean kMasterInvert = true;
+		public static final boolean kFollowerInvert = false;
 		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 65;
 		public static final int kPeakCurrentDurationMillis = 100;
@@ -189,7 +203,11 @@ public final class Constants {
 	}
 
 	public static final class HoodConstants {
-		public static final int kMotorPort = 5;
+		public static final int kMotorPort = 12;
+		public static final int kSlotID = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.2;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -211,9 +229,9 @@ public final class Constants {
 	}
 
 	public static final class IntakeConstants {
-		public static final int kMotorPort = 0;
 		public static final boolean kInvert = false;
-		public static final double kSpeed = 1.0;
+		public static final int kMotorPort = 2;
+		public static final double kPercentOutput = 0.2;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values
