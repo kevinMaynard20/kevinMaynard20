@@ -49,7 +49,7 @@ public class ShootSetupCommand extends CommandBase {
      * Set the setpoints of the flywheel and hood
      */
     public void initialize() {
-        m_flywheelSubsystem.setSetpoint(m_flywheelSetpoint);
+        m_flywheelSubsystem.setVelocity(m_flywheelSetpoint);
         m_hoodSubsystem.setSetpoint(m_hoodSetpoint);
     }
 
@@ -57,7 +57,7 @@ public class ShootSetupCommand extends CommandBase {
      * Stop the flywheel and reset the hood at the end of the command
      */
     public void end(boolean interrupted) {
-        m_flywheelSubsystem.setSetpoint(0);
+        m_flywheelSubsystem.setVelocity(0);
         m_hoodSubsystem.setSetpoint(0);
     }
 }

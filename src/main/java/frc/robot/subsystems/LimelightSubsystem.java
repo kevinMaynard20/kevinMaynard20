@@ -19,6 +19,7 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
     private ArrayList<Double> averageDistance = new ArrayList<>();
 
     public LimelightSubsystem() {
+        turnOffLight();
     }
 
     /**

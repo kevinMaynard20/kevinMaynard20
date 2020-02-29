@@ -29,7 +29,7 @@ public class DriveFlywheelCommand extends CommandBase {
      * Update the motor setpoint
      */
     public void execute() {
-        m_flywheelSubsystem.setSetpoint(
+        m_flywheelSubsystem.setVelocity(
                 FlywheelConstants.kMaxRPM * Math.abs(m_speed.get()) > ControllerConstants.kDeadzone ? m_speed.get()
                         : 0);
     }

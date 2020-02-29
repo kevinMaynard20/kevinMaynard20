@@ -33,9 +33,9 @@ public final class Constants {
 		public static final int kMotorPort = 10;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
-		public static final double kP = 0.000_1;
-		public static final double kI = 0.0;
-		public static final double kD = 0.0;
+		public static final double kP = .0002;
+		public static final double kI = 0;
+		public static final double kD = 0;
 		public static final double kIz = 0;
 		public static final double kFF = 0;
 		public static final double kMaxOutput = 1;
@@ -43,26 +43,26 @@ public final class Constants {
 		public static final int kSlotID = 0;
 		public static final double kMinVelocity = 0;
 		public static final double kMaxAcel = 20_000;
-		public static final double kMaxVelocity = 10_000;
-		public static final double kAllowedError = 0.2;
-		public static final double kOutPosition = -1;
-		public static final double kInPosition = -1;
+		public static final double kMaxVelocity = 5_000;
+		public static final double kAllowedError = 0.1;
+		public static final double kOutPosition = -45;
+		public static final double kInPosition = -5;
 	}
 
 	public static final class CarouselConstants {
 		public static final int kMotorPort = 14;
-		public static final boolean kInvert = false;
+		public static final boolean kInvert = true;
 		public static final int kSmartCurrentLimit = 20;
-		public static final double kP = 0.000_005;
+		public static final double kP = 0.000001;
 		public static final double kI = 0;
 		public static final double kD = 0;
 		public static final double kIz = 0;
-		public static final double kFF = 0.0001;
+		public static final double kFF = 0.000095;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
 		public static final double kVelocity = 20;
 		public static final double kIntakeVelocity = 30;
-		public static final double kRatio = 300;
+		public static final double kRatio = 140;
 	}
 
 	public static final class ClimberConstants {
@@ -129,9 +129,9 @@ public final class Constants {
 		public static final InvertType kFollowerLeftInvert = InvertType.None;
 
 		public static final int kMasterRightPort = 5;
-		public static final InvertType kMasterRightInvert = InvertType.None;
+		public static final InvertType kMasterRightInvert = InvertType.InvertMotorOutput;
 		public static final int kFollowerRightPort = 6;
-		public static final InvertType kFollowerRightInvert = InvertType.None;
+		public static final InvertType kFollowerRightInvert = InvertType.InvertMotorOutput;
 
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
 		public static final boolean kGyroReversed = true;
@@ -171,16 +171,16 @@ public final class Constants {
 	public static final class FlywheelConstants {
 		public static final int kMasterPort = 11;
 		public static final int kFollowerPort = 13;
-		public static final boolean kMasterInvert = true;
-		public static final boolean kFollowerInvert = false;
+		public static final boolean kMasterInvert = false;
+		public static final boolean kFollowerInvert = true;
 		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 65;
 		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kP = 0.000_375;
+		public static final double kP = 0.0;
 		public static final double kI = 0;
-		public static final double kD = 0.000_03;
+		public static final double kD = 0.0;
 		public static final double kIz = 0.0;
-		public static final double kFF = 0.000_26;
+		public static final double kFF = 0.000_22;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
 		public static final double kMaxRPM = 9600;
@@ -190,7 +190,7 @@ public final class Constants {
 
 	public static final class HoodConstants {
 		public static final int kMotorPort = 12;
-		public static final boolean kInvert = false;
+		public static final boolean kInvert = true;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
 		public static final double kI = 0.0;
@@ -211,9 +211,9 @@ public final class Constants {
 	}
 
 	public static final class IntakeConstants {
-		public static final boolean kInvert = false;
+		public static final boolean kInvert = true;
 		public static final int kMotorPort = 2;
-		public static final double kPercentOutput = 0.4;
+		public static final double kPercentOutput = 0.8;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values
@@ -231,12 +231,13 @@ public final class Constants {
 	}
 
 	public static final class LoggingConstants {
-		public static final boolean[] kSubsystems = { false, false, false, false, false, false, false, false, false,
+		//Arduino, Arm, Carousel, Climber, Drive, Feeder, Flywheel, Hood, Intake, Limelight
+		public static final boolean[] kSubsystems = { false, true, false, false, false, false, false, false, false,
 				false };
 	}
 
 	public enum FieldLocation {
-		WALL(-1, -1, -1, -1), INITLINE(-1, -1, -1, -1), CLOSETRENCH(-1, -1, -1, -1), FARTRENCH(-1, -1, -1, -1);
+		WALL(1000, 0, 0, 0), INITLINE(1000, 0, 0, 0), CLOSETRENCH(1000, 0, 0, 0), FARTRENCH(1000, 0, 0, 0);
 
 		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
 

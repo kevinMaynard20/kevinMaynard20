@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.ControllerConstants;
@@ -39,6 +38,7 @@ import frc.robot.commands.feedercommands.AutoFeederCommand;
 import frc.robot.commands.feedercommands.FeederCommand;
 import frc.robot.commands.intakecommands.IntakeCommand;
 import frc.robot.commands.intakecommands.OuttakeCommand;
+import frc.robot.commands.shootcommands.DriveHoodCommand;
 import frc.robot.commands.shootcommands.HoodPositionCommand;
 import frc.robot.commands.shootcommands.LimelightShootSetupCommand;
 import frc.robot.commands.shootcommands.ShootSetupCommand;
@@ -75,9 +75,9 @@ public class RobotContainer {
 			m_intakeSubsystem, m_limelightSubsystem };
 
 	public RobotContainer() {
-		// configureButtonBindings();
-		configureTestingBindings();
-		// configureShuffleboard();
+		configureButtonBindings();
+		// configureTestingBindings();
+		configureShuffleboard();
 		// Generate all trajectories at startup to prevent loop overrun
 		// generateTrajectoryCommands();
 	}
@@ -92,6 +92,7 @@ public class RobotContainer {
 		// Climber
 		m_climberSubsystem.setDefaultCommand(
 				new DriveScissorsCommand(m_climberSubsystem, () -> -m_driverController.getRawAxis(Axis.kRightY)));
+
 		// Automatic travel to set distance and shoot setup
 		new JoystickButton(m_driverController, Button.kLeftBumper).whenHeld(new ParallelCommandGroup(
 				new LimelightCompleteCommand(m_limelightSubsystem, m_driveSubsystem,
@@ -127,42 +128,66 @@ public class RobotContainer {
 		new JoystickButton(m_operatorController, Button.kTriangle)
 				.whenHeld(new ReverseCarouselCommand(m_carouselSubsystem));
 		// Hood and flywheel override
-		new JoystickButton(m_operatorController, Button.kSquare)
-				.whenPressed(new HoodPositionCommand(m_hoodSubsystem, 0));
-		new JoystickButton(m_operatorController, DPad.kDown)
-				.whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL));
-		new JoystickButton(m_operatorController, DPad.kLeft)
-				.whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.INITLINE));
-		new JoystickButton(m_operatorController, DPad.kUp).whenPressed(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.CLOSETRENCH));
-		new JoystickButton(m_operatorController, DPad.kRight).whenPressed(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.FARTRENCH));
+		new POVButton(m_operatorController, DPad.kDown)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL));
+		new POVButton(m_operatorController, DPad.kLeft)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.INITLINE));
+		new POVButton(m_operatorController, DPad.kUp)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.CLOSETRENCH));
+		new POVButton(m_operatorController, DPad.kRight)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.FARTRENCH));
 		// Zero hood encoder
 		new JoystickButton(m_operatorController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
 		// Zero carousel encoder
 		new JoystickButton(m_operatorController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
+		// Zero arm encoder
+		new JoystickButton(m_operatorController, Button.kTrackpad).whenPressed(() -> m_armSubsystem.resetEncoder());
 	}
 
 	private void configureTestingBindings() {
-		// Serves to switch between testing and actual controls more quickly than
-		// commenting everything out
 		// m_driveSubsystem.setDefaultCommand(
-		// 		new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
-		// 				() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
-		// 				() -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
-		// // Zero hood encoder
-		// new JoystickButton(m_driverController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
-		// // Zero carousel encoder
-		// new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
-		// Intake
+		// new ArcadeDriveCommand(m_driveSubsystem, () ->
+		// -m_driverController.getRawAxis(Axis.kLeftY),
+		// () -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+		// () -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
+		new JoystickButton(m_driverController, Button.kRightBumper).whenPressed(new ExtendArmCommand(m_armSubsystem));
+		new JoystickButton(m_driverController, Button.kLeftBumper).whenPressed(new RetractArmCommand(m_armSubsystem));
+		new JoystickButton(m_driverController, Button.kTrackpad)
+				.whenHeld(new DriveHoodCommand(m_hoodSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY)));
+		new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_hoodSubsystem.resetEncoder());
 		new JoystickButton(m_driverController, Button.kX).whenHeld(new IntakeCommand(m_intakeSubsystem));
-		// Carousel
-		new JoystickButton(m_driverController, Button.kCircle)
+		new JoystickButton(m_driverController, Button.kTriangle)
 				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem));
-		// Feeder
-		new JoystickButton(m_driverController, Button.kRightBumper).toggleWhenPressed(new FeederCommand(m_feederSubsystem));
-		// Flywheel
-		new POVButton(m_driverController, DPad.kDown).whenPressed(() -> m_flywheelSubsystem.setSetpoint(1000));
+		new JoystickButton(m_driverController, Button.kCircle).whenHeld(new FeederCommand(m_feederSubsystem));
+		new POVButton(m_driverController, DPad.kLeft)
+				.whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, 6000, 30));
+		new POVButton(m_driverController, DPad.kDown)
+				.whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, 0, 0));
+
+		// new JoystickButton(m_driverController, Button.kRightBumper).whenHeld(new
+		// ParallelCommandGroup(
+		// new AutoFeederCommand(m_feederSubsystem, () ->
+		// m_carouselSubsystem.getPosition(),
+		// () -> m_flywheelSubsystem.atSetpoint(), () ->
+		// m_hoodSubsystem.atSetpoint())));
+		// new JoystickButton(m_operatorController, Button.kSquare)
+		// .whenPressed(new HoodPositionCommand(m_hoodSubsystem, 0));
+		// new JoystickButton(m_driverController, DPad.kDown)
+		// .whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, ()
+		// -> FieldLocation.WALL));
+		// new JoystickButton(m_driverController, DPad.kLeft)
+		// .whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, ()
+		// -> FieldLocation.INITLINE));
+		// new JoystickButton(m_driverController, DPad.kUp).whenPressed(
+		// new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () ->
+		// FieldLocation.CLOSETRENCH));
+		// new JoystickButton(m_driverController, DPad.kRight).whenPressed(
+		// new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () ->
+		// FieldLocation.FARTRENCH));
+		// // Zero hood encoder
+		new JoystickButton(m_driverController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
+		// Zero carousel encoder
+		new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
 	}
 
 	public void configureShuffleboard() {

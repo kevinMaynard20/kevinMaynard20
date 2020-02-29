@@ -43,6 +43,8 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
         m_pidController.setSmartMotionMaxVelocity(ArmConstants.kMaxVelocity, ArmConstants.kSlotID);
         m_pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.kAllowedError, ArmConstants.kSlotID);
         m_pidController.setSmartMotionMinOutputVelocity(ArmConstants.kMinVelocity, ArmConstants.kSlotID);
+
+        setPosition(getPosition());
     }
 
     /**
@@ -86,6 +88,7 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
      */
     public void resetEncoder() {
         m_encoder.setPosition(0);
+        setPosition(0);
     }
 
     public void configureShuffleboard() {

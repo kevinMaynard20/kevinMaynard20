@@ -67,7 +67,7 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 	public void update() {
 		read();
 		write();
-		m_turnSpeed = m_anglePid.calculate(m_xValue);
+		m_turnSpeed = -m_anglePid.calculate(m_xValue);
 		m_driveSpeed = m_distancePid.calculate(m_distance);
 	}
 

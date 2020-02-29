@@ -26,7 +26,7 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	public CarouselSubsystem() {
 		m_motor.restoreFactoryDefaults();
 		m_motor.setInverted(CarouselConstants.kInvert);
-		m_motor.setIdleMode(IdleMode.kBrake);
+		m_motor.setIdleMode(IdleMode.kCoast);
 		m_motor.enableVoltageCompensation(12);
 		m_motor.setSmartCurrentLimit(CarouselConstants.kSmartCurrentLimit);
 
@@ -53,24 +53,17 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	}
 
 	/**
-	 * Set the value of the current encoder position.
-	 * 
-	 * @param position Value in rotations.
-	 */
-	public void setPosition(double position) {
-		m_encoder.setPosition(position);
-	}
-
-	/**
 	 * Set new velocity for the carousel to spin at.
 	 * 
 	 * @param velocity Motor rpm.
 	 */
 	public void setVelocity(double velocity) {
-		if (velocity == 0.0)
-			m_motor.set(0.0);
-		else
+		System.out.println(velocity);
+		if (velocity == 0.0) {
+			m_motor.set(0);
+		} else {
 			m_pidController.setReference(velocity, ControlType.kVelocity);
+		}
 	}
 
 	/**
@@ -82,7 +75,12 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 
 	public void configureShuffleboard() {
 		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Carousel");
-		shuffleboardTab.addNumber("Encoder Velocity", () -> getPosition()).withSize(4, 4).withPosition(0, 0)
-				.withWidget(BuiltInWidgets.kGraph);
+		shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity() / CarouselConstants.kRatio).withSize(4, 2)
+				.withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
+		shuffleboardTab.addNumber("Output", () -> m_motor.getAppliedOutput()).withSize(1, 1).withPosition(0, 2)
+				.withWidget(BuiltInWidgets.kTextView);
+		shuffleboardTab.addNumber("Current", () -> m_motor.getOutputCurrent()).withSize(1, 1).withPosition(2, 2)
+				.withWidget(BuiltInWidgets.kTextView);
+
 	}
 }
