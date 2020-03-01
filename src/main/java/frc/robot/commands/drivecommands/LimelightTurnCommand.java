@@ -30,7 +30,7 @@ public class LimelightTurnCommand extends CommandBase {
         m_limelightSubsystem = limelightSubsystem;
         m_driveSubsystem = driveSubsystem;
         m_turnGoal = turnGoal;
-        addRequirements(driveSubsystem);
+        addRequirements(m_driveSubsystem);
     }
 
     /**

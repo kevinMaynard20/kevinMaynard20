@@ -24,6 +24,6 @@ public class HoodPositionCommand extends CommandBase {
      * Update the setpoint
      */
     public void execute() {
-        m_hoodSubsystem.setSetpoint(m_setpoint);
+        m_hoodSubsystem.setPosition(m_setpoint);
     }
 }

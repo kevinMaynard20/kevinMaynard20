@@ -5,7 +5,7 @@ import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.FeederSubsystem;
 
 public class FeederCommand extends CommandBase {
-	
+
 	private final FeederSubsystem m_feederSubsystem;
 
 	/**
@@ -15,7 +15,7 @@ public class FeederCommand extends CommandBase {
 	 */
 	public FeederCommand(FeederSubsystem feederSubsystem) {
 		m_feederSubsystem = feederSubsystem;
-		addRequirements(feederSubsystem);
+		addRequirements(m_feederSubsystem);
 	}
 
 	/**

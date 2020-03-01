@@ -24,18 +24,19 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Constants.ControllerConstants.DPad;
 import frc.robot.Constants.FieldLocation;
 import frc.robot.Constants.LoggingConstants;
+import frc.robot.commands.armcommands.BounceArmCommand;
 import frc.robot.commands.armcommands.DriveArmCommand;
 import frc.robot.commands.armcommands.ExtendArmCommand;
 import frc.robot.commands.armcommands.RetractArmCommand;
-import frc.robot.commands.carouselcommands.FasterCarouselCommand;
-import frc.robot.commands.carouselcommands.ReverseCarouselCommand;
+import frc.robot.commands.carouselcommands.AutoSpeedCarouselCommand;
 import frc.robot.commands.carouselcommands.RunCarouselCommand;
+import frc.robot.commands.carouselcommands.ToOpenSpaceCommand;
 import frc.robot.commands.climbercommands.DriveScissorsCommand;
 import frc.robot.commands.drivecommands.ArcadeDriveCommand;
 import frc.robot.commands.drivecommands.LimelightTurnCommand;
 import frc.robot.commands.drivecommands.PixyTargetCommand;
 import frc.robot.commands.drivecommands.TrajectoryFollow;
-import frc.robot.commands.feedercommands.FeederCommand;
+import frc.robot.commands.feedercommands.AutoFeederCommand;
 import frc.robot.commands.intakecommands.IntakeCommand;
 import frc.robot.commands.intakecommands.OuttakeCommand;
 import frc.robot.commands.shootcommands.ShootSetupCommand;
@@ -80,24 +81,13 @@ public class RobotContainer {
 	}
 
 	private void configureButtonBindings() {
-		// new JoystickButton(m_driverController, Button.kLeftBumper).whenHeld(new
-		// ParallelCommandGroup(
-		// new LimelightCompleteCommand(m_limelightSubsystem, m_driveSubsystem,
-		// () -> FieldLocation.fromDistance(m_limelightSubsystem.getAverageDistance())),
-		// new RunCarouselCommand(m_carouselSubsystem), new
-		// ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem,
-		// () ->
-		// FieldLocation.fromDistance(m_limelightSubsystem.getAverageDistance()))));
-		// Automatic turn towards target and shoot setup not using setpoints
-		// new JoystickButton(m_driverController, Button.kTriangle)
-		// .whenHeld(new ParallelCommandGroup(new
-		// LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0),
-		// new RunCarouselCommand(m_carouselSubsystem),
-		// new LimelightShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem,
-		// m_limelightSubsystem)));
-
 		// Driver
-		// Drive
+		// Drive arcade
+		// m_driveSubsystem.setDefaultCommand(
+		// new CurvatureDriveCommand(m_driveSubsystem, () ->
+		// -m_driverController.getRawAxis(Axis.kLeftY),
+		// () -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+		// () -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		m_driveSubsystem.setDefaultCommand(
 				new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
 						() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
@@ -105,43 +95,53 @@ public class RobotContainer {
 		// Climber
 		m_climberSubsystem.setDefaultCommand(
 				new DriveScissorsCommand(m_climberSubsystem, () -> -m_driverController.getRawAxis(Axis.kRightY)));
-
-		// Turn to target
-		new POVButton(m_driverController, DPad.kUp)
-				.whenHeld(new LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0));
-		// Run carousel
-		new JoystickButton(m_driverController, Button.kLeftBumper).toggleWhenPressed(
-				new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kRatio));
-		new POVButton(m_driverController, DPad.kDown)
-				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem, 60 * CarouselConstants.kRatio));
-		// Shoot when other systems are ready
-		new JoystickButton(m_driverController, Button.kRightBumper).whenHeld(new FeederCommand(m_feederSubsystem));
+		// Carousel default
+		m_carouselSubsystem.setDefaultCommand(new ToOpenSpaceCommand(m_carouselSubsystem));
 
 		// Pixy ball follow
 		new JoystickButton(m_driverController, Button.kX).whenHeld(new ParallelCommandGroup(
 				new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem,
 						() -> -m_driverController.getRawAxis(Axis.kLeftY)),
-				new FasterCarouselCommand(m_carouselSubsystem), new IntakeCommand(m_intakeSubsystem)));
+				new RunCarouselCommand(m_carouselSubsystem,
+						CarouselConstants.kIntakeVelocity * CarouselConstants.kRatio),
+				new IntakeCommand(m_intakeSubsystem)));
+		// Turn to target
+		new POVButton(m_driverController, DPad.kUp)
+				.whenHeld(new LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0));
+		// Feeder
+		new JoystickButton(m_driverController, Button.kRightBumper).whenHeld(new AutoFeederCommand(m_feederSubsystem,
+				m_carouselSubsystem::atOpenSpace, m_flywheelSubsystem::atSetpoint));
+		// Run carousel fast
+		new JoystickButton(m_driverController, Button.kLeftBumper)
+				.toggleWhenPressed(new AutoSpeedCarouselCommand(m_carouselSubsystem, m_flywheelSubsystem::getSetpoint));
+		// Run carousel default speed
+		new POVButton(m_driverController, DPad.kDown).toggleWhenPressed(
+				new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kRatio));
 
 		// Operator
 		// Intake
-		new JoystickButton(m_operatorController, Button.kX).whenHeld(new ParallelCommandGroup(
-				new IntakeCommand(m_intakeSubsystem), new FasterCarouselCommand(m_carouselSubsystem)));
+		new JoystickButton(m_operatorController, Button.kX)
+				.whenHeld(new ParallelCommandGroup(new IntakeCommand(m_intakeSubsystem),
+						new RunCarouselCommand(m_carouselSubsystem,
+								CarouselConstants.kIntakeVelocity * CarouselConstants.kRatio),
+						new BounceArmCommand(m_armSubsystem)));
 		new JoystickButton(m_operatorController, Button.kCircle).whenHeld(new OuttakeCommand(m_intakeSubsystem));
 		// Arm
 		new JoystickButton(m_operatorController, Button.kLeftBumper).whenPressed(new RetractArmCommand(m_armSubsystem));
 		new JoystickButton(m_operatorController, Button.kRightBumper).whenPressed(new ExtendArmCommand(m_armSubsystem));
-		new Trigger(() -> Math.abs((m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2
-				- (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2) > ControllerConstants.kDeadzone)
-						.whenActive(new DriveArmCommand(m_armSubsystem,
-								() -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2
-										- (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
+		new Trigger(() -> Math.abs(
+				(m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2) > ControllerConstants.kTriggerDeadzone
+				|| Math.abs(
+						(m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2) > ControllerConstants.kDeadzone)
+								.whenActive(new DriveArmCommand(m_armSubsystem,
+										() -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+										() -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		m_armSubsystem.setDefaultCommand(
-				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2
-						- (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
+				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+						() -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// Carousel jostle
-		new JoystickButton(m_operatorController, Button.kTriangle)
-				.whenHeld(new ReverseCarouselCommand(m_carouselSubsystem));
+		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new RunCarouselCommand(m_carouselSubsystem,
+				CarouselConstants.kJostleVelocity * CarouselConstants.kRatio));
 		// Hood and flywheel override
 		new POVButton(m_operatorController, DPad.kDown)
 				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL));

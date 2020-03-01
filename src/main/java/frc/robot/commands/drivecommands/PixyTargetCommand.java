@@ -22,7 +22,7 @@ public class PixyTargetCommand extends CommandBase {
         m_driveSubsystem = driveSubsystem;
         m_arduinoSubsystem = arduinoSubsystem;
         m_speed = speed;
-        addRequirements(driveSubsystem, arduinoSubsystem);
+        addRequirements(m_driveSubsystem, m_arduinoSubsystem);
     }
 
     public void execute() {

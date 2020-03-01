@@ -48,21 +48,38 @@ public final class Constants {
 		public static final double kOutPosition = -46;
 		public static final double kInPosition = -5;
 		public static final double kMinPosition = -52;
+		public static final double kBounceUpPosition = -44;
+		public static final double kBounceDownPosition = -50;
+		public static final double kBounceTime = .4;
 	}
 
 	public static final class CarouselConstants {
 		public static final int kMotorPort = 14;
 		public static final boolean kInvert = true;
 		public static final int kSmartCurrentLimit = 20;
-		public static final double kP = 0.000001;
-		public static final double kI = 0;
-		public static final double kD = 0;
-		public static final double kIz = 0;
-		public static final double kFF = 0.000095;
+
+		public static final double kVelP = 0.000001;
+		public static final double kVelI = 0;
+		public static final double kVelD = 0;
+		public static final double kVelIz = 0;
+		public static final double kVelFF = 0.000095;
+
+		public static final double kPosP = 0.0002;
+		public static final double kPosI = 0;
+		public static final double kPosD = 0;
+		public static final double kPosIz = 0;
+		public static final double kPosFF = 0.0;
+
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 20_000;
+		public static final double kMaxVelocity = 10_000;
+		public static final double kAllowedError = 0.1;
 		public static final double kVelocity = 20;
 		public static final double kIntakeVelocity = 30;
+		public static final double kJostleVelocity = -65;
 		public static final double kRatio = 140;
 		public static final double kStartPositionTolerance = 2.5;
 	}
@@ -161,7 +178,10 @@ public final class Constants {
 				DriveConstants.kMaxSpeedMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared)
 						.setKinematics(DriveConstants.kDriveKinematics)
 						.addConstraint(DriveConstants.kVoltageConstraint);
+
 		public static final double kTurningMultiplier = .5;
+		public static final double kQuickStopThreshold = .2;
+		public static final double kQuickStopAlpha = .1;
 	}
 
 	public static final class FeederConstants {
@@ -183,11 +203,13 @@ public final class Constants {
 		public static final double kD = 0.0;
 		public static final double kIz = 0.0;
 		public static final double kFF = 0.000_20;
+		public static final double kS = 0;
+		public static final double kV = 0;
+		public static final double kA = 0;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kMaxRPM = 9600;
 		public static final double kRatio = 2.4;
-		public static final double kAllowedErrorPercent = 2;
+		public static final double kAllowedErrorPercent = 1;
 	}
 
 	public static final class HoodConstants {
@@ -240,13 +262,16 @@ public final class Constants {
 	}
 
 	public enum FieldLocation {
-		WALL(4100, 0, 0, 0), INITLINE(4800, 30, 0, 0), CLOSETRENCH(6000, 39, 0, 0), FARTRENCH(9000, 30, 0, 0);
+		WALL(4100, 0, 60, 0, 0), INITLINE(4800, 30, 40, 0, 0), CLOSETRENCH(6000, 39, 20, 0, 0),
+		FARTRENCH(9000, 30, 20, 0, 0);
 
-		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
+		public final double flywheelSetpoint, hoodSetpoint, carouselSetpoint, distanceGoal, turnGoal;
 
-		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double distanceGoal, double turnGoal) {
+		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double carouselSetpoint,
+				double distanceGoal, double turnGoal) {
 			this.flywheelSetpoint = flywheelSetpoint;
 			this.hoodSetpoint = hoodSetpoint;
+			this.carouselSetpoint = carouselSetpoint * CarouselConstants.kRatio;
 			this.distanceGoal = distanceGoal;
 			this.turnGoal = turnGoal;
 		}
@@ -260,6 +285,17 @@ public final class Constants {
 				}
 			}
 			return closestDistance;
+		}
+
+		public static final FieldLocation fromFlywheelSetpoint(double flywheelSetpoint) {
+			FieldLocation closestSetpoint = WALL;
+			for (FieldLocation fieldLocation : FieldLocation.values()) {
+				if (Math.abs(flywheelSetpoint - fieldLocation.flywheelSetpoint) < Math
+						.abs(flywheelSetpoint - closestSetpoint.flywheelSetpoint)) {
+					closestSetpoint = fieldLocation;
+				}
+			}
+			return closestSetpoint;
 		}
 	}
 }

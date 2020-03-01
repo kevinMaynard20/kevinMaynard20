@@ -1,7 +1,5 @@
 package frc.robot.commands.armcommands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
@@ -17,7 +15,7 @@ public class ExtendArmCommand extends CommandBase {
      */
     public ExtendArmCommand(ArmSubsystem armSubsystem) {
         m_armSubsystem = armSubsystem;
-        addRequirements(armSubsystem);
+        addRequirements(m_armSubsystem);
     }
 
     /**

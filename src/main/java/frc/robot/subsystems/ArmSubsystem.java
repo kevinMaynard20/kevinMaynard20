@@ -19,7 +19,7 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
     private final CANSparkMax m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
-    private double m_targetPosition = 0;
+    private double m_setPosition = 0;
 
     /**
      * Initializes a new instance of the {@link ArmSubsystem} class.
@@ -45,7 +45,7 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
         m_pidController.setSmartMotionMinOutputVelocity(ArmConstants.kMinVelocity, ArmConstants.kSlotID);
 
         resetEncoder();
-        setPosition(getPosition());
+        setPosition(0);
     }
 
     /**
@@ -66,22 +66,24 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
      * @return Whether the arm is at the setpoint
      */
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= ArmConstants.kAllowedError);
+        return (Math.abs(m_setPosition - getPosition()) <= ArmConstants.kAllowedError);
     }
 
     /**
      * @param speed Percent output of the arm
      */
     public void setPercentOutput(double speed) {
-        
-        m_motor.set(speed);
+        if (speed < 0 && getPosition() > ArmConstants.kMinPosition || speed > 0 && getPosition() < 0)
+            m_motor.set(speed);
+        else
+            m_motor.set(0);
     }
 
     /**
      * @param position Setpoint (motor rotations)
      */
     public void setPosition(double position) {
-        m_targetPosition = position;
+        m_setPosition = position;
         m_pidController.setReference(position, ControlType.kSmartMotion, ArmConstants.kSlotID);
     }
 

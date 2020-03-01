@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.FeederSubsystem;
 
 public class StopFeederCommand extends CommandBase {
-    
+
     private final FeederSubsystem m_feederSubsystem;
 
     /**
@@ -14,7 +14,7 @@ public class StopFeederCommand extends CommandBase {
      */
     public StopFeederCommand(FeederSubsystem feederSubsystem) {
         m_feederSubsystem = feederSubsystem;
-        addRequirements(feederSubsystem);
+        addRequirements(m_feederSubsystem);
     }
 
     /**

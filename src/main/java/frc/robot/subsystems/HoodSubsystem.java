@@ -19,7 +19,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     private final CANSparkMax m_motor = new CANSparkMax(HoodConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
-    private double m_targetPosition = 0;
+    private double m_setPosition = 0;
 
     /**
      * Initializes a new instance of the {@link HoodSubsystem} class.
@@ -45,7 +45,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
         m_pidController.setSmartMotionMinOutputVelocity(HoodConstants.kMinVelocity, HoodConstants.kSlotID);
 
         resetEncoder();
-        setSetpoint(getPosition());
+        setPosition(0);
     }
 
     /**
@@ -74,7 +74,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
      * @return Whether the hood is at the setpoint
      */
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= HoodConstants.kAllowedError);
+        return (Math.abs(m_setPosition - getPosition()) <= HoodConstants.kAllowedError);
     }
 
     /**
@@ -87,13 +87,13 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     /**
      * @param position Setpoint (motor rotations)
      */
-    public void setSetpoint(double position) {
-        m_targetPosition = position;
+    public void setPosition(double position) {
+        m_setPosition = position;
         m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
     }
 
     public void setSetpointDegrees(double degrees) {
-        setSetpoint(
+        setPosition(
                 (degrees - HoodConstants.kMinAngle) * ((HoodConstants.kMaxEncoderValue - HoodConstants.kMinEncoderValue)
                         / (HoodConstants.kMaxAngle - HoodConstants.kMinAngle)));
     }
@@ -103,7 +103,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
      */
     public void resetEncoder() {
         m_encoder.setPosition(0);
-        setSetpoint(0);
+        setPosition(0);
     }
 
     public void configureShuffleboard() {

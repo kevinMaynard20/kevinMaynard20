@@ -19,7 +19,7 @@ public class ClimberSubsystem extends SubsystemBase implements ShuffleboardLoggi
     private final CANSparkMax m_motor = new CANSparkMax(ClimberConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
-    private double m_targetPosition = 0;
+    private double m_setPosition = 0;
 
     /**
      * Initializes a new instance of the {@link ClimberSubsystem} class.
@@ -63,13 +63,13 @@ public class ClimberSubsystem extends SubsystemBase implements ShuffleboardLoggi
      * @return Whether the climber is at the setpoint
      */
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= ClimberConstants.kAllowedError);
+        return (Math.abs(-m_setPosition - getPosition()) <= ClimberConstants.kAllowedError);
     }
 
     /**
      * @param speed Percent output of the arm
      */
-    public void setPercentOutput(Double speed) {
+    public void setPercentOutput(double speed) {
         m_motor.set(speed);
     }
 
@@ -77,7 +77,7 @@ public class ClimberSubsystem extends SubsystemBase implements ShuffleboardLoggi
      * @param position Setpoint (motor rotations)
      */
     public void setPosition(double position) {
-        m_targetPosition = position;
+        m_setPosition = position;
         m_pidController.setReference(position, ControlType.kSmartMotion, ClimberConstants.kSlotID);
     }
 

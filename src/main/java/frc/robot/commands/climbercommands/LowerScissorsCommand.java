@@ -14,7 +14,7 @@ public class LowerScissorsCommand extends CommandBase {
      */
     public LowerScissorsCommand(ClimberSubsystem climberSubsystem) {
         m_climberSubsystem = climberSubsystem;
-        addRequirements(climberSubsystem);
+        addRequirements(m_climberSubsystem);
     }
 
     /**

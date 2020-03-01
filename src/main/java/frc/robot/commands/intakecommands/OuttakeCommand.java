@@ -15,7 +15,7 @@ public class OuttakeCommand extends CommandBase {
      */
     public OuttakeCommand(IntakeSubsystem intakeSubsystem) {
         m_intakeSubsystem = intakeSubsystem;
-        addRequirements(intakeSubsystem);
+        addRequirements(m_intakeSubsystem);
     }
 
     /**

@@ -23,7 +23,7 @@ public class LimelightShootSetupCommand extends CommandBase {
         m_flywheelSubsystem = flywheelSubsystem;
         m_hoodSubsystem = hoodSubsystem;
         m_limelightSubsystem = limelightSubsystem;
-        addRequirements(flywheelSubsystem, hoodSubsystem);
+        addRequirements(m_flywheelSubsystem, m_hoodSubsystem);
     }
 
     /**

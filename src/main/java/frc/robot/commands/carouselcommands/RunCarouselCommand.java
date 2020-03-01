@@ -1,9 +1,6 @@
 package frc.robot.commands.carouselcommands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.CarouselConstants;
 import frc.robot.subsystems.CarouselSubsystem;
 
 public class RunCarouselCommand extends CommandBase {
@@ -19,7 +16,7 @@ public class RunCarouselCommand extends CommandBase {
 	public RunCarouselCommand(CarouselSubsystem carouselSubsystem, double speed) {
 		m_carouselSubsystem = carouselSubsystem;
 		m_speed = speed;
-		addRequirements(carouselSubsystem);
+		addRequirements(m_carouselSubsystem);
 	}
 
 	/**

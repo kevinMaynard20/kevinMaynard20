@@ -39,7 +39,7 @@ public class LimelightCompleteCommand extends CommandBase {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_turnGoal = turnGoal;
         m_distanceGoal = distanceGoal;
-        addRequirements(drivetrainSubsystem);
+        addRequirements(m_drivetrainSubsystem);
     }
 
     /**
@@ -55,7 +55,7 @@ public class LimelightCompleteCommand extends CommandBase {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_turnGoal = fieldLocation.get().turnGoal;
         m_distanceGoal = fieldLocation.get().distanceGoal;
-        addRequirements(drivetrainSubsystem);
+        addRequirements(m_drivetrainSubsystem);
     }
 
     /**

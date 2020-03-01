@@ -15,7 +15,7 @@ public class RaiseScissorsCommand extends CommandBase {
      */
     public RaiseScissorsCommand(ClimberSubsystem climberSubsystem) {
         m_climberSubsystem = climberSubsystem;
-        addRequirements(climberSubsystem);
+        addRequirements(m_climberSubsystem);
     }
 
     /**

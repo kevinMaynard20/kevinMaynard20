@@ -26,7 +26,7 @@ public class ArcadeDriveCommand extends CommandBase {
 		m_speedStraight = speedStraight;
 		m_speedLeft = speedLeft;
 		m_speedRight = speedRight;
-		addRequirements(driveSubsystem);
+		addRequirements(m_driveSubsystem);
 	}
 
 	/**
@@ -35,8 +35,12 @@ public class ArcadeDriveCommand extends CommandBase {
 	public void execute() {
 		double speedStraight = Math.abs(m_speedStraight.get()) > ControllerConstants.kDeadzone ? m_speedStraight.get()
 				: 0;
-		double speedLeft = Math.abs(m_speedLeft.get()) > ControllerConstants.kTriggerDeadzone ? m_speedLeft.get() * DriveConstants.kTurningMultiplier : 0;
-		double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone ? m_speedRight.get() * DriveConstants.kTurningMultiplier : 0;
+		double speedLeft = Math.abs(m_speedLeft.get()) > ControllerConstants.kTriggerDeadzone
+				? m_speedLeft.get() * DriveConstants.kTurningMultiplier
+				: 0;
+		double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone
+				? m_speedRight.get() * DriveConstants.kTurningMultiplier
+				: 0;
 		m_driveSubsystem.arcadeDrive(speedStraight, speedLeft, speedRight);
 	}
 }

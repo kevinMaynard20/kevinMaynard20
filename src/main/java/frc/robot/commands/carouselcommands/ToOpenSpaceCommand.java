@@ -4,28 +4,27 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.subsystems.CarouselSubsystem;
 
-public class ResetCarouselCommand extends CommandBase {
+public class ToOpenSpaceCommand extends CommandBase {
 
     private final CarouselSubsystem m_carouselSubsystem;
 
     /**
-     * Run the carousel at normal speed
+     * Set the carousel to be ready for shooting whenever it is not running
      * 
      * @param carouselSubsystem {@link CarouselSubsystem} to be used.
      */
-    public ResetCarouselCommand(CarouselSubsystem carouselSubsystem) {
+    public ToOpenSpaceCommand(CarouselSubsystem carouselSubsystem) {
         m_carouselSubsystem = carouselSubsystem;
-        addRequirements(carouselSubsystem);
+        addRequirements(m_carouselSubsystem);
     }
 
     /**
      * Run the carousel
      */
     public void initialize() {
-        if (m_carouselSubsystem.atOpenSpace())
-            m_carouselSubsystem.setVelocity(CarouselConstants.kVelocity * CarouselConstants.kRatio);
-        else
-            m_carouselSubsystem.setVelocity(0);
+        double closestPosition = Math.min(m_carouselSubsystem.getPosition() % CarouselConstants.kRatio,
+                CarouselConstants.kRatio - (m_carouselSubsystem.getPosition() % CarouselConstants.kRatio));
+        m_carouselSubsystem.setPosition(closestPosition);
     }
 
     /**
