@@ -68,7 +68,7 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 		read();
 		write();
 		m_turnSpeed = -m_anglePid.calculate(m_xValue);
-		m_driveSpeed = m_distancePid.calculate(m_distance);
+		m_driveSpeed = -m_distancePid.calculate(m_distance);
 	}
 
 	/**
@@ -85,8 +85,6 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 		m_distance = 0;
 		for (int i : ArduinoConstants.kReadDistance)
 			m_distance += m_readData[i];
-		// m_xValue = m_readData[1] + m_readData[2] + m_readData[3];
-		// m_distance = m_readData[4] + m_readData[5] + m_readData[6];
 	}
 
 	/**

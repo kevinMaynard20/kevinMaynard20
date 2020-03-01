@@ -38,6 +38,10 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 		m_pidController.setOutputRange(CarouselConstants.kMinOutput, CarouselConstants.kMaxOutput);
 	}
 
+	public boolean atOpenSpace() {
+		return Math.abs((getPosition() % CarouselConstants.kRatio)) < CarouselConstants.kStartPositionTolerance;
+	}
+
 	/**
 	 * @return Position of encoder (rotations).
 	 */
@@ -58,7 +62,6 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	 * @param velocity Motor rpm.
 	 */
 	public void setVelocity(double velocity) {
-		System.out.println(velocity);
 		if (velocity == 0.0) {
 			m_motor.set(0);
 		} else {

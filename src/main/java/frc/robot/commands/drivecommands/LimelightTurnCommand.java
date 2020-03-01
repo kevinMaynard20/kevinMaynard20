@@ -37,6 +37,7 @@ public class LimelightTurnCommand extends CommandBase {
      * Set the tolerance and goal of the PID
      */
     public void initialize() {
+        m_limelightSubsystem.turnOnLight();
         m_turnController.setTolerance(LimelightConstants.kTurnTolerance);
         m_turnController.setGoal(m_turnGoal);
     }
@@ -57,6 +58,7 @@ public class LimelightTurnCommand extends CommandBase {
      * Stop the drivetrain at the end of the command
      */
     public void end(boolean interrputed) {
+        m_limelightSubsystem.turnOffLight();
         m_driveSubsystem.tankDriveVolts(0, 0);
     }
 

@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CarouselConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
@@ -30,17 +32,12 @@ import frc.robot.commands.carouselcommands.ReverseCarouselCommand;
 import frc.robot.commands.carouselcommands.RunCarouselCommand;
 import frc.robot.commands.climbercommands.DriveScissorsCommand;
 import frc.robot.commands.drivecommands.ArcadeDriveCommand;
-import frc.robot.commands.drivecommands.LimelightCompleteCommand;
 import frc.robot.commands.drivecommands.LimelightTurnCommand;
 import frc.robot.commands.drivecommands.PixyTargetCommand;
 import frc.robot.commands.drivecommands.TrajectoryFollow;
-import frc.robot.commands.feedercommands.AutoFeederCommand;
 import frc.robot.commands.feedercommands.FeederCommand;
 import frc.robot.commands.intakecommands.IntakeCommand;
 import frc.robot.commands.intakecommands.OuttakeCommand;
-import frc.robot.commands.shootcommands.DriveHoodCommand;
-import frc.robot.commands.shootcommands.HoodPositionCommand;
-import frc.robot.commands.shootcommands.LimelightShootSetupCommand;
 import frc.robot.commands.shootcommands.ShootSetupCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
@@ -83,6 +80,22 @@ public class RobotContainer {
 	}
 
 	private void configureButtonBindings() {
+		// new JoystickButton(m_driverController, Button.kLeftBumper).whenHeld(new
+		// ParallelCommandGroup(
+		// new LimelightCompleteCommand(m_limelightSubsystem, m_driveSubsystem,
+		// () -> FieldLocation.fromDistance(m_limelightSubsystem.getAverageDistance())),
+		// new RunCarouselCommand(m_carouselSubsystem), new
+		// ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem,
+		// () ->
+		// FieldLocation.fromDistance(m_limelightSubsystem.getAverageDistance()))));
+		// Automatic turn towards target and shoot setup not using setpoints
+		// new JoystickButton(m_driverController, Button.kTriangle)
+		// .whenHeld(new ParallelCommandGroup(new
+		// LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0),
+		// new RunCarouselCommand(m_carouselSubsystem),
+		// new LimelightShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem,
+		// m_limelightSubsystem)));
+
 		// Driver
 		// Drive
 		m_driveSubsystem.setDefaultCommand(
@@ -93,25 +106,22 @@ public class RobotContainer {
 		m_climberSubsystem.setDefaultCommand(
 				new DriveScissorsCommand(m_climberSubsystem, () -> -m_driverController.getRawAxis(Axis.kRightY)));
 
-		// Automatic travel to set distance and shoot setup
-		new JoystickButton(m_driverController, Button.kLeftBumper).whenHeld(new ParallelCommandGroup(
-				new LimelightCompleteCommand(m_limelightSubsystem, m_driveSubsystem,
-						() -> FieldLocation.fromDistance(m_limelightSubsystem.getAverageDistance())),
-				new RunCarouselCommand(m_carouselSubsystem), new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem,
-						() -> FieldLocation.fromDistance(m_limelightSubsystem.getAverageDistance()))));
-		// Automatic turn towards target and shoot setup not using setpoints
-		new JoystickButton(m_driverController, Button.kTriangle)
-				.whenHeld(new ParallelCommandGroup(new LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0),
-						new RunCarouselCommand(m_carouselSubsystem),
-						new LimelightShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, m_limelightSubsystem)));
+		// Turn to target
+		new POVButton(m_driverController, DPad.kUp)
+				.whenHeld(new LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0));
+		// Run carousel
+		new JoystickButton(m_driverController, Button.kLeftBumper).toggleWhenPressed(
+				new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kRatio));
+		new POVButton(m_driverController, DPad.kDown)
+				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem, 60 * CarouselConstants.kRatio));
 		// Shoot when other systems are ready
-		new JoystickButton(m_driverController, Button.kRightBumper).whenHeld(new ParallelCommandGroup(
-				new AutoFeederCommand(m_feederSubsystem, () -> m_carouselSubsystem.getPosition(),
-						() -> m_flywheelSubsystem.atSetpoint(), () -> m_hoodSubsystem.atSetpoint())));
+		new JoystickButton(m_driverController, Button.kRightBumper).whenHeld(new FeederCommand(m_feederSubsystem));
+
 		// Pixy ball follow
-		new JoystickButton(m_driverController, Button.kX)
-				.whenHeld(new ParallelCommandGroup(new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem),
-						new FasterCarouselCommand(m_carouselSubsystem), new IntakeCommand(m_intakeSubsystem)));
+		new JoystickButton(m_driverController, Button.kX).whenHeld(new ParallelCommandGroup(
+				new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem,
+						() -> -m_driverController.getRawAxis(Axis.kLeftY)),
+				new FasterCarouselCommand(m_carouselSubsystem), new IntakeCommand(m_intakeSubsystem)));
 
 		// Operator
 		// Intake
@@ -121,9 +131,14 @@ public class RobotContainer {
 		// Arm
 		new JoystickButton(m_operatorController, Button.kLeftBumper).whenPressed(new RetractArmCommand(m_armSubsystem));
 		new JoystickButton(m_operatorController, Button.kRightBumper).whenPressed(new ExtendArmCommand(m_armSubsystem));
+		new Trigger(() -> Math.abs((m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2
+				- (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2) > ControllerConstants.kDeadzone)
+						.whenActive(new DriveArmCommand(m_armSubsystem,
+								() -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2
+										- (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		m_armSubsystem.setDefaultCommand(
-				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2
-						- (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2));
+				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2
+						- (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// Carousel jostle
 		new JoystickButton(m_operatorController, Button.kTriangle)
 				.whenHeld(new ReverseCarouselCommand(m_carouselSubsystem));
@@ -150,19 +165,27 @@ public class RobotContainer {
 		// -m_driverController.getRawAxis(Axis.kLeftY),
 		// () -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
 		// () -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
-		new JoystickButton(m_driverController, Button.kRightBumper).whenPressed(new ExtendArmCommand(m_armSubsystem));
-		new JoystickButton(m_driverController, Button.kLeftBumper).whenPressed(new RetractArmCommand(m_armSubsystem));
-		new JoystickButton(m_driverController, Button.kTrackpad)
-				.whenHeld(new DriveHoodCommand(m_hoodSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY)));
-		new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_hoodSubsystem.resetEncoder());
-		new JoystickButton(m_driverController, Button.kX).whenHeld(new IntakeCommand(m_intakeSubsystem));
-		new JoystickButton(m_driverController, Button.kTriangle)
-				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem));
-		new JoystickButton(m_driverController, Button.kCircle).whenHeld(new FeederCommand(m_feederSubsystem));
-		new POVButton(m_driverController, DPad.kLeft)
-				.whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, 6000, 30));
-		new POVButton(m_driverController, DPad.kDown)
-				.whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, 0, 0));
+		// new JoystickButton(m_driverController, Button.kRightBumper).whenPressed(new
+		// ExtendArmCommand(m_armSubsystem));
+		// new JoystickButton(m_driverController, Button.kLeftBumper).whenPressed(new
+		// RetractArmCommand(m_armSubsystem));
+		// new JoystickButton(m_driverController, Button.kTrackpad)
+		// .whenHeld(new DriveHoodCommand(m_hoodSubsystem, () ->
+		// -m_driverController.getRawAxis(Axis.kLeftY)));
+		// new JoystickButton(m_driverController, Button.kOptions).whenPressed(() ->
+		// m_hoodSubsystem.resetEncoder());
+		// new JoystickButton(m_driverController, Button.kX).whenHeld(new
+		// IntakeCommand(m_intakeSubsystem));
+		// new JoystickButton(m_driverController, Button.kTriangle)
+		// .toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem));
+		// new JoystickButton(m_driverController, Button.kCircle).whenHeld(new
+		// FeederCommand(m_feederSubsystem));
+		// new POVButton(m_driverController, DPad.kLeft)
+		// .whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem,
+		// 6000, 30));
+		// new POVButton(m_driverController, DPad.kDown)
+		// .whenPressed(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, 0,
+		// 0));
 
 		// new JoystickButton(m_driverController, Button.kRightBumper).whenHeld(new
 		// ParallelCommandGroup(
@@ -184,10 +207,6 @@ public class RobotContainer {
 		// new JoystickButton(m_driverController, DPad.kRight).whenPressed(
 		// new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () ->
 		// FieldLocation.FARTRENCH));
-		// // Zero hood encoder
-		new JoystickButton(m_driverController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
-		// Zero carousel encoder
-		new JoystickButton(m_driverController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
 	}
 
 	public void configureShuffleboard() {

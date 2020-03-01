@@ -44,6 +44,7 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
         m_pidController.setSmartMotionAllowedClosedLoopError(HoodConstants.kAllowedError, HoodConstants.kSlotID);
         m_pidController.setSmartMotionMinOutputVelocity(HoodConstants.kMinVelocity, HoodConstants.kSlotID);
 
+        resetEncoder();
         setSetpoint(getPosition());
     }
 
@@ -89,6 +90,12 @@ public class HoodSubsystem extends SubsystemBase implements ShuffleboardLogging 
     public void setSetpoint(double position) {
         m_targetPosition = position;
         m_pidController.setReference(position, ControlType.kSmartMotion, HoodConstants.kSlotID, 0);
+    }
+
+    public void setSetpointDegrees(double degrees) {
+        setSetpoint(
+                (degrees - HoodConstants.kMinAngle) * ((HoodConstants.kMaxEncoderValue - HoodConstants.kMinEncoderValue)
+                        / (HoodConstants.kMaxAngle - HoodConstants.kMinAngle)));
     }
 
     /**

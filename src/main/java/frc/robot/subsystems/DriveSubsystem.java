@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -30,11 +31,15 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      */
     public DriveSubsystem() {
         m_masterLeft.setInverted(DriveConstants.kMasterLeftInvert);
+        m_masterLeft.setNeutralMode(NeutralMode.Brake);
         m_followerLeft.setInverted(DriveConstants.kFollowerLeftInvert);
+        m_followerLeft.setNeutralMode(NeutralMode.Brake);
         m_followerLeft.follow(m_masterLeft);
 
         m_masterRight.setInverted(DriveConstants.kMasterRightInvert);
+        m_masterRight.setNeutralMode(NeutralMode.Brake);
         m_followerRight.setInverted(DriveConstants.kFollowerRightInvert);
+        m_followerRight.setNeutralMode(NeutralMode.Brake);
         m_followerRight.follow(m_masterRight);
 
         resetEncoders();

@@ -42,9 +42,9 @@ public class AutoFeederCommand extends CommandBase {
 	public void execute() {
 		if (m_started && m_flywheelReady.get() && m_hoodReady.get())
 			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
-		else if (m_carouselPosition.get() % CarouselConstants.kRatio < FeederConstants.kStartPositionTolerance
+		else if (m_carouselPosition.get() % CarouselConstants.kRatio < CarouselConstants.kStartPositionTolerance
 				|| m_carouselPosition.get() % CarouselConstants.kRatio > CarouselConstants.kRatio
-						- FeederConstants.kStartPositionTolerance)
+						- CarouselConstants.kStartPositionTolerance)
 			m_started = true;
 	}
 

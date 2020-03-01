@@ -15,7 +15,7 @@ public class DriveArmCommand extends CommandBase {
      * Drive the hood using percent output
      * 
      * @param armSubsystem The hood subsystem to be used
-     * @param speed         Percent output supplier
+     * @param speed        Percent output supplier
      */
     public DriveArmCommand(ArmSubsystem armSubsystem, Supplier<Double> speed) {
         m_armSubsystem = armSubsystem;
@@ -27,13 +27,14 @@ public class DriveArmCommand extends CommandBase {
      * Update the motor output
      */
     public void execute() {
-        m_armSubsystem.setPercentOutput(Math.abs(m_speed.get()) > ControllerConstants.kTriggerDeadzone ? m_speed.get() : 0);
+        double speed = Math.abs(m_speed.get()) > ControllerConstants.kTriggerDeadzone ? m_speed.get() : 0;
+        m_armSubsystem.setPercentOutput(speed);
     }
 
     /**
      * Set the setposition to the current position when the command ends
      */
     public void end(boolean interrupted) {
-        m_armSubsystem.setPosition(m_armSubsystem.getPosition());
+        m_armSubsystem.setPercentOutput(0);
     }
 }

@@ -12,7 +12,7 @@ public final class Constants {
 	public static final class ArduinoConstants {
 		public static final int kAddress = 0x1;
 
-		public static final double kAngleP = 0.002;
+		public static final double kAngleP = 0.003;
 		public static final double kAngleI = 0.0;
 		public static final double kAngleD = 0.0002;
 		public static final int kAngleSetpoint = 157;
@@ -45,8 +45,9 @@ public final class Constants {
 		public static final double kMaxAcel = 20_000;
 		public static final double kMaxVelocity = 5_000;
 		public static final double kAllowedError = 0.1;
-		public static final double kOutPosition = -45;
+		public static final double kOutPosition = -46;
 		public static final double kInPosition = -5;
+		public static final double kMinPosition = -52;
 	}
 
 	public static final class CarouselConstants {
@@ -63,6 +64,7 @@ public final class Constants {
 		public static final double kVelocity = 20;
 		public static final double kIntakeVelocity = 30;
 		public static final double kRatio = 140;
+		public static final double kStartPositionTolerance = 2.5;
 	}
 
 	public static final class ClimberConstants {
@@ -78,7 +80,7 @@ public final class Constants {
 		public static final double kMinOutput = -1;
 		public static final int kSlotID = 0;
 		public static final double kMinVelocity = 0;
-		public static final double kMaxAcel = 20_000;
+		public static final double kMaxAcel = 40_000;
 		public static final double kMaxVelocity = 10_000;
 		public static final double kAllowedError = 0.2;
 		public static final double kTopSetpoint = -1;
@@ -159,13 +161,13 @@ public final class Constants {
 				DriveConstants.kMaxSpeedMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared)
 						.setKinematics(DriveConstants.kDriveKinematics)
 						.addConstraint(DriveConstants.kVoltageConstraint);
+		public static final double kTurningMultiplier = .5;
 	}
 
 	public static final class FeederConstants {
 		public static final boolean kInvert = false;
 		public static final int kMotorPort = 1;
 		public static final double kSpeed = 1.0;
-		public static final double kStartPositionTolerance = 2.5;
 	}
 
 	public static final class FlywheelConstants {
@@ -176,11 +178,11 @@ public final class Constants {
 		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 65;
 		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kP = 0.0;
+		public static final double kP = 0.002;
 		public static final double kI = 0;
 		public static final double kD = 0.0;
 		public static final double kIz = 0.0;
-		public static final double kFF = 0.000_22;
+		public static final double kFF = 0.000_20;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
 		public static final double kMaxRPM = 9600;
@@ -231,13 +233,14 @@ public final class Constants {
 	}
 
 	public static final class LoggingConstants {
-		//Arduino, Arm, Carousel, Climber, Drive, Feeder, Flywheel, Hood, Intake, Limelight
-		public static final boolean[] kSubsystems = { false, true, false, false, false, false, false, false, false,
+		// Arduino, Arm, Carousel, Climber, Drive, Feeder, Flywheel, Hood, Intake,
+		// Limelight
+		public static final boolean[] kSubsystems = { false, true, false, false, true, false, true, true, false,
 				false };
 	}
 
 	public enum FieldLocation {
-		WALL(1000, 0, 0, 0), INITLINE(1000, 0, 0, 0), CLOSETRENCH(1000, 0, 0, 0), FARTRENCH(1000, 0, 0, 0);
+		WALL(4100, 0, 0, 0), INITLINE(4800, 30, 0, 0), CLOSETRENCH(6000, 39, 0, 0), FARTRENCH(9000, 30, 0, 0);
 
 		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
 
