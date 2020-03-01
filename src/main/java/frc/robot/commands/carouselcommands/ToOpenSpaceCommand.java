@@ -1,5 +1,6 @@
 package frc.robot.commands.carouselcommands;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.subsystems.CarouselSubsystem;
@@ -7,6 +8,7 @@ import frc.robot.subsystems.CarouselSubsystem;
 public class ToOpenSpaceCommand extends CommandBase {
 
     private final CarouselSubsystem m_carouselSubsystem;
+    private final PIDController m_pidController = new PIDController(500, .2, .1);
 
     /**
      * Set the carousel to be ready for shooting whenever it is not running
@@ -18,13 +20,15 @@ public class ToOpenSpaceCommand extends CommandBase {
         addRequirements(m_carouselSubsystem);
     }
 
-    /**
-     * Run the carousel
-     */
     public void initialize() {
-        double closestPosition = Math.min(m_carouselSubsystem.getPosition() % CarouselConstants.kRatio,
-                CarouselConstants.kRatio - (m_carouselSubsystem.getPosition() % CarouselConstants.kRatio));
-        m_carouselSubsystem.setPosition(closestPosition);
+        m_pidController.setSetpoint(
+                Math.ceil(m_carouselSubsystem.getPosition() / CarouselConstants.kRatio) * CarouselConstants.kRatio);
+    }
+
+    public void execute() {
+        double speed = m_pidController.calculate(m_carouselSubsystem.getPosition());
+        speed = speed > 20 * CarouselConstants.kRatio ? 20 * CarouselConstants.kRatio : speed;
+        m_carouselSubsystem.setVelocity(speed);
     }
 
     /**

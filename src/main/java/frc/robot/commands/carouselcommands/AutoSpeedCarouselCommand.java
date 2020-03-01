@@ -3,6 +3,7 @@ package frc.robot.commands.carouselcommands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.CarouselConstants;
 import frc.robot.Constants.FieldLocation;
 import frc.robot.subsystems.CarouselSubsystem;
 
@@ -23,7 +24,12 @@ public class AutoSpeedCarouselCommand extends CommandBase {
     }
 
     public void execute() {
-        m_carouselSubsystem.setVelocity(FieldLocation.fromFlywheelSetpoint(m_flywheelSetpoint.get()).carouselSetpoint);
+        double velocity = 0;
+        if (m_flywheelSetpoint.get() > 0)
+            velocity = FieldLocation.fromFlywheelSetpoint(m_flywheelSetpoint.get()).carouselSetpoint;
+        else
+            velocity = CarouselConstants.kVelocity;
+        m_carouselSubsystem.setVelocity(velocity * CarouselConstants.kRatio);
     }
 
     /**

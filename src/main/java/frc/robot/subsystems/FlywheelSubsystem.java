@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 import frc.robot.ShuffleboardLogging;
@@ -24,8 +25,9 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
             MotorType.kBrushless);
     private final CANPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
     private final CANEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
-    private final SimpleMotorFeedforward m_feedForward = new SimpleMotorFeedforward(FlywheelConstants.kS,
-            FlywheelConstants.kV, FlywheelConstants.kA);
+    // private final SimpleMotorFeedforward m_feedForward = new
+    // SimpleMotorFeedforward(FlywheelConstants.kS,
+    // FlywheelConstants.kV, FlywheelConstants.kA);
     private double m_setVelocity;
 
     /**
@@ -59,11 +61,11 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
     }
 
     public void periodic() {
+        SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
         if (m_setVelocity == 0) {
             m_neoFlywheelMaster.stopMotor();
         } else {
-            m_neoController.setReference(m_setVelocity / FlywheelConstants.kRatio, ControlType.kVelocity, 0,
-                    m_feedForward.calculate(m_setVelocity));
+            m_neoController.setReference(m_setVelocity / FlywheelConstants.kRatio, ControlType.kVelocity, 0);
         }
     }
 
@@ -95,7 +97,7 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
      */
     public boolean atSetpoint() {
         return getSetpoint() > 0
-                ? (Math.abs(getVelocity() - getSetpoint()) / getSetpoint())
+                ? (Math.abs(getVelocity() - getSetpoint() / FlywheelConstants.kRatio) / getSetpoint())
                         * 100 < FlywheelConstants.kAllowedErrorPercent
                 : false;
     }

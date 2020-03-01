@@ -11,6 +11,7 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.ShuffleboardLogging;
@@ -49,6 +50,10 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 		setPosition(0);
 	}
 
+	public void periodic() {
+		SmartDashboard.putNumber("Carousel Velocity", m_encoder.getVelocity());
+	}
+
 	/**
 	 * @return Position of encoder (rotations).
 	 */
@@ -64,8 +69,9 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	}
 
 	public boolean atOpenSpace() {
-		return getPosition() % CarouselConstants.kRatio < CarouselConstants.kAllowedError || CarouselConstants.kRatio
-				- (getPosition() % CarouselConstants.kRatio) < CarouselConstants.kAllowedError;
+		return getPosition() % CarouselConstants.kRatio < CarouselConstants.kStartPositionTolerance
+				|| CarouselConstants.kRatio
+						- (getPosition() % CarouselConstants.kRatio) < CarouselConstants.kStartPositionTolerance;
 	}
 
 	public void setPosition(double position) {
@@ -119,6 +125,8 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 		shuffleboardTab.addBoolean("At Open Space", () -> atOpenSpace()).withSize(1, 1).withPosition(1, 2)
 				.withWidget(BuiltInWidgets.kTextView);
 		shuffleboardTab.addNumber("Current", () -> m_motor.getOutputCurrent()).withSize(1, 1).withPosition(2, 2)
+				.withWidget(BuiltInWidgets.kTextView);
+		shuffleboardTab.addNumber("Position", () -> m_encoder.getPosition()).withSize(1, 1).withPosition(3, 2)
 				.withWidget(BuiltInWidgets.kTextView);
 	}
 }

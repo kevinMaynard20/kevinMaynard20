@@ -30,8 +30,11 @@ public class CurvatureDriveCommand extends CommandBase {
         double speedLeft = Math.abs(m_speedLeft.get()) > ControllerConstants.kTriggerDeadzone ? m_speedLeft.get() : 0;
         double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone ? m_speedRight.get()
                 : 0;
-        boolean isQuickTurn = Math.abs(speedLeft) == 0 && Math.abs(speedRight) == 0;
-        curvatureDrive(speedStraight, speedLeft - speedRight, isQuickTurn);
+        boolean isQuickTurn = Math.abs(speedStraight) == 0;
+        System.out.println("Left: "+ speedLeft);
+        System.out.println("Right: "+ speedRight);
+        System.out.println("Quick: " + isQuickTurn);
+        curvatureDrive(speedStraight, speedRight - speedLeft, isQuickTurn);
     }
 
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
