@@ -23,7 +23,7 @@ public class LimelightCompleteCommand extends CommandBase {
                     DriveConstants.kMaxRotSpeedMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared));
     private final ProfiledPIDController m_distanceController = new ProfiledPIDController(LimelightConstants.kDisP,
             LimelightConstants.kDisI, LimelightConstants.kDisD, new Constraints(DriveConstants.kMaxSpeedMetersPerSecond,
-                    DriveConstants.kMaxAccelerationMetersPerSecondSquared));;
+                    DriveConstants.kMaxAccelerationMetersPerSecondSquared));
 
     /**
      * Use the limelight to both reach a desired distance and angle to the powerport
@@ -39,7 +39,7 @@ public class LimelightCompleteCommand extends CommandBase {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_turnGoal = turnGoal;
         m_distanceGoal = distanceGoal;
-        addRequirements(drivetrainSubsystem);
+        addRequirements(m_drivetrainSubsystem);
     }
 
     /**
@@ -55,7 +55,7 @@ public class LimelightCompleteCommand extends CommandBase {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_turnGoal = fieldLocation.get().turnGoal;
         m_distanceGoal = fieldLocation.get().distanceGoal;
-        addRequirements(drivetrainSubsystem);
+        addRequirements(m_drivetrainSubsystem);
     }
 
     /**

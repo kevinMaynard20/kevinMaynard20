@@ -6,7 +6,7 @@
 #include "PixyCam.h"
 
 void setup() {
-  Serial.begin(9600);
+//  Serial.begin(9600);
   I2C::initialize(0x1);
   LEDStrip::initialize(6, 144, 15);
   PixyCam::initialize();

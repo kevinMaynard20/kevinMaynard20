@@ -9,17 +9,19 @@ import frc.robot.subsystems.ArmSubsystem;
 public class DriveArmCommand extends CommandBase {
 
     private final ArmSubsystem m_armSubsystem;
-    private final Supplier<Double> m_speed;
+    private final Supplier<Double> m_reverseSpeed, m_forwardSpeed;
 
     /**
      * Drive the hood using percent output
      * 
      * @param armSubsystem The hood subsystem to be used
-     * @param speed         Percent output supplier
+     * @param reverseSpeed Supplier of reverse speed (retract)
+     * @param forwardSpeed Supplier of forward speed (extend)
      */
-    public DriveArmCommand(ArmSubsystem armSubsystem, Supplier<Double> speed) {
+    public DriveArmCommand(ArmSubsystem armSubsystem, Supplier<Double> reverseSpeed, Supplier<Double> forwardSpeed) {
         m_armSubsystem = armSubsystem;
-        m_speed = speed;
+        m_reverseSpeed = reverseSpeed;
+        m_forwardSpeed = forwardSpeed;
         addRequirements(m_armSubsystem);
     }
 
@@ -27,13 +29,19 @@ public class DriveArmCommand extends CommandBase {
      * Update the motor output
      */
     public void execute() {
-        m_armSubsystem.setPercentOutput(Math.abs(m_speed.get()) > ControllerConstants.kTriggerDeadzone ? m_speed.get() : 0);
+        double reverseSpeed = Math.abs(m_reverseSpeed.get()) > ControllerConstants.kTriggerDeadzone
+                ? m_reverseSpeed.get()
+                : 0;
+        double forwardSpeed = Math.abs(m_forwardSpeed.get()) > ControllerConstants.kTriggerDeadzone
+                ? m_forwardSpeed.get()
+                : 0;
+        m_armSubsystem.setPercentOutput(reverseSpeed - forwardSpeed);
     }
 
     /**
-     * Set the setposition to the current position when the command ends
+     * Stop the arm when the command ends
      */
     public void end(boolean interrupted) {
-        m_armSubsystem.setPosition(m_armSubsystem.getPosition());
+        m_armSubsystem.setPercentOutput(0);
     }
 }

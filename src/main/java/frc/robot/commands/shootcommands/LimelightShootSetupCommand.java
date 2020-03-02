@@ -23,7 +23,7 @@ public class LimelightShootSetupCommand extends CommandBase {
         m_flywheelSubsystem = flywheelSubsystem;
         m_hoodSubsystem = hoodSubsystem;
         m_limelightSubsystem = limelightSubsystem;
-        addRequirements(flywheelSubsystem, hoodSubsystem);
+        addRequirements(m_flywheelSubsystem, m_hoodSubsystem);
     }
 
     /**
@@ -38,6 +38,6 @@ public class LimelightShootSetupCommand extends CommandBase {
      * Stop the flywheel after the balls are shot
      */
     public void end(boolean interrupted) {
-        m_flywheelSubsystem.setSetpoint(0);
+        m_flywheelSubsystem.setVelocity(0);
     }
 }

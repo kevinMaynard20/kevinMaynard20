@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class ArcadeDriveCommand extends CommandBase {
@@ -25,7 +26,7 @@ public class ArcadeDriveCommand extends CommandBase {
 		m_speedStraight = speedStraight;
 		m_speedLeft = speedLeft;
 		m_speedRight = speedRight;
-		addRequirements(driveSubsystem);
+		addRequirements(m_driveSubsystem);
 	}
 
 	/**
@@ -35,7 +36,12 @@ public class ArcadeDriveCommand extends CommandBase {
 		double speedStraight = Math.abs(m_speedStraight.get()) > ControllerConstants.kDeadzone ? m_speedStraight.get()
 				: 0;
 		double speedLeft = Math.abs(m_speedLeft.get()) > ControllerConstants.kTriggerDeadzone ? m_speedLeft.get() : 0;
-		double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone ? m_speedRight.get() : 0;
+		double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone ? m_speedRight.get()
+				: 0;
+		if (speedStraight != 0) {
+			speedLeft *= DriveConstants.kTurningMultiplier;
+			speedRight *= DriveConstants.kTurningMultiplier;
+		}
 		m_driveSubsystem.arcadeDrive(speedStraight, speedLeft, speedRight);
 	}
 }

@@ -12,7 +12,7 @@ public final class Constants {
 	public static final class ArduinoConstants {
 		public static final int kAddress = 0x1;
 
-		public static final double kAngleP = 0.002;
+		public static final double kAngleP = 0.003;
 		public static final double kAngleI = 0.0;
 		public static final double kAngleD = 0.0002;
 		public static final int kAngleSetpoint = 157;
@@ -30,43 +30,62 @@ public final class Constants {
 	}
 
 	public static final class ArmConstants {
-		public static final int kMotorPort = 0;
+		public static final int kMotorPort = 10;
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
-		public static final double kP = 0.000_1;
-		public static final double kI = 0.0;
-		public static final double kD = 0.0;
-		public static final double kIz = 0;
-		public static final double kFF = 0;
-		public static final double kMaxOutput = 1;
-		public static final double kMinOutput = -1;
-		public static final int kSlotID = 0;
-		public static final double kMinVelocity = 0;
-		public static final double kMaxAcel = 20_000;
-		public static final double kMaxVelocity = 10_000;
-		public static final double kAllowedError = 0.2;
-		public static final double kOutPosition = -1;
-		public static final double kInPosition = -1;
-	}
-
-	public static final class CarouselConstants {
-		public static final int kMotorPort = 6;
-		public static final boolean kInvert = false;
-		public static final int kSmartCurrentLimit = 20;
-		public static final double kP = 0.000_005;
+		public static final double kP = .0002;
 		public static final double kI = 0;
 		public static final double kD = 0;
 		public static final double kIz = 0;
-		public static final double kFF = 0.0001;
+		public static final double kFF = 0;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 10_000;
+		public static final double kMaxVelocity = 5_000;
+		public static final double kAllowedError = 0.1;
+		public static final double kOutPosition = -46;
+		public static final double kInPosition = -5;
+		public static final double kMinPosition = -52;
+		public static final double kBounceUpPosition = -40;
+		public static final double kBounceDownPosition = -50;
+		public static final double kBounceTime = .4;
+	}
+
+	public static final class CarouselConstants {
+		public static final int kMotorPort = 14;
+		public static final boolean kInvert = true;
+		public static final int kSmartCurrentLimit = 20;
+
+		public static final double kVelP = 0.000001;
+		public static final double kVelI = 0;
+		public static final double kVelD = 0;
+		public static final double kVelIz = 0;
+		public static final double kVelFF = 0.000095;
+
+		public static final double kPosP = 0.00010;
+		public static final double kPosI = 0;
+		public static final double kPosD = 0;
+		public static final double kPosIz = 0;
+		public static final double kPosFF = 0.0;
+
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -1;
+		public static final int kSlotID = 0;
+		public static final double kMinVelocity = 0;
+		public static final double kMaxAcel = 5_000;
+		public static final double kMaxVelocity = 8_000;
+		public static final double kAllowedError = 0.1;
 		public static final double kVelocity = 20;
 		public static final double kIntakeVelocity = 30;
-		public static final double kRatio = 300;
+		public static final double kJostleVelocity = -65;
+		public static final double kRatio = 140;
+		public static final double kStartPositionTolerance = 5;
 	}
 
 	public static final class ClimberConstants {
-		public static final int kMotorPort = 6;
+		public static final int kMotorPort = 8; // or 9?
 		public static final boolean kInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
@@ -78,7 +97,7 @@ public final class Constants {
 		public static final double kMinOutput = -1;
 		public static final int kSlotID = 0;
 		public static final double kMinVelocity = 0;
-		public static final double kMaxAcel = 20_000;
+		public static final double kMaxAcel = 40_000;
 		public static final double kMaxVelocity = 10_000;
 		public static final double kAllowedError = 0.2;
 		public static final double kTopSetpoint = -1;
@@ -123,15 +142,15 @@ public final class Constants {
 	}
 
 	public static final class DriveConstants {
-		public static final int kMasterLeftPort = 10;
+		public static final int kMasterLeftPort = 4;
 		public static final InvertType kMasterLeftInvert = InvertType.None;
-		public static final int kFollowerLeftPort = 9;
+		public static final int kFollowerLeftPort = 3;
 		public static final InvertType kFollowerLeftInvert = InvertType.None;
 
-		public static final int kMasterRightPort = 4;
-		public static final InvertType kMasterRightInvert = InvertType.None;
-		public static final int kFollowerRightPort = 3;
-		public static final InvertType kFollowerRightInvert = InvertType.None;
+		public static final int kMasterRightPort = 5;
+		public static final InvertType kMasterRightInvert = InvertType.InvertMotorOutput;
+		public static final int kFollowerRightPort = 6;
+		public static final InvertType kFollowerRightInvert = InvertType.InvertMotorOutput;
 
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
 		public static final boolean kGyroReversed = true;
@@ -159,38 +178,43 @@ public final class Constants {
 				DriveConstants.kMaxSpeedMetersPerSecond, DriveConstants.kMaxAccelerationMetersPerSecondSquared)
 						.setKinematics(DriveConstants.kDriveKinematics)
 						.addConstraint(DriveConstants.kVoltageConstraint);
+
+		public static final double kTurningMultiplier = .55;
+		public static final double kQuickStopThreshold = .2;
+		public static final double kQuickStopAlpha = .1;
 	}
 
 	public static final class FeederConstants {
-		public static final int kMotorPort = 7;
 		public static final boolean kInvert = false;
-		public static final double kSpeed = 1.0;
-		public static final double kStartPositionTolerance = 2.5;
+		public static final int kMotorPort = 1;
+		public static final double kSpeed = 0.75;
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kMasterPort = 22;
-		public static final int kFollowerPort = 6;
+		public static final int kMasterPort = 11;
+		public static final int kFollowerPort = 13;
 		public static final boolean kMasterInvert = false;
-		public static final boolean kFollowerOpposeMaster = true;
+		public static final boolean kFollowerInvert = true;
 		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 65;
 		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kP = 0.000_375;
+		public static final double kP = 0.002;
 		public static final double kI = 0;
-		public static final double kD = 0.000_03;
+		public static final double kD = 0.0;
 		public static final double kIz = 0.0;
-		public static final double kFF = 0.000_26;
+		public static final double kFF = 0.000_20;
+		public static final double kS = 0.217;
+		public static final double kV = 0.0583;
+		public static final double kA = 0.0787;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = -1;
-		public static final double kMaxRPM = 9600;
 		public static final double kRatio = 2.4;
 		public static final double kAllowedErrorPercent = 2;
 	}
 
 	public static final class HoodConstants {
-		public static final int kMotorPort = 5;
-		public static final boolean kInvert = false;
+		public static final int kMotorPort = 12;
+		public static final boolean kInvert = true;
 		public static final int kSmartCurrentLimit = 60;
 		public static final double kP = 0.000_1;
 		public static final double kI = 0.0;
@@ -211,9 +235,9 @@ public final class Constants {
 	}
 
 	public static final class IntakeConstants {
-		public static final int kMotorPort = 0;
-		public static final boolean kInvert = false;
-		public static final double kSpeed = 1.0;
+		public static final boolean kInvert = true;
+		public static final int kMotorPort = 2;
+		public static final double kPercentOutput = 0.5;
 	}
 
 	public static final class LimelightConstants {// TODO - Update PID and camera values
@@ -230,14 +254,28 @@ public final class Constants {
 		public static final double kTargetHeight = 89.75;
 	}
 
+	public static final class LoggingConstants {
+		// Arduino, Arm, Carousel, Climber, Drive, Feeder, Flywheel, Hood, Intake,
+		// Limelight
+		public static final boolean[] kSubsystems = { false, false, false, false, false, false, true, true, false,
+				false };
+	}
+
 	public enum FieldLocation {
-		WALL(-1, -1, -1, -1), INITLINE(-1, -1, -1, -1), CLOSETRENCH(-1, -1, -1, -1), FARTRENCH(-1, -1, -1, -1);
+		// WALL(4100, 0, 60, 0, 0), INITLINE(4800, 30, 40, 0, 0), CLOSETRENCH(5900, 40,
+		// 20, 0, 0),
+		// FARTRENCH(9000, 30, 20, 0, 0);
+		
+		WALL(4100, 3, 60, 0, 0), TWOFEET(2850, 7, 20, 0, 0), INITLINE(3300, 15, 20, 0, 0),
+		CLOSETRENCH(4700, 32, 20, 0, 0), FARTRENCH(6500, 40, 20, 0, 0);
 
-		public final double flywheelSetpoint, hoodSetpoint, distanceGoal, turnGoal;
+		public final double flywheelSetpoint, hoodSetpoint, carouselSetpoint, distanceGoal, turnGoal;
 
-		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double distanceGoal, double turnGoal) {
+		private FieldLocation(double flywheelSetpoint, double hoodSetpoint, double carouselSetpoint,
+				double distanceGoal, double turnGoal) {
 			this.flywheelSetpoint = flywheelSetpoint;
 			this.hoodSetpoint = hoodSetpoint;
+			this.carouselSetpoint = carouselSetpoint * CarouselConstants.kRatio;
 			this.distanceGoal = distanceGoal;
 			this.turnGoal = turnGoal;
 		}
@@ -251,6 +289,17 @@ public final class Constants {
 				}
 			}
 			return closestDistance;
+		}
+
+		public static final FieldLocation fromFlywheelSetpoint(double flywheelSetpoint) {
+			FieldLocation closestSetpoint = WALL;
+			for (FieldLocation fieldLocation : FieldLocation.values()) {
+				if (Math.abs(flywheelSetpoint - fieldLocation.flywheelSetpoint) < Math
+						.abs(flywheelSetpoint - closestSetpoint.flywheelSetpoint)) {
+					closestSetpoint = fieldLocation;
+				}
+			}
+			return closestSetpoint;
 		}
 	}
 }

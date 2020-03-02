@@ -27,13 +27,13 @@ public class DriveHoodCommand extends CommandBase {
      * Update the motor output
      */
     public void execute() {
-        m_hoodSubsystem.setPercentOutput(Math.abs(m_speed.get()) > ControllerConstants.kDeadzone ? m_speed.get() : 0);
+        m_hoodSubsystem.setPercentOutput(m_speed.get());
     }
 
     /**
      * Set the setposition to the current position when the command ends
      */
     public void end(boolean interrupted) {
-        m_hoodSubsystem.setSetpoint(m_hoodSubsystem.getPosition());
+        m_hoodSubsystem.setPosition(m_hoodSubsystem.getPosition());
     }
 }

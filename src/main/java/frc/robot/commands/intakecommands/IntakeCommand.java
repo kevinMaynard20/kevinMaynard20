@@ -15,14 +15,14 @@ public class IntakeCommand extends CommandBase {
      */
     public IntakeCommand(IntakeSubsystem intakeSubsystem) {
         m_intakeSubsystem = intakeSubsystem;
-        addRequirements(intakeSubsystem);
+        addRequirements(m_intakeSubsystem);
     }
 
     /**
      * Run the motor forwards
      */
     public void initialize() {
-        m_intakeSubsystem.setSpeed(IntakeConstants.kSpeed);
+        m_intakeSubsystem.setSpeed(IntakeConstants.kPercentOutput);
     }
 
     /**

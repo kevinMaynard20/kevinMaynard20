@@ -15,7 +15,7 @@ public class RetractArmCommand extends CommandBase {
      */
     public RetractArmCommand(ArmSubsystem armSubsystem) {
         m_armSubsystem = armSubsystem;
-        addRequirements(armSubsystem);
+        addRequirements(m_armSubsystem);
     }
 
     /**

@@ -7,15 +7,20 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.ShuffleboardLogging;
 
-public class ArmSubsystem extends SubsystemBase {
+public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
     private final CANSparkMax m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
-    private double m_targetPosition = 0;
+    private double m_setPosition = 0;
 
     /**
      * Initializes a new instance of the {@link ArmSubsystem} class.
@@ -39,6 +44,13 @@ public class ArmSubsystem extends SubsystemBase {
         m_pidController.setSmartMotionMaxVelocity(ArmConstants.kMaxVelocity, ArmConstants.kSlotID);
         m_pidController.setSmartMotionAllowedClosedLoopError(ArmConstants.kAllowedError, ArmConstants.kSlotID);
         m_pidController.setSmartMotionMinOutputVelocity(ArmConstants.kMinVelocity, ArmConstants.kSlotID);
+
+        resetEncoder();
+        setPosition(0);
+    }
+
+    public void periodic() {
+        SmartDashboard.putNumber("Arm position", getPosition());
     }
 
     /**
@@ -59,21 +71,24 @@ public class ArmSubsystem extends SubsystemBase {
      * @return Whether the arm is at the setpoint
      */
     public boolean atSetpoint() {
-        return (Math.abs(getPosition() - m_targetPosition) <= ArmConstants.kAllowedError);
+        return (Math.abs(m_setPosition - getPosition()) <= ArmConstants.kAllowedError);
     }
 
     /**
      * @param speed Percent output of the arm
      */
-    public void setPercentOutput(Double speed) {
-        m_motor.set(speed);
+    public void setPercentOutput(double speed) {
+        if (speed < 0 && getPosition() < ArmConstants.kMinPosition)
+            m_motor.set(0);
+        else
+            m_motor.set(speed);
     }
 
     /**
      * @param position Setpoint (motor rotations)
      */
     public void setPosition(double position) {
-        m_targetPosition = position;
+        m_setPosition = position;
         m_pidController.setReference(position, ControlType.kSmartMotion, ArmConstants.kSlotID);
     }
 
@@ -82,5 +97,16 @@ public class ArmSubsystem extends SubsystemBase {
      */
     public void resetEncoder() {
         m_encoder.setPosition(0);
+        setPosition(0);
+    }
+
+    public void configureShuffleboard() {
+        ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Arm");
+        shuffleboardTab.addNumber("Encoder Position", () -> getPosition()).withSize(4, 2).withPosition(0, 0)
+                .withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity()).withSize(4, 2).withPosition(4, 0)
+                .withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(0, 2)
+                .withWidget(BuiltInWidgets.kBooleanBox);
     }
 }

@@ -27,7 +27,7 @@ public class ShootSetupCommand extends CommandBase {
         m_hoodSubsystem = hoodSubsystem;
         m_flywheelSetpoint = flywheelSetpoint;
         m_hoodSetpoint = hoodSetpoint;
-        addRequirements(flywheelSubsystem, hoodSubsystem);
+        addRequirements(m_flywheelSubsystem, m_hoodSubsystem);
     }
 
     /**
@@ -43,21 +43,22 @@ public class ShootSetupCommand extends CommandBase {
         m_hoodSubsystem = hoodSubsystem;
         m_flywheelSetpoint = fieldLocation.get().flywheelSetpoint;
         m_hoodSetpoint = fieldLocation.get().hoodSetpoint;
+        addRequirements(m_flywheelSubsystem, m_hoodSubsystem);
     }
 
     /**
      * Set the setpoints of the flywheel and hood
      */
     public void initialize() {
-        m_flywheelSubsystem.setSetpoint(m_flywheelSetpoint);
-        m_hoodSubsystem.setSetpoint(m_hoodSetpoint);
+        m_flywheelSubsystem.setVelocity(m_flywheelSetpoint);
+        m_hoodSubsystem.setPosition(m_hoodSetpoint);
     }
 
     /**
      * Stop the flywheel and reset the hood at the end of the command
      */
     public void end(boolean interrupted) {
-        m_flywheelSubsystem.setSetpoint(0);
-        m_hoodSubsystem.setSetpoint(0);
+        m_flywheelSubsystem.setVelocity(0);
+        m_hoodSubsystem.setPosition(0);
     }
 }

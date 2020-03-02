@@ -28,7 +28,7 @@ public class VelocityDriveCommand extends CommandBase {
         m_speedStraight = speedStraight;
         m_speedLeft = speedLeft;
         m_speedRight = speedRight;
-        addRequirements(driveSubsystem);
+        addRequirements(m_driveSubsystem);
     }
 
     /**

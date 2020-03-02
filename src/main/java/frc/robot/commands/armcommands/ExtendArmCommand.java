@@ -15,7 +15,7 @@ public class ExtendArmCommand extends CommandBase {
      */
     public ExtendArmCommand(ArmSubsystem armSubsystem) {
         m_armSubsystem = armSubsystem;
-        addRequirements(armSubsystem);
+        addRequirements(m_armSubsystem);
     }
 
     /**

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.FeederSubsystem;
 
-public class FeederCommand extends CommandBase {
+public class ReverseFeederCommand extends CommandBase {
 
 	private final FeederSubsystem m_feederSubsystem;
 
@@ -13,7 +13,7 @@ public class FeederCommand extends CommandBase {
 	 * 
 	 * @param feederSubsystem {@link FeederSubsystem} to be used.
 	 */
-	public FeederCommand(FeederSubsystem feederSubsystem) {
+	public ReverseFeederCommand(FeederSubsystem feederSubsystem) {
 		m_feederSubsystem = feederSubsystem;
 		addRequirements(m_feederSubsystem);
 	}
@@ -22,7 +22,7 @@ public class FeederCommand extends CommandBase {
 	 * Update the motor output
 	 */
 	public void initialize() {
-		m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
+		m_feederSubsystem.setSpeed(-FeederConstants.kSpeed);
 	}
 
 	/**
