@@ -10,6 +10,7 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.ShuffleboardLogging;
@@ -48,6 +49,10 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
         setPosition(0);
     }
 
+    public void periodic() {
+        SmartDashboard.putNumber("Arm position", getPosition());
+    }
+
     /**
      * @return Current arm position (motor rotations)
      */
@@ -73,10 +78,10 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
      * @param speed Percent output of the arm
      */
     public void setPercentOutput(double speed) {
-        if (speed < 0 && getPosition() > ArmConstants.kMinPosition || speed > 0 && getPosition() < 0)
-            m_motor.set(speed);
-        else
+        if (speed < 0 && getPosition() < ArmConstants.kMinPosition)
             m_motor.set(0);
+        else
+            m_motor.set(speed);
     }
 
     /**

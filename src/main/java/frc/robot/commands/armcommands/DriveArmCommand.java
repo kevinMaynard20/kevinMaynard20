@@ -32,7 +32,7 @@ public class DriveArmCommand extends CommandBase {
         double reverseSpeed = Math.abs(m_reverseSpeed.get()) > ControllerConstants.kTriggerDeadzone
                 ? m_reverseSpeed.get()
                 : 0;
-        double forwardSpeed = Math.abs(m_reverseSpeed.get()) > ControllerConstants.kTriggerDeadzone
+        double forwardSpeed = Math.abs(m_forwardSpeed.get()) > ControllerConstants.kTriggerDeadzone
                 ? m_forwardSpeed.get()
                 : 0;
         m_armSubsystem.setPercentOutput(reverseSpeed - forwardSpeed);
