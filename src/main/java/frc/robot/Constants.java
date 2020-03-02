@@ -187,7 +187,7 @@ public final class Constants {
 	public static final class FeederConstants {
 		public static final boolean kInvert = false;
 		public static final int kMotorPort = 1;
-		public static final double kSpeed = 1.0;
+		public static final double kSpeed = 0.75;
 	}
 
 	public static final class FlywheelConstants {
@@ -257,13 +257,17 @@ public final class Constants {
 	public static final class LoggingConstants {
 		// Arduino, Arm, Carousel, Climber, Drive, Feeder, Flywheel, Hood, Intake,
 		// Limelight
-		public static final boolean[] kSubsystems = { false, false, false, false, false, false, false, false, false,
+		public static final boolean[] kSubsystems = { false, false, false, false, false, false, true, true, false,
 				false };
 	}
 
 	public enum FieldLocation {
-		WALL(4100, 0, 60, 0, 0), INITLINE(4800, 30, 40, 0, 0), CLOSETRENCH(5900, 40, 20, 0, 0),
-		FARTRENCH(9000, 30, 20, 0, 0);
+		// WALL(4100, 0, 60, 0, 0), INITLINE(4800, 30, 40, 0, 0), CLOSETRENCH(5900, 40,
+		// 20, 0, 0),
+		// FARTRENCH(9000, 30, 20, 0, 0);
+		
+		WALL(4100, 3, 60, 0, 0), TWOFEET(2850, 7, 20, 0, 0), INITLINE(3300, 15, 20, 0, 0),
+		CLOSETRENCH(4700, 32, 20, 0, 0), FARTRENCH(6500, 40, 20, 0, 0);
 
 		public final double flywheelSetpoint, hoodSetpoint, carouselSetpoint, distanceGoal, turnGoal;
 
