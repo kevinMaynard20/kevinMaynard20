@@ -1,6 +1,8 @@
 package frc.robot;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 
 import edu.wpi.first.wpilibj.Filesystem;
@@ -178,20 +180,24 @@ public class RobotContainer {
 						() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
 						() -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// // flywheel
-		// new POVButton(m_operatorController, DPad.kUp).whenPressed(() -> m_flywheelSubsystem.incrementSpeed(),
-		// 		m_flywheelSubsystem);
-		// new POVButton(m_operatorController, DPad.kDown).whenPressed(() -> m_flywheelSubsystem.decrementSpeed(),
-		// 		m_flywheelSubsystem);
-		// new POVButton(m_operatorController, DPad.kLeft).whenPressed(()->m_flywheelSubsystem.setVelocity(5000));
-		// new POVButton(m_operatorController, DPad.kRight).whenPressed(()->m_flywheelSubsystem.setVelocity(6000));
+		// new POVButton(m_operatorController, DPad.kUp).whenPressed(() ->
+		// m_flywheelSubsystem.incrementSpeed(),
+		// m_flywheelSubsystem);
+		// new POVButton(m_operatorController, DPad.kDown).whenPressed(() ->
+		// m_flywheelSubsystem.decrementSpeed(),
+		// m_flywheelSubsystem);
+		// new POVButton(m_operatorController,
+		// DPad.kLeft).whenPressed(()->m_flywheelSubsystem.setVelocity(5000));
+		// new POVButton(m_operatorController,
+		// DPad.kRight).whenPressed(()->m_flywheelSubsystem.setVelocity(6000));
 		// new JoystickButton(m_operatorController, Button.kLeftBumper)
-		// 		.whenPressed(() -> m_flywheelSubsystem.setVelocity(0));
+		// .whenPressed(() -> m_flywheelSubsystem.setVelocity(0));
 		// Hood and flywheel override
 		new POVButton(m_operatorController, DPad.kDown).whenHeld(new ParallelCommandGroup(
 				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL),
 				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
 						m_flywheelSubsystem::atSetpoint)));
-		new POVButton(m_operatorController, DPad.kLeft).whenHeld(new ParallelCommandGroup(	
+		new POVButton(m_operatorController, DPad.kLeft).whenHeld(new ParallelCommandGroup(
 				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.TWOFEET),
 				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
 						m_flywheelSubsystem::atSetpoint)));
@@ -205,9 +211,12 @@ public class RobotContainer {
 						m_flywheelSubsystem::atSetpoint)));
 		// // hood
 		// m_hoodSubsystem.setDefaultCommand(
-		// 		new DriveHoodCommand(m_hoodSubsystem, () -> m_operatorController.getRawAxis(Axis.kRightY) * 0.1));
-		// new JoystickButton(m_operatorController, Button.kOptions).whenPressed(() -> m_hoodSubsystem.resetEncoder());
-		// new JoystickButton(m_operatorController, Button.kRightBumper).whenPressed(new HoodPositionCommand(m_hoodSubsystem, 0));
+		// new DriveHoodCommand(m_hoodSubsystem, () ->
+		// m_operatorController.getRawAxis(Axis.kRightY) * 0.1));
+		// new JoystickButton(m_operatorController, Button.kOptions).whenPressed(() ->
+		// m_hoodSubsystem.resetEncoder());
+		// new JoystickButton(m_operatorController, Button.kRightBumper).whenPressed(new
+		// HoodPositionCommand(m_hoodSubsystem, 0));
 		// arm
 		m_armSubsystem.setDefaultCommand(
 				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
@@ -233,18 +242,20 @@ public class RobotContainer {
 		return m_autoChooser.getSelected();
 	}
 
+	/**
+	 * Generates trajectory commands for every json in "deploy\paths"
+	 */
 	private void generateTrajectoryCommands() {
-		// Generate trajectories that will be strung into auto commands before putting
-		// them onto shuffleboard to be selected
-		String trajectoryJSON = "paths/Path1.wpilib.json";
-		try {
-			Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-			Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-			m_autoChooser.addOption("Trajectory", new TrajectoryFollow(m_driveSubsystem, trajectory));
-		} catch (IOException ex) {
-			Shuffleboard.getTab("Errors").add("Trajectory Error", ex.getStackTrace().toString()).withSize(4, 4)
-					.withPosition(0, 0).withWidget(BuiltInWidgets.kTextView);
+		File[] files = new File("paths").listFiles();
+		for (File file : files) {
+			try {
+				Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(file.getPath());
+				Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+				m_autoChooser.addOption("Trajectory", new TrajectoryFollow(m_driveSubsystem, trajectory));
+			} catch (IOException e) {
+				Shuffleboard.getTab("Errors").add("Trajectory Error", e.getStackTrace().toString()).withSize(4, 4)
+						.withPosition(0, 0).withWidget(BuiltInWidgets.kTextView);
+			}
 		}
-		SmartDashboard.putData(m_autoChooser);
 	}
 }
