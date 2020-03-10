@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -79,8 +81,8 @@ public class RobotContainer {
 			m_intakeSubsystem, m_limelightSubsystem };
 
 	public RobotContainer() {
-		// configureButtonBindings();
-		configureTestingBindings();
+		configureButtonBindings();
+		// configureTestingBindings();
 		configureShuffleboard();
 		// Generate all trajectories at startup to prevent loop overrun
 		// generateTrajectoryCommands();
@@ -243,19 +245,20 @@ public class RobotContainer {
 	}
 
 	/**
-	 * Generates trajectory commands for every json in "deploy\paths"
+	 * Generates all autonomous commands.
 	 */
-	private void generateTrajectoryCommands() {
+	private void generateAutonomousCommands() {
+		Hashtable<String, Trajectory> trajectories = new Hashtable<String, Trajectory>();
 		File[] files = new File("paths").listFiles();
-		for (File file : files) {
+		for (File file : files)
 			try {
-				Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(file.getPath());
-				Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-				m_autoChooser.addOption("Trajectory", new TrajectoryFollow(m_driveSubsystem, trajectory));
+				trajectories.put(file.getName(), TrajectoryUtil
+						.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve(file.getPath())));
 			} catch (IOException e) {
 				Shuffleboard.getTab("Errors").add("Trajectory Error", e.getStackTrace().toString()).withSize(4, 4)
 						.withPosition(0, 0).withWidget(BuiltInWidgets.kTextView);
 			}
-		}
+		for (String name : trajectories.keySet())
+			m_autoChooser.addOption(name, new TrajectoryFollow(m_driveSubsystem, trajectories.get(name)));
 	}
 }
