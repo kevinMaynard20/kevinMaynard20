@@ -50,7 +50,7 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
     }
 
     public void periodic() {
-        SmartDashboard.putNumber("Arm position", getPosition());
+        SmartDashboard.putNumber("Arm Position", getPosition());
     }
 
     /**

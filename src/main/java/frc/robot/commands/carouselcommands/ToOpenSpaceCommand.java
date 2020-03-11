@@ -8,7 +8,7 @@ import frc.robot.subsystems.CarouselSubsystem;
 public class ToOpenSpaceCommand extends CommandBase {
 
     private final CarouselSubsystem m_carouselSubsystem;
-    private final PIDController m_pidController = new PIDController(500, .2, .1);
+    private final PIDController m_pidController = new PIDController(800, .2, .1);
 
     /**
      * Set the carousel to be ready for shooting whenever it is not running
@@ -22,12 +22,12 @@ public class ToOpenSpaceCommand extends CommandBase {
 
     public void initialize() {
         m_pidController.setSetpoint(
-                Math.ceil(m_carouselSubsystem.getPosition() / CarouselConstants.kRatio) * CarouselConstants.kRatio);
+                Math.ceil(m_carouselSubsystem.getPosition() / CarouselConstants.kGearRatio) * CarouselConstants.kGearRatio);
     }
 
     public void execute() {
         double speed = m_pidController.calculate(m_carouselSubsystem.getPosition());
-        speed = speed > 20 * CarouselConstants.kRatio ? 20 * CarouselConstants.kRatio : speed;
+        speed = speed > 20 * CarouselConstants.kGearRatio ? 20 * CarouselConstants.kGearRatio : speed;
         m_carouselSubsystem.setVelocity(speed);
     }
 

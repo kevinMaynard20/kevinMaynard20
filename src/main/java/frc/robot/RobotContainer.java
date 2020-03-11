@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -24,6 +23,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Constants.ControllerConstants.DPad;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldLocation;
 import frc.robot.Constants.LoggingConstants;
 import frc.robot.commands.arduinocommands.UpdateLEDsCommand;
@@ -36,9 +36,10 @@ import frc.robot.commands.carouselcommands.RunCarouselCommand;
 import frc.robot.commands.carouselcommands.ToOpenSpaceCommand;
 import frc.robot.commands.climbercommands.DriveScissorsCommand;
 import frc.robot.commands.drivecommands.ArcadeDriveCommand;
+import frc.robot.commands.drivecommands.BackupCommand;
 import frc.robot.commands.drivecommands.LimelightTurnCommand;
 import frc.robot.commands.drivecommands.PixyTargetCommand;
-import frc.robot.commands.drivecommands.TrajectoryFollow;
+import frc.robot.commands.drivecommands.TrajectoryFollowCommand;
 import frc.robot.commands.feedercommands.AutoFeederCommand;
 import frc.robot.commands.feedercommands.FeederCommand;
 import frc.robot.commands.feedercommands.ReverseFeederCommand;
@@ -72,7 +73,7 @@ public class RobotContainer {
 	private final Joystick m_driverController = new Joystick(ControllerConstants.kDriverControllerPort);
 	private final Joystick m_operatorController = new Joystick(ControllerConstants.kOperatorControllerPort);
 	// auto selector
-	private final SendableChooser<RamseteCommand> m_autoChooser = new SendableChooser<>();
+	private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 	private final ShuffleboardLogging[] m_subsystems = { m_arduinoSubsystem, m_armSubsystem, m_carouselSubsystem,
 			m_climberSubsystem, m_driveSubsystem, m_feederSubsystem, m_flywheelSubsystem, m_hoodSubsystem,
 			m_intakeSubsystem, m_limelightSubsystem };
@@ -84,13 +85,13 @@ public class RobotContainer {
 		// Generate all trajectories at startup to prevent loop overrun
 		generateAutonomousCommands();
 		// LEDs
-		m_arduinoSubsystem.setDefaultCommand(new UpdateLEDsCommand(m_arduinoSubsystem, () -> {		// TODO: add more things for the LEDs to do
+		m_arduinoSubsystem.setDefaultCommand(new UpdateLEDsCommand(m_arduinoSubsystem, () -> { // TODO: add more things
+																								// for the LEDs to do
 			return MainLEDModes.kChasing;
 		}, () -> {
 			return 0.0;
 		}, () -> {
-			return m_flywheelSubsystem.getVelocity() > 100 ? ShooterLEDModes.kFlywheelPercent
-					: ShooterLEDModes.kOff;
+			return m_flywheelSubsystem.getVelocity() > 100 ? ShooterLEDModes.kFlywheelPercent : ShooterLEDModes.kOff;
 		}, () -> {
 			return m_flywheelSubsystem.getVelocity() / m_flywheelSubsystem.getSetpoint();
 		}));
@@ -119,7 +120,7 @@ public class RobotContainer {
 				new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem,
 						() -> -m_driverController.getRawAxis(Axis.kLeftY)),
 				new RunCarouselCommand(m_carouselSubsystem,
-						CarouselConstants.kIntakeVelocity * CarouselConstants.kRatio),
+						CarouselConstants.kIntakeVelocity * CarouselConstants.kGearRatio),
 				new IntakeCommand(m_intakeSubsystem), new BounceArmCommand(m_armSubsystem)));
 		// Turn to target
 		new POVButton(m_driverController, DPad.kUp)
@@ -130,16 +131,18 @@ public class RobotContainer {
 		new JoystickButton(m_driverController, Button.kRightBumper)
 				.whenHeld(new AutoSpeedCarouselCommand(m_carouselSubsystem, m_flywheelSubsystem::getSetpoint));
 		// Run carousel default speed
-		new POVButton(m_driverController, DPad.kDown).toggleWhenPressed(
-				new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kRatio));
+		new POVButton(m_driverController, DPad.kDown).toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem,
+				CarouselConstants.kVelocity * CarouselConstants.kGearRatio));
 		new POVButton(m_driverController, DPad.kRight).whenHeld(new ReverseFeederCommand(m_feederSubsystem));
+		new POVButton(m_driverController, DPad.kLeft)
+				.whenHeld(new BackupCommand(m_driveSubsystem, DriveConstants.kBackupDistance));
 
 		// Operator
 		// Intake
 		new JoystickButton(m_operatorController, Button.kX)
 				.whenHeld(new ParallelCommandGroup(new IntakeCommand(m_intakeSubsystem),
 						new RunCarouselCommand(m_carouselSubsystem,
-								CarouselConstants.kIntakeVelocity * CarouselConstants.kRatio)))
+								CarouselConstants.kIntakeVelocity * CarouselConstants.kGearRatio)))
 				.whenHeld(new BounceArmCommand(m_armSubsystem));
 		new JoystickButton(m_operatorController, Button.kCircle).whenHeld(new OuttakeCommand(m_intakeSubsystem));
 		// Arm
@@ -157,7 +160,7 @@ public class RobotContainer {
 						() -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// Carousel jostle
 		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new RunCarouselCommand(m_carouselSubsystem,
-				CarouselConstants.kJostleVelocity * CarouselConstants.kRatio));
+				CarouselConstants.kJostleVelocity * CarouselConstants.kGearRatio));
 		// Hood and flywheel override
 		new POVButton(m_operatorController, DPad.kDown).whenHeld(new ParallelCommandGroup(
 				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL),
@@ -172,23 +175,34 @@ public class RobotContainer {
 				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
 						m_flywheelSubsystem::atSetpoint)));
 		new POVButton(m_operatorController, DPad.kRight).whenHeld(new ParallelCommandGroup(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.FARTRENCH),
+				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.FARTWRENCH),
 				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
 						m_flywheelSubsystem::atSetpoint)));
 		// Zero hood encoder
-		new JoystickButton(m_operatorController, Button.kShare).whenPressed(() -> m_hoodSubsystem.resetEncoder());
+		new JoystickButton(m_operatorController, Button.kTrackpad)
+				.and(new JoystickButton(m_operatorController, Button.kTriangle))
+				.whenActive(() -> m_hoodSubsystem.resetEncoder());
 		// Zero carousel encoder
-		new JoystickButton(m_operatorController, Button.kOptions).whenPressed(() -> m_carouselSubsystem.resetEncoder());
+		new JoystickButton(m_operatorController, Button.kTrackpad)
+				.and(new JoystickButton(m_operatorController, Button.kCircle))
+				.whenActive(() -> m_carouselSubsystem.resetEncoder());
 		// Zero arm encoder
-		new JoystickButton(m_operatorController, Button.kTrackpad).whenPressed(() -> m_armSubsystem.resetEncoder());
+		new JoystickButton(m_operatorController, Button.kTrackpad)
+				.and(new JoystickButton(m_operatorController, Button.kX))
+				.whenActive(() -> m_armSubsystem.resetEncoder());
+		// Manually drive carousel
+		// new JoystickButton(m_operatorController, Button.kTrackpad).whileActiveOnce(
+		// new DriveCarouselCommand(m_carouselSubsystem, () ->
+		// -m_driverController.getRawAxis(Axis.kRightY)));
 	}
 
 	private void configureTestingBindings() {
-		// driving
-		m_driveSubsystem.setDefaultCommand(
-				new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
-						() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
-						() -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
+		// // driving
+		// m_driveSubsystem.setDefaultCommand(
+		// new ArcadeDriveCommand(m_driveSubsystem, () ->
+		// -m_driverController.getRawAxis(Axis.kLeftY),
+		// () -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
+		// () -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// // flywheel
 		// new POVButton(m_operatorController, DPad.kUp).whenPressed(() ->
 		// m_flywheelSubsystem.incrementSpeed(),
@@ -203,22 +217,14 @@ public class RobotContainer {
 		// new JoystickButton(m_operatorController, Button.kLeftBumper)
 		// .whenPressed(() -> m_flywheelSubsystem.setVelocity(0));
 		// Hood and flywheel override
-		new POVButton(m_operatorController, DPad.kDown).whenHeld(new ParallelCommandGroup(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL),
-				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
-						m_flywheelSubsystem::atSetpoint)));
-		new POVButton(m_operatorController, DPad.kLeft).whenHeld(new ParallelCommandGroup(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.TWOFEET),
-				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
-						m_flywheelSubsystem::atSetpoint)));
-		new POVButton(m_operatorController, DPad.kUp).whenHeld(new ParallelCommandGroup(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.INITLINE),
-				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
-						m_flywheelSubsystem::atSetpoint)));
-		new POVButton(m_operatorController, DPad.kRight).whenHeld(new ParallelCommandGroup(
-				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.CLOSETRENCH),
-				new AutoFeederCommand(m_feederSubsystem, m_carouselSubsystem::atOpenSpace,
-						m_flywheelSubsystem::atSetpoint)));
+		new POVButton(m_operatorController, DPad.kDown)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL));
+		new POVButton(m_operatorController, DPad.kLeft)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.TWOFEET));
+		new POVButton(m_operatorController, DPad.kUp)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.INITLINE));
+		new POVButton(m_operatorController, DPad.kRight)
+				.whenHeld(new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.CLOSETRENCH));
 		// // hood
 		// m_hoodSubsystem.setDefaultCommand(
 		// new DriveHoodCommand(m_hoodSubsystem, () ->
@@ -234,8 +240,8 @@ public class RobotContainer {
 		// intake
 		new JoystickButton(m_operatorController, Button.kX).whenHeld(new IntakeCommand(m_intakeSubsystem));
 		// carousel
-		new JoystickButton(m_operatorController, Button.kCircle).toggleWhenPressed(
-				new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kRatio));
+		new JoystickButton(m_operatorController, Button.kCircle).toggleWhenPressed(new RunCarouselCommand(
+				m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kGearRatio));
 		// feeder
 		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new FeederCommand(m_feederSubsystem));
 	}
@@ -267,6 +273,6 @@ public class RobotContainer {
 						.withPosition(0, 0).withWidget(BuiltInWidgets.kTextView);
 			}
 		for (String name : trajectories.keySet())
-			m_autoChooser.addOption(name, new TrajectoryFollow(m_driveSubsystem, trajectories.get(name)));
-	}
+			m_autoChooser.addOption(name, new TrajectoryFollowCommand(m_driveSubsystem, trajectories.get(name)));
+		}
 }

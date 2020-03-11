@@ -32,11 +32,13 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 		m_motor.enableVoltageCompensation(12);
 		m_motor.setSmartCurrentLimit(CarouselConstants.kSmartCurrentLimit);
 
-		m_pidController.setP(CarouselConstants.kPosP);
-		m_pidController.setI(CarouselConstants.kPosI);
-		m_pidController.setIZone(CarouselConstants.kPosIz);
-		m_pidController.setD(CarouselConstants.kPosD);
-		m_pidController.setFF(CarouselConstants.kPosFF);
+		// m_encoder.setPositionConversionFactor(1/CarouselConstants.kGearRatio);
+		// m_encoder.setVelocityConversionFactor(1/CarouselConstants.kGearRatio);
+		m_pidController.setP(CarouselConstants.kP);
+		m_pidController.setI(CarouselConstants.kI);
+		m_pidController.setIZone(CarouselConstants.kIz);
+		m_pidController.setD(CarouselConstants.kD);
+		m_pidController.setFF(CarouselConstants.kFF);
 		m_pidController.setOutputRange(CarouselConstants.kMinOutput, CarouselConstants.kMaxOutput);
 
 		m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, CarouselConstants.kSlotID);
@@ -47,48 +49,30 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 		m_pidController.setSmartMotionMinOutputVelocity(CarouselConstants.kMinVelocity, CarouselConstants.kSlotID);
 
 		resetEncoder();
-		setPosition(0);
 	}
 
 	public void periodic() {
 		SmartDashboard.putNumber("Carousel Velocity", m_encoder.getVelocity());
+		SmartDashboard.putNumber("Carousel Vel 2", m_encoder.getVelocity() / CarouselConstants.kGearRatio);
 	}
 
 	/**
-	 * @return Position of encoder (rotations).
+	 * @return Position of encoder (carousel rotations).
 	 */
 	public double getPosition() {
 		return m_encoder.getPosition();
 	}
 
 	/**
-	 * @return Measured velocity of the motor (rpm).
+	 * @return Measured velocity of the carousel (rpm).
 	 */
 	public double getVelocity() {
 		return m_encoder.getVelocity();
 	}
 
 	public boolean atOpenSpace() {
-		return getPosition() % CarouselConstants.kRatio < CarouselConstants.kStartPositionTolerance
-				|| CarouselConstants.kRatio
-						- (getPosition() % CarouselConstants.kRatio) < CarouselConstants.kStartPositionTolerance;
-	}
-
-	public void setPosition(double position) {
-		m_pidController.setP(CarouselConstants.kPosP);
-		m_pidController.setI(CarouselConstants.kPosI);
-		m_pidController.setIZone(CarouselConstants.kPosIz);
-		m_pidController.setD(CarouselConstants.kPosD);
-		m_pidController.setFF(CarouselConstants.kPosFF);
-
-		m_pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, CarouselConstants.kSlotID);
-		m_pidController.setSmartMotionMaxAccel(CarouselConstants.kMaxAcel, CarouselConstants.kSlotID);
-		m_pidController.setSmartMotionMaxVelocity(CarouselConstants.kMaxVelocity, CarouselConstants.kSlotID);
-		m_pidController.setSmartMotionAllowedClosedLoopError(CarouselConstants.kAllowedError,
-				CarouselConstants.kSlotID);
-		m_pidController.setSmartMotionMinOutputVelocity(CarouselConstants.kMinVelocity, CarouselConstants.kSlotID);
-
-		m_pidController.setReference(position, ControlType.kSmartMotion);
+		return getPosition() % 1 < CarouselConstants.kStartPositionTolerance
+				|| 1 - (getPosition() % 1) < CarouselConstants.kStartPositionTolerance;
 	}
 
 	/**
@@ -97,11 +81,6 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 	 * @param velocity Motor rpm.
 	 */
 	public void setVelocity(double velocity) {
-		m_pidController.setP(CarouselConstants.kVelP);
-		m_pidController.setI(CarouselConstants.kVelI);
-		m_pidController.setIZone(CarouselConstants.kVelIz);
-		m_pidController.setD(CarouselConstants.kVelD);
-		m_pidController.setFF(CarouselConstants.kVelFF);
 		if (velocity == 0.0) {
 			m_motor.set(0);
 		} else {
@@ -118,8 +97,8 @@ public class CarouselSubsystem extends SubsystemBase implements ShuffleboardLogg
 
 	public void configureShuffleboard() {
 		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Carousel");
-		shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity() / CarouselConstants.kRatio).withSize(4, 2)
-				.withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
+		shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity()).withSize(4, 2).withPosition(0, 0)
+				.withWidget(BuiltInWidgets.kGraph);
 		shuffleboardTab.addNumber("Output", () -> m_motor.getAppliedOutput()).withSize(1, 1).withPosition(0, 2)
 				.withWidget(BuiltInWidgets.kTextView);
 		shuffleboardTab.addBoolean("At Open Space", () -> atOpenSpace()).withSize(1, 1).withPosition(1, 2)

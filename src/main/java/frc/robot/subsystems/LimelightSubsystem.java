@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.ShuffleboardLogging;
@@ -39,6 +40,10 @@ public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLog
                 averageDistance.remove(0);
             }
         }
+
+        SmartDashboard.putNumber("Avg Distance", getAverageDistance());
+        SmartDashboard.putNumber("Distance", getDistance());
+        SmartDashboard.putBoolean("Target Visible", isTargetVisible());
     }
 
     /**

@@ -22,13 +22,13 @@ public class FeederCommand extends CommandBase {
 	 * Update the motor output
 	 */
 	public void initialize() {
-		m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
+		m_feederSubsystem.setPercentOutput(FeederConstants.kSpeed);
 	}
 
 	/**
 	 * Stop the feeder at the end of the command
 	 */
 	public void end(boolean interrupted) {
-		m_feederSubsystem.setSpeed(0.0);
+		m_feederSubsystem.setPercentOutput(0.0);
 	}
 }

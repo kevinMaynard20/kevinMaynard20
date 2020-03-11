@@ -25,7 +25,7 @@ public class DriveScissorsCommand extends CommandBase {
     /**
      * Update the climber motor output
      */
-    public void initialize() {
+    public void execute() {
         double speed = Math.abs(m_speed.get()) > ControllerConstants.kDeadzone ? m_speed.get() : 0;
         m_climberSubsystem.setPercentOutput(speed);
     }
