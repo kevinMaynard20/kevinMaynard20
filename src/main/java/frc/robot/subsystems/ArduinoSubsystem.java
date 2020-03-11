@@ -7,11 +7,10 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArduinoConstants;
 import frc.robot.ShuffleboardLogging;
+import frc.robot.Constants.ArduinoConstants;
 
 public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLogging {
-
 	// PIDs
 	private final PIDController m_anglePid = new PIDController(ArduinoConstants.kAngleP, ArduinoConstants.kAngleI,
 			ArduinoConstants.kAngleD);
@@ -19,13 +18,17 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 			ArduinoConstants.kDistanceI, ArduinoConstants.kDistanceD);
 	// I2C communication
 	private final I2C m_wire = new I2C(Port.kOnboard, ArduinoConstants.kAddress);
-	// data written to Arduino
-	private byte[] m_writeData = new byte[1];
 	// data read from Arduino
 	private byte[] m_readData = new byte[7];
 	private boolean m_targetInView;
 	private int m_xValue;
 	private int m_distance;
+	// data written to Arduino
+	private byte[] m_writeData = new byte[4];
+	private byte m_mainLEDMode = ArduinoConstants.MainLEDModes.kOff;
+	private byte m_mainLEDValue = 0;
+	private byte m_shooterLEDMode = ArduinoConstants.ShooterLEDModes.kOff;
+	private byte m_shooterLEDValue = 0;
 	// PID outputs
 	private double m_turnSpeed;
 	private double m_driveSpeed;
@@ -35,9 +38,9 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 	 */
 	public ArduinoSubsystem() {
 		m_anglePid.setSetpoint(ArduinoConstants.kAngleSetpoint);
-		m_anglePid.setTolerance(ArduinoConstants.kAngleTolerance);
+		// m_anglePid.setTolerance(ArduinoConstants.kAngleTolerance);
 		m_distancePid.setSetpoint(ArduinoConstants.kDistanceSetpoint);
-		m_distancePid.setTolerance(ArduinoConstants.kDistanceTolerance);
+		// m_distancePid.setTolerance(ArduinoConstants.kDistanceTolerance);
 	}
 
 	/**
@@ -54,12 +57,12 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 		return m_driveSpeed;
 	}
 
-	/**
-	 * @return Whether both PIDs are at their setpoints.
-	 */
-	public boolean atSetpoint() {
-		return m_anglePid.atSetpoint() && m_distancePid.atSetpoint();
-	}
+	// /**
+	// * @return Whether both PIDs are at their setpoints.
+	// */
+	// public boolean atSetpoint() {
+	// return m_anglePid.atSetpoint() && m_distancePid.atSetpoint();
+	// }
 
 	/**
 	 * Updates I2C stuff.
@@ -88,14 +91,6 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 	}
 
 	/**
-	 * Writes data to Arduino.
-	 */
-	public void write() {
-		// write byte array
-		m_wire.writeBulk(m_writeData, m_writeData.length);
-	}
-
-	/**
 	 * @return Whether or not a target is in the camera's view.
 	 */
 	public boolean getTargetInView() {
@@ -116,6 +111,34 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 		return m_distance;
 	}
 
+	/**
+	 * Writes data to Arduino.
+	 */
+	public void write() {
+		m_writeData[0] = m_mainLEDMode;
+		m_writeData[1] = m_mainLEDValue;
+		m_writeData[2] = m_shooterLEDMode;
+		m_writeData[3] = m_shooterLEDValue;
+		// write byte array
+		m_wire.writeBulk(m_writeData, m_writeData.length);
+	}
+
+	public void setMainLEDMode(byte mode) {
+		m_mainLEDMode = mode;
+	}
+
+	public void setMainLEDValue(double value) {
+		m_mainLEDValue = (byte)Math.round(value);
+	}
+
+	public void setShooterLEDMode(byte mode) {
+		m_shooterLEDMode = mode;
+	}
+
+	public void setShooterLEDValue(double value) {
+		m_shooterLEDValue = (byte)Math.round(value);
+	}
+
 	public void configureShuffleboard() {
 		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Arduino");
 		shuffleboardTab.add("Angle PID", m_anglePid).withSize(1, 2).withPosition(0, 0)
@@ -124,8 +147,9 @@ public class ArduinoSubsystem extends SubsystemBase implements ShuffleboardLoggi
 				.withWidget(BuiltInWidgets.kPIDController);
 		shuffleboardTab.addBoolean("Target in view", () -> m_targetInView).withSize(1, 1).withPosition(2, 0)
 				.withWidget(BuiltInWidgets.kBooleanBox);
-		shuffleboardTab.addBoolean("At Setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(2, 1)
-				.withWidget(BuiltInWidgets.kBooleanBox);
+		// shuffleboardTab.addBoolean("At Setpoint", () -> atSetpoint()).withSize(1,
+		// 1).withPosition(2, 1)
+		// .withWidget(BuiltInWidgets.kBooleanBox);
 		shuffleboardTab.addNumber("X Value", () -> m_xValue).withSize(1, 1).withPosition(3, 0)
 				.withWidget(BuiltInWidgets.kTextView);
 		shuffleboardTab.addNumber("Distance", () -> m_distance).withSize(1, 1).withPosition(3, 1)

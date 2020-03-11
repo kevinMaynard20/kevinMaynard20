@@ -2,9 +2,6 @@ package frc.robot;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import edu.wpi.first.wpilibj.Filesystem;
@@ -12,7 +9,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArduinoConstants.MainLEDModes;
+import frc.robot.Constants.ArduinoConstants.ShooterLEDModes;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
@@ -28,6 +26,7 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Constants.ControllerConstants.DPad;
 import frc.robot.Constants.FieldLocation;
 import frc.robot.Constants.LoggingConstants;
+import frc.robot.commands.arduinocommands.UpdateLEDsCommand;
 import frc.robot.commands.armcommands.BounceArmCommand;
 import frc.robot.commands.armcommands.DriveArmCommand;
 import frc.robot.commands.armcommands.ExtendArmCommand;
@@ -45,8 +44,6 @@ import frc.robot.commands.feedercommands.FeederCommand;
 import frc.robot.commands.feedercommands.ReverseFeederCommand;
 import frc.robot.commands.intakecommands.IntakeCommand;
 import frc.robot.commands.intakecommands.OuttakeCommand;
-import frc.robot.commands.shootcommands.DriveHoodCommand;
-import frc.robot.commands.shootcommands.HoodPositionCommand;
 import frc.robot.commands.shootcommands.ShootSetupCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
@@ -85,7 +82,18 @@ public class RobotContainer {
 		// configureTestingBindings();
 		configureShuffleboard();
 		// Generate all trajectories at startup to prevent loop overrun
-		// generateTrajectoryCommands();
+		generateAutonomousCommands();
+		// LEDs
+		m_arduinoSubsystem.setDefaultCommand(new UpdateLEDsCommand(m_arduinoSubsystem, () -> {		// TODO: add more things for the LEDs to do
+			return MainLEDModes.kChasing;
+		}, () -> {
+			return 0.0;
+		}, () -> {
+			return m_flywheelSubsystem.getVelocity() > 100 ? ShooterLEDModes.kFlywheelPercent
+					: ShooterLEDModes.kOff;
+		}, () -> {
+			return m_flywheelSubsystem.getVelocity() / m_flywheelSubsystem.getSetpoint();
+		}));
 	}
 
 	private void configureButtonBindings() {

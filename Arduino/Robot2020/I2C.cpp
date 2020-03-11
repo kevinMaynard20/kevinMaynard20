@@ -1,6 +1,6 @@
 #include "I2C.h"
 
-static byte I2C::readData[1];
+static byte I2C::readData[4];
 static byte I2C::writeData[5];
 
 static void I2C::initialize(byte address) {
@@ -22,8 +22,20 @@ static void I2C::requestEvent() {
   Wire.write(writeData, sizeof(writeData) / sizeof(byte));
 }
 
-static byte I2C::getPattern() {
+static byte I2C::getMainLEDMode() {
   return readData[0];
+}
+
+static byte I2C::getMainLEDValue() {
+  return readData[1];
+}
+
+static byte I2C::getShooterLEDMode() {
+  return readData[2];
+}
+
+static byte I2C::getShooterLEDValue() {
+  return readData[3];
 }
 
 static void I2C::setWriteData(bool targetInView, short xValue, byte distance) {
