@@ -62,15 +62,12 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
     }
     
     public void periodic() {
-        // SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
+        SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
         if (m_setVelocity == 0) {
             m_neoFlywheelMaster.stopMotor();
         } else {
             m_neoController.setReference(m_setVelocity / FlywheelConstants.kRatio, ControlType.kVelocity, 0);
         }
-        // SmartDashboard.putNumber("flywheel setpoint", getSetpoint());
-        // SmartDashboard.putNumber("flywheel speed", getVelocity() * FlywheelConstants.kRatio);
-        System.out.println("flywheel set velocity: " + m_setVelocity);
     }
 
     public void incrementSpeed() {

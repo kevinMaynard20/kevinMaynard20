@@ -31,8 +31,7 @@ public class PixyTargetCommand extends CommandBase {
         // if target is in the camera's view
         if (m_arduinoSubsystem.getTargetInView())
             // drive based on Arduino data
-            // TODO: use Math.max() to make min speed of 0.4
-            m_driveSubsystem.arcadeDrive(m_speed.get(), m_arduinoSubsystem.getTurnSpeed(),
+            m_driveSubsystem.arcadeDrive(Math.max(m_speed.get(), 0.4), m_arduinoSubsystem.getTurnSpeed(),
                     -m_arduinoSubsystem.getTurnSpeed());
         else
             m_driveSubsystem.tankDrive(0, 0);

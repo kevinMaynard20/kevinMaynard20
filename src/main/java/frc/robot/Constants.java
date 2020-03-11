@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
-
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
@@ -16,17 +15,32 @@ public final class Constants {
 		public static final double kAngleI = 0.0;
 		public static final double kAngleD = 0.0002;
 		public static final int kAngleSetpoint = 157;
-		public static final int kAngleTolerance = 10;
+		// public static final int kAngleTolerance = 10;
 
 		public static final double kDistanceP = 0.01;
 		public static final double kDistanceI = 0.0;
 		public static final double kDistanceD = 0.0013;
 		public static final int kDistanceSetpoint = 20;
-		public static final int kDistanceTolerance = 2;
+		// public static final int kDistanceTolerance = 2;
 
 		public static final int kReadTargetInView = 0;
 		public static final int[] kReadXValue = { 1, 2, 3 };
 		public static final int[] kReadDistance = { 4, 5, 6 };
+
+		public static final int kWriteMainLEDMode = 0;
+		public static final int kWriteMainLEDValue = 1;
+		public static final int kWriteShooterLEDMode = 2;
+		public static final int kWriteShooterLEDValue = 3;
+
+		public static final class MainLEDModes {
+			public static final byte kOff = 0;
+			public static final byte kChasing = 1;
+		}
+
+		public static final class ShooterLEDModes {
+			public static final byte kOff = 0;
+			public static final byte kFlywheelPercent = 1;
+		}
 	}
 
 	public static final class ArmConstants {

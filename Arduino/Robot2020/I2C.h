@@ -9,12 +9,15 @@ class I2C {
     static void initialize(byte address);
     static void receiveEvent();
     static void requestEvent();
-    static byte getPattern();
+    static byte getMainLEDMode();
+    static byte getMainLEDValue();
+    static byte getShooterLEDMode();
+    static byte getShooterLEDValue();
     static void setWriteData(bool targetInView, short xValue, byte distance);
     
   private:
     // data received from RoboRio
-    static byte readData[1];
+    static byte readData[4];
     // data to send to RoboRio
     static byte writeData[5];
 

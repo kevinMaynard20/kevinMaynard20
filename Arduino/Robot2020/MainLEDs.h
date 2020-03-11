@@ -1,13 +1,13 @@
-#ifndef LEDStrip_h
-#define LEDStrip_h
+#ifndef MainLEDs_h
+#define MainLEDs_h
 
 #include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
 
-class LEDStrip {
+class MainLEDs {
   public:
     static void initialize(byte pin, byte numLEDs, byte brightness);
-    static void refresh(byte pattern);
+    static void refresh(byte mode, byte value);
 
   private:
     // constant RGB values for different colors
@@ -21,9 +21,18 @@ class LEDStrip {
     static const uint32_t white;
     // LED strip object
     static Adafruit_NeoPixel strip;
+
+    // for timing animations
+    static unsigned long timestamp;
+    // global counter variable
+    static byte counter;
+    // stores previous mode to check if the new one is different
+    static byte prevMode;
     
     // turns all LEDs off
     static void allOff();
+    // chasing pattern
+    static void chasing(uint32_t color);
 };
 
 #endif
