@@ -12,7 +12,7 @@ public class BounceArmCommand extends CommandBase {
     private boolean armDown;
 
     /**
-     * Extend the arm
+     * Bounce the arm to improve intaking
      * 
      * @param armSubsystem {@link ArmSubsystem} to be used.
      */

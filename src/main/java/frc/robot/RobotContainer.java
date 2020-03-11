@@ -100,11 +100,6 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 		// Driver
 		// Drive arcade
-		// m_driveSubsystem.setDefaultCommand(
-		// new CurvatureDriveCommand(m_driveSubsystem, () ->
-		// -m_driverController.getRawAxis(Axis.kLeftY),
-		// () -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
-		// () -> (m_driverController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		m_driveSubsystem.setDefaultCommand(
 				new ArcadeDriveCommand(m_driveSubsystem, () -> -m_driverController.getRawAxis(Axis.kLeftY),
 						() -> (m_driverController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
@@ -120,7 +115,7 @@ public class RobotContainer {
 				new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem,
 						() -> -m_driverController.getRawAxis(Axis.kLeftY)),
 				new RunCarouselCommand(m_carouselSubsystem,
-						CarouselConstants.kIntakeVelocity * CarouselConstants.kGearRatio),
+						CarouselConstants.kIntakeVelocity),
 				new IntakeCommand(m_intakeSubsystem), new BounceArmCommand(m_armSubsystem)));
 		// Turn to target
 		new POVButton(m_driverController, DPad.kUp)
@@ -132,7 +127,7 @@ public class RobotContainer {
 				.whenHeld(new AutoSpeedCarouselCommand(m_carouselSubsystem, m_flywheelSubsystem::getSetpoint));
 		// Run carousel default speed
 		new POVButton(m_driverController, DPad.kDown).toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem,
-				CarouselConstants.kVelocity * CarouselConstants.kGearRatio));
+				CarouselConstants.kVelocity));
 		new POVButton(m_driverController, DPad.kRight).whenHeld(new ReverseFeederCommand(m_feederSubsystem));
 		new POVButton(m_driverController, DPad.kLeft)
 				.whenHeld(new BackupCommand(m_driveSubsystem, DriveConstants.kBackupDistance));
@@ -142,7 +137,7 @@ public class RobotContainer {
 		new JoystickButton(m_operatorController, Button.kX)
 				.whenHeld(new ParallelCommandGroup(new IntakeCommand(m_intakeSubsystem),
 						new RunCarouselCommand(m_carouselSubsystem,
-								CarouselConstants.kIntakeVelocity * CarouselConstants.kGearRatio)))
+								CarouselConstants.kIntakeVelocity)))
 				.whenHeld(new BounceArmCommand(m_armSubsystem));
 		new JoystickButton(m_operatorController, Button.kCircle).whenHeld(new OuttakeCommand(m_intakeSubsystem));
 		// Arm
@@ -160,7 +155,7 @@ public class RobotContainer {
 						() -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// Carousel jostle
 		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new RunCarouselCommand(m_carouselSubsystem,
-				CarouselConstants.kJostleVelocity * CarouselConstants.kGearRatio));
+				CarouselConstants.kJostleVelocity));
 		// Hood and flywheel override
 		new POVButton(m_operatorController, DPad.kDown).whenHeld(new ParallelCommandGroup(
 				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL),
@@ -181,15 +176,15 @@ public class RobotContainer {
 		// Zero hood encoder
 		new JoystickButton(m_operatorController, Button.kTrackpad)
 				.and(new JoystickButton(m_operatorController, Button.kTriangle))
-				.whenActive(() -> m_hoodSubsystem.resetEncoder());
+				.whenActive(() -> m_hoodSubsystem.resetEncoder(), m_hoodSubsystem);
 		// Zero carousel encoder
 		new JoystickButton(m_operatorController, Button.kTrackpad)
 				.and(new JoystickButton(m_operatorController, Button.kCircle))
-				.whenActive(() -> m_carouselSubsystem.resetEncoder());
+				.whenActive(() -> m_carouselSubsystem.resetEncoder(), m_carouselSubsystem);
 		// Zero arm encoder
 		new JoystickButton(m_operatorController, Button.kTrackpad)
 				.and(new JoystickButton(m_operatorController, Button.kX))
-				.whenActive(() -> m_armSubsystem.resetEncoder());
+				.whenActive(() -> m_armSubsystem.resetEncoder(), m_armSubsystem);
 		// Manually drive carousel
 		// new JoystickButton(m_operatorController, Button.kTrackpad).whileActiveOnce(
 		// new DriveCarouselCommand(m_carouselSubsystem, () ->
@@ -241,7 +236,7 @@ public class RobotContainer {
 		new JoystickButton(m_operatorController, Button.kX).whenHeld(new IntakeCommand(m_intakeSubsystem));
 		// carousel
 		new JoystickButton(m_operatorController, Button.kCircle).toggleWhenPressed(new RunCarouselCommand(
-				m_carouselSubsystem, CarouselConstants.kVelocity * CarouselConstants.kGearRatio));
+				m_carouselSubsystem, CarouselConstants.kVelocity));
 		// feeder
 		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new FeederCommand(m_feederSubsystem));
 	}
@@ -274,5 +269,5 @@ public class RobotContainer {
 			}
 		for (String name : trajectories.keySet())
 			m_autoChooser.addOption(name, new TrajectoryFollowCommand(m_driveSubsystem, trajectories.get(name)));
-		}
+	}
 }

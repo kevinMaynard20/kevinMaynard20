@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.ShuffleboardLogging;
@@ -23,10 +22,6 @@ public class FeederSubsystem extends SubsystemBase implements ShuffleboardLoggin
 		m_motor.setNeutralMode(NeutralMode.Coast);
 		m_motor.enableVoltageCompensation(true);
 		m_motor.setInverted(FeederConstants.kInvert);
-	}
-
-	public void periodic() {
-		SmartDashboard.putNumber("Feeder Speed", m_motor.getMotorOutputVoltage());
 	}
 
 	public double getPercentOutput() {

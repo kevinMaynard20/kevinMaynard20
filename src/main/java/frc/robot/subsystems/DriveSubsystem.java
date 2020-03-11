@@ -76,6 +76,11 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
         m_followerRight.setOpenLoopRampRate(DriveConstants.kRampRate);
         m_followerRight.follow(m_masterRight, DriveConstants.kFollowerRightOppose);
 
+        m_leftEncoder.setPositionConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters);
+        m_leftEncoder.setVelocityConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters / 60);
+
         m_leftPIDController.setP(DriveConstants.kP);
         m_leftPIDController.setI(DriveConstants.kI);
         m_leftPIDController.setIZone(DriveConstants.kIz);
@@ -195,7 +200,8 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * @param right    Right percent output
      */
     public void arcadeDrive(double straight, double left, double right) {
-        tankDrive(.75 * (straight - left + right), .75 * (straight + left - right));
+        tankDrive(DriveConstants.kSpeedLimitFactor * (straight - left + right),
+                DriveConstants.kSpeedLimitFactor * (straight + left - right));
     }
 
     /**

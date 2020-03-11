@@ -48,6 +48,9 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
                 FlywheelConstants.kPeakCurrentDurationMillis);
         m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOppose);
 
+        m_neoEncoderMaster.setPositionConversionFactor(1 / FlywheelConstants.kGearRatio);
+        m_neoEncoderMaster.setVelocityConversionFactor(1 / FlywheelConstants.kGearRatio);
+
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
         m_neoController.setD(FlywheelConstants.kD);
@@ -58,11 +61,11 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
 
     public void periodic() {
         SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
-        SmartDashboard.putNumber("Flywheel Velocity", getVelocity() * FlywheelConstants.kRatio);
+        SmartDashboard.putNumber("Flywheel Velocity", getVelocity());
         if (m_setVelocity == 0) {
             m_neoFlywheelMaster.stopMotor();
         } else {
-            m_neoController.setReference(m_setVelocity / FlywheelConstants.kRatio, ControlType.kVelocity, 0);
+            m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0);
         }
 
     }
@@ -103,15 +106,15 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
      */
     public boolean atSetpoint() {
         return getSetpoint() > 0
-                ? (Math.abs(getVelocity() - getSetpoint() / FlywheelConstants.kRatio) / getSetpoint())
+                ? (Math.abs(getVelocity() - getSetpoint()) / getSetpoint())
                         * 100 < FlywheelConstants.kAllowedErrorPercent
                 : false;
     }
 
     public void configureShuffleboard() {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
-        shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity() * FlywheelConstants.kRatio).withSize(4, 2)
-                .withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity()).withSize(4, 2).withPosition(0, 0)
+                .withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(0, 2)
                 .withWidget(BuiltInWidgets.kBooleanBox);
         // shuffleboardTab.addNumber("Current draw", () ->

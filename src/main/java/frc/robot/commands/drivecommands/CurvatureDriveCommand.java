@@ -31,9 +31,6 @@ public class CurvatureDriveCommand extends CommandBase {
         double speedRight = Math.abs(m_speedRight.get()) > ControllerConstants.kTriggerDeadzone ? m_speedRight.get()
                 : 0;
         boolean isQuickTurn = Math.abs(speedStraight) == 0;
-        System.out.println("Left: "+ speedLeft);
-        System.out.println("Right: "+ speedRight);
-        System.out.println("Quick: " + isQuickTurn);
         curvatureDrive(speedStraight, speedRight - speedLeft, isQuickTurn);
     }
 
