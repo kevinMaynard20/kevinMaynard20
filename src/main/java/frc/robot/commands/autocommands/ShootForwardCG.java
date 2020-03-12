@@ -25,7 +25,7 @@ public class ShootForwardCG extends SequentialCommandGroup {
             HoodSubsystem hoodSubsystem, FeederSubsystem feederSubsystem, CarouselSubsystem carouselSubsystem) {
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(), List.of(),
-                new Pose2d(3, 0, new Rotation2d()), DriveConstants.kTrajectoryConfig);
+                new Pose2d(1, 0, new Rotation2d()), DriveConstants.kTrajectoryConfig);
         Command moveForward = new TrajectoryFollowCommand(driveSubsystem, trajectory);
         driveSubsystem.resetOdometry(trajectory.getInitialPose());
         addCommands(new ShootCG(flywheelSubsystem, hoodSubsystem, feederSubsystem, carouselSubsystem), moveForward);

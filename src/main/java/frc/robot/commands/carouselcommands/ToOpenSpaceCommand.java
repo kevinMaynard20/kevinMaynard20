@@ -1,6 +1,7 @@
 package frc.robot.commands.carouselcommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.CarouselConstants;
 import frc.robot.subsystems.CarouselSubsystem;
 
 public class ToOpenSpaceCommand extends CommandBase {
@@ -17,8 +18,12 @@ public class ToOpenSpaceCommand extends CommandBase {
         addRequirements(m_carouselSubsystem);
     }
 
-    public void initialize() {
-        m_carouselSubsystem.setPosition(m_carouselSubsystem.getPosition() + 1);
+    public void execute() {
+        if (m_carouselSubsystem.atOpenSpace()) {
+            m_carouselSubsystem.setVelocity(0);
+        } else {
+            m_carouselSubsystem.setVelocity(CarouselConstants.kVelocity);
+        }
     }
 
     /**

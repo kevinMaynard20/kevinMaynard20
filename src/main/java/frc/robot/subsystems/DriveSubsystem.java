@@ -79,7 +79,12 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
         m_leftEncoder.setPositionConversionFactor(
                 (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters);
         m_leftEncoder.setVelocityConversionFactor(
-                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters / 60);
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters / 60.0);
+
+        m_rightEncoder.setPositionConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters);
+        m_rightEncoder.setVelocityConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters / 60.0);
 
         m_leftPIDController.setP(DriveConstants.kP);
         m_leftPIDController.setI(DriveConstants.kI);
@@ -96,14 +101,16 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
         m_rightPIDController.setFF(DriveConstants.kFF);
         m_rightPIDController.setOutputRange(DriveConstants.kMinOutput, DriveConstants.kMaxOutput);
         m_rightPIDController.setFeedbackDevice(m_rightEncoder);
+
+        resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     }
 
     /**
      * Update odometry
      */
     public void periodic() {
-        SmartDashboard.putNumber("Left wheel", getLeftEncoderVelocity());
-        SmartDashboard.putNumber("Right wheel", getRightEncoderVelocity());
+        SmartDashboard.putNumber("Left wheel", getLeftEncoderPosition());
+        SmartDashboard.putNumber("Right wheel", getRightEncoderPosition());
         SmartDashboard.putNumber("Heading", m_odometry.getPoseMeters().getRotation().getDegrees());
         m_odometry.update(Rotation2d.fromDegrees(getHeading()), getLeftEncoderPosition(), getRightEncoderPosition());
     }
@@ -119,7 +126,7 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * @return The right encoder position (meters)
      */
     public double getRightEncoderPosition() {
-        return m_rightEncoder.getPosition();
+        return -m_rightEncoder.getPosition();
     }
 
     /**
@@ -140,7 +147,7 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * @return The velocity of the right encoder (meters/s)
      */
     public double getRightEncoderVelocity() {
-        return m_rightEncoder.getVelocity();
+        return -m_rightEncoder.getVelocity();
     }
 
     /**
@@ -177,13 +184,6 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
     public void resetEncoders() {
         m_leftEncoder.setPosition(0);
         m_rightEncoder.setPosition(0);
-    }
-
-    /**
-     * Reset the heading of the gyro
-     */
-    public void zeroHeading() {
-        m_gyro.reset();
     }
 
     /**
@@ -227,9 +227,9 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
                 .withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addNumber("Right speed", () -> getWheelSpeeds().rightMetersPerSecond).withSize(4, 2)
                 .withPosition(4, 0).withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.addNumber("Left motor speed", () -> m_leftEncoder.getVelocity()).withSize(1, 1)
+        shuffleboardTab.addNumber("Left motor speed", () -> getLeftEncoderPosition()).withSize(1, 1)
                 .withPosition(0, 2).withWidget(BuiltInWidgets.kTextView);
-        shuffleboardTab.addNumber("Right motor speed", () -> m_rightEncoder.getVelocity()).withSize(1, 1)
+        shuffleboardTab.addNumber("Right motor speed", () -> getRightEncoderPosition()).withSize(1, 1)
                 .withPosition(1, 2).withWidget(BuiltInWidgets.kTextView);
         shuffleboardTab.addNumber("Heading", () -> getHeading()).withSize(1, 1).withPosition(2, 2)
                 .withWidget(BuiltInWidgets.kTextView);

@@ -3,13 +3,19 @@ package frc.robot;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -31,6 +37,8 @@ import frc.robot.commands.armcommands.BounceArmCommand;
 import frc.robot.commands.armcommands.DriveArmCommand;
 import frc.robot.commands.armcommands.ExtendArmCommand;
 import frc.robot.commands.armcommands.RetractArmCommand;
+import frc.robot.commands.autocommands.ShootCG;
+import frc.robot.commands.autocommands.ShootForwardCG;
 import frc.robot.commands.carouselcommands.AutoSpeedCarouselCommand;
 import frc.robot.commands.carouselcommands.RunCarouselCommand;
 import frc.robot.commands.carouselcommands.ToOpenSpaceCommand;
@@ -79,11 +87,19 @@ public class RobotContainer {
 			m_intakeSubsystem, m_limelightSubsystem };
 
 	public RobotContainer() {
+		m_autoChooser.addOption("Test path",
+				new TrajectoryFollowCommand(m_driveSubsystem,
+						TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d()),
+								List.of(new Translation2d(2, 1), new Translation2d(1, 2), new Translation2d(2, 3)),
+								new Pose2d(0, 4, new Rotation2d()), DriveConstants.kTrajectoryConfig)));
+		m_autoChooser.addOption("Auto",
+				new ShootForwardCG(m_driveSubsystem, m_flywheelSubsystem, m_hoodSubsystem, m_feederSubsystem, m_carouselSubsystem));
+		SmartDashboard.putData(m_autoChooser);
 		configureButtonBindings();
 		// configureTestingBindings();
 		configureShuffleboard();
 		// Generate all trajectories at startup to prevent loop overrun
-		generateAutonomousCommands();
+		// generateAutonomousCommands();
 		// LEDs
 		m_arduinoSubsystem.setDefaultCommand(new UpdateLEDsCommand(m_arduinoSubsystem, () -> { // TODO: add more things
 																								// for the LEDs to do
@@ -91,9 +107,9 @@ public class RobotContainer {
 		}, () -> {
 			return 0.0;
 		}, () -> {
-			return m_flywheelSubsystem.getVelocity() > 100 ? ShooterLEDModes.kFlywheelPercent : ShooterLEDModes.kOff;
+			return m_flywheelSubsystem.getVelocity() > 5 ? ShooterLEDModes.kFlywheelPercent : ShooterLEDModes.kOff;
 		}, () -> {
-			return m_flywheelSubsystem.getVelocity() / m_flywheelSubsystem.getSetpoint();
+			return m_flywheelSubsystem.getVelocity() / m_flywheelSubsystem.getSetpoint() * 100.0;
 		}));
 	}
 
@@ -114,20 +130,19 @@ public class RobotContainer {
 		new JoystickButton(m_driverController, Button.kX).whenHeld(new ParallelCommandGroup(
 				new PixyTargetCommand(m_driveSubsystem, m_arduinoSubsystem,
 						() -> -m_driverController.getRawAxis(Axis.kLeftY)),
-				new RunCarouselCommand(m_carouselSubsystem,
-						CarouselConstants.kIntakeVelocity),
+				new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kIntakeVelocity),
 				new IntakeCommand(m_intakeSubsystem), new BounceArmCommand(m_armSubsystem)));
 		// Turn to target
-		new POVButton(m_driverController, DPad.kUp)
-				.whenHeld(new LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, 0));
-		// Feeder
-		new JoystickButton(m_driverController, Button.kLeftBumper).whenHeld(new FeederCommand(m_feederSubsystem));
+		new JoystickButton(m_driverController, Button.kLeftBumper)
+				.whenHeld(new LimelightTurnCommand(m_limelightSubsystem, m_driveSubsystem, .2));
 		// Run carousel fast
 		new JoystickButton(m_driverController, Button.kRightBumper)
 				.whenHeld(new AutoSpeedCarouselCommand(m_carouselSubsystem, m_flywheelSubsystem::getSetpoint));
+		// Feeder
+		new POVButton(m_driverController, DPad.kUp).whenHeld(new FeederCommand(m_feederSubsystem));
 		// Run carousel default speed
-		new POVButton(m_driverController, DPad.kDown).toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem,
-				CarouselConstants.kVelocity));
+		new POVButton(m_driverController, DPad.kDown)
+				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity));
 		new POVButton(m_driverController, DPad.kRight).whenHeld(new ReverseFeederCommand(m_feederSubsystem));
 		new POVButton(m_driverController, DPad.kLeft)
 				.whenHeld(new BackupCommand(m_driveSubsystem, DriveConstants.kBackupDistance));
@@ -136,8 +151,7 @@ public class RobotContainer {
 		// Intake
 		new JoystickButton(m_operatorController, Button.kX)
 				.whenHeld(new ParallelCommandGroup(new IntakeCommand(m_intakeSubsystem),
-						new RunCarouselCommand(m_carouselSubsystem,
-								CarouselConstants.kIntakeVelocity)))
+						new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kIntakeVelocity)))
 				.whenHeld(new BounceArmCommand(m_armSubsystem));
 		new JoystickButton(m_operatorController, Button.kCircle).whenHeld(new OuttakeCommand(m_intakeSubsystem));
 		// Arm
@@ -154,8 +168,8 @@ public class RobotContainer {
 				new DriveArmCommand(m_armSubsystem, () -> (m_operatorController.getRawAxis(Axis.kLeftTrigger) + 1) / 2,
 						() -> (m_operatorController.getRawAxis(Axis.kRightTrigger) + 1) / 2));
 		// Carousel jostle
-		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new RunCarouselCommand(m_carouselSubsystem,
-				CarouselConstants.kJostleVelocity));
+		new JoystickButton(m_operatorController, Button.kTriangle)
+				.whenHeld(new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kJostleVelocity));
 		// Hood and flywheel override
 		new POVButton(m_operatorController, DPad.kDown).whenHeld(new ParallelCommandGroup(
 				new ShootSetupCommand(m_flywheelSubsystem, m_hoodSubsystem, () -> FieldLocation.WALL),
@@ -235,8 +249,8 @@ public class RobotContainer {
 		// intake
 		new JoystickButton(m_operatorController, Button.kX).whenHeld(new IntakeCommand(m_intakeSubsystem));
 		// carousel
-		new JoystickButton(m_operatorController, Button.kCircle).toggleWhenPressed(new RunCarouselCommand(
-				m_carouselSubsystem, CarouselConstants.kVelocity));
+		new JoystickButton(m_operatorController, Button.kCircle)
+				.toggleWhenPressed(new RunCarouselCommand(m_carouselSubsystem, CarouselConstants.kVelocity));
 		// feeder
 		new JoystickButton(m_operatorController, Button.kTriangle).whenHeld(new FeederCommand(m_feederSubsystem));
 	}
@@ -258,7 +272,7 @@ public class RobotContainer {
 	 */
 	private void generateAutonomousCommands() {
 		Hashtable<String, Trajectory> trajectories = new Hashtable<String, Trajectory>();
-		File[] files = new File("paths").listFiles();
+		File[] files = new File("\\home\\lvuser\\deploy\\paths\\output").listFiles();
 		for (File file : files)
 			try {
 				trajectories.put(file.getName(), TrajectoryUtil

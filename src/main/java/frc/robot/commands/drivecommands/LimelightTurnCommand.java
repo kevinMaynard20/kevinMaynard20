@@ -60,10 +60,4 @@ public class LimelightTurnCommand extends CommandBase {
         m_driveSubsystem.tankDrive(0, 0);
     }
 
-    /**
-     * End the command when the PID is at the setpoint
-     */
-    public boolean isFinished() {
-        return m_turnController.atSetpoint();
-    }
 }

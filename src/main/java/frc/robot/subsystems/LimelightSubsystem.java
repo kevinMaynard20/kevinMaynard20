@@ -14,7 +14,8 @@ import frc.robot.ShuffleboardLogging;
 
 public class LimelightSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
-    private final NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");;
+    private final NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+
     private boolean isTargetVisible;
     private double xAngle, yAngle, distance;
     private ArrayList<Double> averageDistance = new ArrayList<>();

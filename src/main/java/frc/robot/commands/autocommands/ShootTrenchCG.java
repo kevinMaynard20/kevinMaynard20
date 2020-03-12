@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.CarouselConstants;
 import frc.robot.commands.armcommands.BounceArmCommand;
@@ -35,11 +34,11 @@ public class ShootTrenchCG extends SequentialCommandGroup {
             // Move to trench
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(AutoConstants.kInitTrench);
             Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            Command moveToTrench = new TrajectoryFollowCommand(driveSubsystem, trajectory);
-            Command intake = parallel(new IntakeCommand(intakeSubsystem), new BounceArmCommand(armSubsystem),
+            Command moveAndIntake = deadline(new TrajectoryFollowCommand(driveSubsystem, trajectory),
+                    new IntakeCommand(intakeSubsystem), new BounceArmCommand(armSubsystem),
                     new RunCarouselCommand(carouselSubsystem, CarouselConstants.kIntakeVelocity));
-            Command combined = deadline(moveToTrench, sequence(new WaitCommand(2), intake));
-            addCommands(new ShootCG(flywheelSubsystem, hoodSubsystem, feederSubsystem, carouselSubsystem), combined);
+            addCommands(new ShootCG(flywheelSubsystem, hoodSubsystem, feederSubsystem, carouselSubsystem),
+                    moveAndIntake);
         } catch (Exception e) {
 
         }
