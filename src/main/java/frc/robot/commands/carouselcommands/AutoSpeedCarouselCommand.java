@@ -25,11 +25,12 @@ public class AutoSpeedCarouselCommand extends CommandBase {
 
     public void execute() {
         double velocity = 0;
-        if (m_flywheelSetpoint.get() > 0)
+        if (m_flywheelSetpoint.get() > 0) {
             velocity = FieldLocation.fromFlywheelSetpoint(m_flywheelSetpoint.get()).carouselSetpoint;
-        else
+        } else {
             velocity = CarouselConstants.kVelocity;
-        m_carouselSubsystem.setVelocity(velocity * CarouselConstants.kRatio);
+        }
+        m_carouselSubsystem.setVelocity(velocity);
     }
 
     /**

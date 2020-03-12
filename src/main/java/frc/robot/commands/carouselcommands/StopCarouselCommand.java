@@ -14,7 +14,7 @@ public class StopCarouselCommand extends CommandBase {
      */
     public StopCarouselCommand(CarouselSubsystem carouselSubsystem) {
         m_carouselSubsystem = carouselSubsystem;
-        addRequirements(carouselSubsystem);
+        addRequirements(m_carouselSubsystem);
     }
 
     /**

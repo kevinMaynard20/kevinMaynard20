@@ -24,12 +24,16 @@ public class FeederSubsystem extends SubsystemBase implements ShuffleboardLoggin
 		m_motor.setInverted(FeederConstants.kInvert);
 	}
 
+	public double getPercentOutput() {
+		return m_motor.getMotorOutputPercent();
+	}
+
 	/**
 	 * Sets new speed for the feeder wheel to spin at.
 	 * 
 	 * @param speed Percent output.
 	 */
-	public void setSpeed(double speed) {
+	public void setPercentOutput(double speed) {
 		m_motor.set(ControlMode.PercentOutput, speed);
 	}
 

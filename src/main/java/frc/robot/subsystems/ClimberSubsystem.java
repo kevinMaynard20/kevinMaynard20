@@ -94,6 +94,8 @@ public class ClimberSubsystem extends SubsystemBase implements ShuffleboardLoggi
                 .withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addNumber("Encoder Velocity", () -> getVelocity()).withSize(4, 2).withPosition(4, 0)
                 .withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addNumber("Output", () -> m_motor.getAppliedOutput()).withSize(1, 1).withPosition(1, 2)
+                .withWidget(BuiltInWidgets.kTextView);
         shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(0, 2)
                 .withWidget(BuiltInWidgets.kBooleanBox);
     }

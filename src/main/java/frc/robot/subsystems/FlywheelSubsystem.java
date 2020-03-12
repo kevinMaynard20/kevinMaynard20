@@ -8,11 +8,9 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
@@ -26,9 +24,6 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
             MotorType.kBrushless);
     private final CANPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
     private final CANEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
-    // private final SimpleMotorFeedforward m_feedForward = new
-    // SimpleMotorFeedforward(FlywheelConstants.kS,
-    // FlywheelConstants.kV, FlywheelConstants.kA);
     private double m_setVelocity;
 
     /**
@@ -47,11 +42,14 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
 
         m_neoFlywheelFollower.restoreFactoryDefaults();
         m_neoFlywheelFollower.setIdleMode(IdleMode.kBrake);
-        m_neoFlywheelMaster.enableVoltageCompensation(12);
-        m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-        m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
+        m_neoFlywheelFollower.enableVoltageCompensation(12);
+        m_neoFlywheelFollower.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
+        m_neoFlywheelFollower.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
                 FlywheelConstants.kPeakCurrentDurationMillis);
-        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerInvert);
+        m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOppose);
+
+        m_neoEncoderMaster.setPositionConversionFactor(1 / FlywheelConstants.kGearRatio);
+        m_neoEncoderMaster.setVelocityConversionFactor(1 / FlywheelConstants.kGearRatio);
 
         m_neoController.setP(FlywheelConstants.kP);
         m_neoController.setI(FlywheelConstants.kI);
@@ -60,14 +58,16 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
         m_neoController.setFF(FlywheelConstants.kFF);
         m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
     }
-    
+
     public void periodic() {
         SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
+        SmartDashboard.putNumber("Flywheel Velocity", getVelocity());
         if (m_setVelocity == 0) {
             m_neoFlywheelMaster.stopMotor();
         } else {
-            m_neoController.setReference(m_setVelocity / FlywheelConstants.kRatio, ControlType.kVelocity, 0);
+            m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0);
         }
+
     }
 
     public void incrementSpeed() {
@@ -106,17 +106,22 @@ public class FlywheelSubsystem extends SubsystemBase implements ShuffleboardLogg
      */
     public boolean atSetpoint() {
         return getSetpoint() > 0
-                ? (Math.abs(getVelocity() - getSetpoint() / FlywheelConstants.kRatio) / getSetpoint())
+                ? (Math.abs(getVelocity() - getSetpoint()) / getSetpoint())
                         * 100 < FlywheelConstants.kAllowedErrorPercent
                 : false;
     }
 
     public void configureShuffleboard() {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
-        shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity() * FlywheelConstants.kRatio).withSize(4, 2)
-                .withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
+        shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity()).withSize(4, 2).withPosition(0, 0)
+                .withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(0, 2)
                 .withWidget(BuiltInWidgets.kBooleanBox);
-        // shuffleboardTab.addNumber("Setpoint", () -> getSetpoint()).withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(5, 1);
+        // shuffleboardTab.addNumber("Current draw", () ->
+        // m_neoFlywheelMaster.getOutputCurrent() +
+        // m_neoFlywheelFollower.getOutputCurrent());
+        // shuffleboardTab.addNumber("Setpoint", () ->
+        // getSetpoint()).withWidget(BuiltInWidgets.kTextView).withSize(1,
+        // 1).withPosition(5, 1);
     }
 }

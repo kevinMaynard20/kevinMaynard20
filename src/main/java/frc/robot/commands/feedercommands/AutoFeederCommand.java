@@ -33,7 +33,7 @@ public class AutoFeederCommand extends CommandBase {
 	 */
 	public void execute() {
 		if (m_carouselReady.get() && m_flywheelReady.get()) {
-			m_feederSubsystem.setSpeed(FeederConstants.kSpeed);
+			m_feederSubsystem.setPercentOutput(FeederConstants.kSpeed);
 		}
 	}
 
@@ -41,6 +41,6 @@ public class AutoFeederCommand extends CommandBase {
 	 * Stop the feeder at the end of the command
 	 */
 	public void end(boolean interrupted) {
-		m_feederSubsystem.setSpeed(0.0);
+		m_feederSubsystem.setPercentOutput(0.0);
 	}
 }

@@ -16,7 +16,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 public class LimelightCompleteCommand extends CommandBase {
 
     private final LimelightSubsystem m_limelightSubsystem;
-    private final DriveSubsystem m_drivetrainSubsystem;
+    private final DriveSubsystem m_driveSubsystem;
     private final double m_turnGoal, m_distanceGoal;
     private final ProfiledPIDController m_turnController = new ProfiledPIDController(LimelightConstants.kTurnP,
             LimelightConstants.kTurnI, LimelightConstants.kTurnD, new Constraints(
@@ -28,18 +28,18 @@ public class LimelightCompleteCommand extends CommandBase {
     /**
      * Use the limelight to both reach a desired distance and angle to the powerport
      * 
-     * @param limelightSubsystem  The limelight subsystem to gather data from
-     * @param drivetrainSubsystem The drivetrain subsystem to be used
-     * @param turnGoal            Angle setpoint towards the target
-     * @param distanceGoal        Distance goal away from the target
+     * @param limelightSubsystem The limelight subsystem to gather data from
+     * @param driveSubsystem     The train subsystem to be used
+     * @param turnGoal           Angle setpoint towards the target
+     * @param distanceGoal       Distance goal away from the target
      */
-    public LimelightCompleteCommand(LimelightSubsystem limelightSubsystem, DriveSubsystem drivetrainSubsystem,
+    public LimelightCompleteCommand(LimelightSubsystem limelightSubsystem, DriveSubsystem driveSubsystem,
             double turnGoal, double distanceGoal) {
         m_limelightSubsystem = limelightSubsystem;
-        m_drivetrainSubsystem = drivetrainSubsystem;
+        m_driveSubsystem = driveSubsystem;
         m_turnGoal = turnGoal;
         m_distanceGoal = distanceGoal;
-        addRequirements(m_drivetrainSubsystem);
+        addRequirements(m_driveSubsystem);
     }
 
     /**
@@ -52,10 +52,10 @@ public class LimelightCompleteCommand extends CommandBase {
     public LimelightCompleteCommand(LimelightSubsystem limelightSubsystem, DriveSubsystem drivetrainSubsystem,
             Supplier<FieldLocation> fieldLocation) {
         m_limelightSubsystem = limelightSubsystem;
-        m_drivetrainSubsystem = drivetrainSubsystem;
+        m_driveSubsystem = drivetrainSubsystem;
         m_turnGoal = fieldLocation.get().turnGoal;
         m_distanceGoal = fieldLocation.get().distanceGoal;
-        addRequirements(m_drivetrainSubsystem);
+        addRequirements(m_driveSubsystem);
     }
 
     /**
@@ -77,16 +77,14 @@ public class LimelightCompleteCommand extends CommandBase {
         double robotTranslationSpeed = m_distanceController.calculate(m_limelightSubsystem.getDistance());
         DifferentialDriveWheelSpeeds wheelSpeeds = DriveConstants.kDriveKinematics
                 .toWheelSpeeds(new ChassisSpeeds(robotTranslationSpeed, 0, robotTurnSpeed));
-        double leftVoltage = DriveConstants.kFeedForward.calculate(wheelSpeeds.leftMetersPerSecond);
-        double rightVoltage = DriveConstants.kFeedForward.calculate(wheelSpeeds.rightMetersPerSecond);
-        m_drivetrainSubsystem.tankDriveVolts(leftVoltage, rightVoltage);
+        m_driveSubsystem.setWheelSpeeds(wheelSpeeds);
     }
 
     /**
      * Stop the drivetrain at the end of the command
      */
     public void end(boolean interrputed) {
-        m_drivetrainSubsystem.tankDriveVolts(0, 0);
+        m_driveSubsystem.tankDrive(0, 0);
     }
 
     /**

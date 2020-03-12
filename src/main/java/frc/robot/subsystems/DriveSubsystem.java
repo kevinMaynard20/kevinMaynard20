@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -19,10 +22,16 @@ import frc.robot.ShuffleboardLogging;
 
 public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging {
 
-    private final WPI_TalonSRX m_masterLeft = new WPI_TalonSRX(DriveConstants.kMasterLeftPort);
-    private final WPI_VictorSPX m_followerLeft = new WPI_VictorSPX(DriveConstants.kFollowerLeftPort);
-    private final WPI_TalonSRX m_masterRight = new WPI_TalonSRX(DriveConstants.kMasterRightPort);
-    private final WPI_VictorSPX m_followerRight = new WPI_VictorSPX(DriveConstants.kFollowerRightPort);
+    private final CANSparkMax m_masterLeft = new CANSparkMax(DriveConstants.kMasterLeftPort, MotorType.kBrushless);
+    private final CANSparkMax m_followerLeft = new CANSparkMax(DriveConstants.kFollowerLeftPort, MotorType.kBrushless);
+    private final CANSparkMax m_masterRight = new CANSparkMax(DriveConstants.kMasterRightPort, MotorType.kBrushless);
+    private final CANSparkMax m_followerRight = new CANSparkMax(DriveConstants.kFollowerRightPort,
+            MotorType.kBrushless);
+    private final CANEncoder m_leftEncoder = m_masterLeft.getEncoder();
+    private final CANEncoder m_rightEncoder = m_masterRight.getEncoder();
+    private final CANPIDController m_leftPIDController = m_masterLeft.getPIDController();
+    private final CANPIDController m_rightPIDController = m_masterRight.getPIDController();
+
     private final AHRS m_gyro = new AHRS(DriveConstants.kGyroPort);
     private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
             Rotation2d.fromDegrees(getHeading()));
@@ -31,26 +40,78 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * Initializes a new instance of the {@link DriveSubsystem} class.
      */
     public DriveSubsystem() {
+        m_masterLeft.restoreFactoryDefaults();
         m_masterLeft.setInverted(DriveConstants.kMasterLeftInvert);
-        m_masterLeft.setNeutralMode(NeutralMode.Brake);
-        m_followerLeft.setInverted(DriveConstants.kFollowerLeftInvert);
-        m_followerLeft.setNeutralMode(NeutralMode.Brake);
-        m_followerLeft.follow(m_masterLeft);
+        m_masterLeft.setIdleMode(IdleMode.kBrake);
+        m_masterLeft.enableVoltageCompensation(12);
+        m_masterLeft.setSmartCurrentLimit(DriveConstants.kSmartCurrentLimit);
+        m_masterLeft.setSecondaryCurrentLimit(DriveConstants.kPeakCurrentLimit,
+                DriveConstants.kPeakCurrentDurationMillis);
+        m_masterLeft.setOpenLoopRampRate(DriveConstants.kRampRate);
 
+        m_followerLeft.restoreFactoryDefaults();
+        m_followerLeft.setIdleMode(IdleMode.kCoast);
+        m_followerLeft.enableVoltageCompensation(12);
+        m_followerLeft.setSmartCurrentLimit(DriveConstants.kSmartCurrentLimit);
+        m_followerLeft.setSecondaryCurrentLimit(DriveConstants.kPeakCurrentLimit,
+                DriveConstants.kPeakCurrentDurationMillis);
+        m_followerLeft.setOpenLoopRampRate(DriveConstants.kRampRate);
+        m_followerLeft.follow(m_masterLeft, DriveConstants.kFollowerLeftOppose);
+
+        m_masterRight.restoreFactoryDefaults();
         m_masterRight.setInverted(DriveConstants.kMasterRightInvert);
-        m_masterRight.setNeutralMode(NeutralMode.Brake);
-        m_followerRight.setInverted(DriveConstants.kFollowerRightInvert);
-        m_followerRight.setNeutralMode(NeutralMode.Brake);
-        m_followerRight.follow(m_masterRight);
+        m_masterRight.setIdleMode(IdleMode.kBrake);
+        m_masterRight.enableVoltageCompensation(12);
+        m_masterRight.setSmartCurrentLimit(DriveConstants.kSmartCurrentLimit);
+        m_masterRight.setSecondaryCurrentLimit(DriveConstants.kPeakCurrentLimit,
+                DriveConstants.kPeakCurrentDurationMillis);
+        m_masterRight.setOpenLoopRampRate(DriveConstants.kRampRate);
 
-        resetEncoders();
-        zeroHeading();
+        m_followerRight.restoreFactoryDefaults();
+        m_followerRight.setIdleMode(IdleMode.kCoast);
+        m_followerRight.enableVoltageCompensation(12);
+        m_followerRight.setSmartCurrentLimit(DriveConstants.kSmartCurrentLimit);
+        m_followerRight.setSecondaryCurrentLimit(DriveConstants.kPeakCurrentLimit,
+                DriveConstants.kPeakCurrentDurationMillis);
+        m_followerRight.setOpenLoopRampRate(DriveConstants.kRampRate);
+        m_followerRight.follow(m_masterRight, DriveConstants.kFollowerRightOppose);
+
+        m_leftEncoder.setPositionConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters);
+        m_leftEncoder.setVelocityConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters / 60.0);
+
+        m_rightEncoder.setPositionConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters);
+        m_rightEncoder.setVelocityConversionFactor(
+                (1 / DriveConstants.kGearRatio) * Math.PI * DriveConstants.kWheelDiameterMeters / 60.0);
+
+        m_leftPIDController.setP(DriveConstants.kP);
+        m_leftPIDController.setI(DriveConstants.kI);
+        m_leftPIDController.setIZone(DriveConstants.kIz);
+        m_leftPIDController.setD(DriveConstants.kD);
+        m_leftPIDController.setFF(DriveConstants.kFF);
+        m_leftPIDController.setOutputRange(DriveConstants.kMinOutput, DriveConstants.kMaxOutput);
+        m_leftPIDController.setFeedbackDevice(m_leftEncoder);
+
+        m_rightPIDController.setP(DriveConstants.kP);
+        m_rightPIDController.setI(DriveConstants.kI);
+        m_rightPIDController.setIZone(DriveConstants.kIz);
+        m_rightPIDController.setD(DriveConstants.kD);
+        m_rightPIDController.setFF(DriveConstants.kFF);
+        m_rightPIDController.setOutputRange(DriveConstants.kMinOutput, DriveConstants.kMaxOutput);
+        m_rightPIDController.setFeedbackDevice(m_rightEncoder);
+
+        resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     }
 
     /**
      * Update odometry
      */
     public void periodic() {
+        SmartDashboard.putNumber("Left wheel", getLeftEncoderPosition());
+        SmartDashboard.putNumber("Right wheel", getRightEncoderPosition());
+        SmartDashboard.putNumber("Heading", m_odometry.getPoseMeters().getRotation().getDegrees());
         m_odometry.update(Rotation2d.fromDegrees(getHeading()), getLeftEncoderPosition(), getRightEncoderPosition());
     }
 
@@ -58,16 +119,14 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * @return The left encoder position (meters)
      */
     public double getLeftEncoderPosition() {
-        return -m_masterLeft.getSelectedSensorPosition() * Math.PI * DriveConstants.kWheelDiameterMeters
-                / DriveConstants.kEncoderEdgesPerRotation;
+        return m_leftEncoder.getPosition();
     }
 
     /**
      * @return The right encoder position (meters)
      */
     public double getRightEncoderPosition() {
-        return m_masterRight.getSelectedSensorPosition() * Math.PI * DriveConstants.kWheelDiameterMeters
-                / DriveConstants.kEncoderEdgesPerRotation;
+        return -m_rightEncoder.getPosition();
     }
 
     /**
@@ -81,16 +140,14 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * @return The velocity of the left encoder (meters/s)
      */
     public double getLeftEncoderVelocity() {
-        return -m_masterLeft.getSelectedSensorVelocity() * 10 * Math.PI * DriveConstants.kWheelDiameterMeters
-                / DriveConstants.kEncoderEdgesPerRotation;
+        return m_leftEncoder.getVelocity();
     }
 
     /**
      * @return The velocity of the right encoder (meters/s)
      */
     public double getRightEncoderVelocity() {
-        return m_masterRight.getSelectedSensorVelocity() * 10 * Math.PI * DriveConstants.kWheelDiameterMeters
-                / DriveConstants.kEncoderEdgesPerRotation;
+        return -m_rightEncoder.getVelocity();
     }
 
     /**
@@ -125,15 +182,8 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * Sets both encoders to 0
      */
     public void resetEncoders() {
-        m_masterLeft.setSelectedSensorPosition(0);
-        m_masterRight.setSelectedSensorPosition(0);
-    }
-
-    /**
-     * Reset the heading of the gyro
-     */
-    public void zeroHeading() {
-        m_gyro.reset();
+        m_leftEncoder.setPosition(0);
+        m_rightEncoder.setPosition(0);
     }
 
     /**
@@ -150,7 +200,8 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
      * @param right    Right percent output
      */
     public void arcadeDrive(double straight, double left, double right) {
-        tankDrive(straight - left + right, straight + left - right);
+        tankDrive(DriveConstants.kSpeedLimitFactor * (straight - left + right),
+                DriveConstants.kSpeedLimitFactor * (straight + left - right));
     }
 
     /**
@@ -160,19 +211,14 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
     public void tankDrive(double leftSpeed, double rightSpeed) {
         m_masterLeft.set(leftSpeed);
         m_masterRight.set(rightSpeed);
-        m_masterLeft.feed();
-        m_masterRight.feed();
     }
 
-    /**
-     * @param leftVolts  Left motors desired voltage
-     * @param rightVolts Right motors desired voltage
-     */
-    public void tankDriveVolts(double leftVolts, double rightVolts) {
-        m_masterLeft.setVoltage(leftVolts);
-        m_masterRight.setVoltage(rightVolts);
-        m_masterLeft.feed();
-        m_masterRight.feed();
+    public void setWheelSpeeds(DifferentialDriveWheelSpeeds wheelSpeeds) {
+        m_leftPIDController.setReference(wheelSpeeds.leftMetersPerSecond, ControlType.kVelocity, DriveConstants.kSlotID,
+                DriveConstants.kFeedForward.calculate(wheelSpeeds.leftMetersPerSecond));
+        m_rightPIDController.setReference(wheelSpeeds.rightMetersPerSecond, ControlType.kVelocity,
+                DriveConstants.kSlotID, DriveConstants.kFeedForward.calculate(wheelSpeeds.rightMetersPerSecond));
+
     }
 
     public void configureShuffleboard() {
@@ -181,7 +227,11 @@ public class DriveSubsystem extends SubsystemBase implements ShuffleboardLogging
                 .withPosition(0, 0).withWidget(BuiltInWidgets.kGraph);
         shuffleboardTab.addNumber("Right speed", () -> getWheelSpeeds().rightMetersPerSecond).withSize(4, 2)
                 .withPosition(4, 0).withWidget(BuiltInWidgets.kGraph);
-        shuffleboardTab.addNumber("Heading", () -> getHeading()).withSize(1, 1).withPosition(0, 2)
+        shuffleboardTab.addNumber("Left motor speed", () -> getLeftEncoderPosition()).withSize(1, 1)
+                .withPosition(0, 2).withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.addNumber("Right motor speed", () -> getRightEncoderPosition()).withSize(1, 1)
+                .withPosition(1, 2).withWidget(BuiltInWidgets.kTextView);
+        shuffleboardTab.addNumber("Heading", () -> getHeading()).withSize(1, 1).withPosition(2, 2)
                 .withWidget(BuiltInWidgets.kTextView);
     }
 }

@@ -21,6 +21,6 @@ public class StopFeederCommand extends CommandBase {
      * Stop the motor
      */
     public void initialize() {
-        m_feederSubsystem.setSpeed(0);
+        m_feederSubsystem.setPercentOutput(0);
     }
 }

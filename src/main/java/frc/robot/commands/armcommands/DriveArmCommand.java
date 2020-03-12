@@ -12,7 +12,7 @@ public class DriveArmCommand extends CommandBase {
     private final Supplier<Double> m_reverseSpeed, m_forwardSpeed;
 
     /**
-     * Drive the hood using percent output
+     * Drive the arm using percent output
      * 
      * @param armSubsystem The hood subsystem to be used
      * @param reverseSpeed Supplier of reverse speed (retract)

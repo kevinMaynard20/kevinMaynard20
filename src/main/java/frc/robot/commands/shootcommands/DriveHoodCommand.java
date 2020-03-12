@@ -27,7 +27,10 @@ public class DriveHoodCommand extends CommandBase {
      * Update the motor output
      */
     public void execute() {
-        m_hoodSubsystem.setPercentOutput(m_speed.get());
+        double speed = Math.abs(m_speed.get()) > ControllerConstants.kTriggerDeadzone
+        ? m_speed.get()
+        : 0;
+        m_hoodSubsystem.setPercentOutput(speed);
     }
 
     /**

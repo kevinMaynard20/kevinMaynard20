@@ -46,11 +46,10 @@ public class ArmSubsystem extends SubsystemBase implements ShuffleboardLogging {
         m_pidController.setSmartMotionMinOutputVelocity(ArmConstants.kMinVelocity, ArmConstants.kSlotID);
 
         resetEncoder();
-        setPosition(0);
     }
 
     public void periodic() {
-        SmartDashboard.putNumber("Arm position", getPosition());
+        SmartDashboard.putNumber("Arm Position", getPosition());
     }
 
     /**
